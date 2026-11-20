@@ -1,0 +1,27 @@
+{
+  "_note": "eBay 공개 문서의 item_summary/search 응답 모양을 흉내 낸 것. 키를 받으면 실제 응답으로 바꾼다.",
+  "href": "https://api.ebay.com/buy/browse/v1/item_summary/search?q=RTX%205070%20Ti&limit=200&offset=0",
+  "total": 3,
+  "next": null,
+  "limit": 200,
+  "offset": 0,
+  "itemSummaries": [
+    {
+      "itemId": "v1|111|0",
+      "title": "MSI GeForce RTX 5070 Ti 16GB GAMING TRIO OC",
+      "price": { "value": "849.99", "currency": "USD" },
+      "condition": "New",
+      "buyingOptions": ["FIXED_PRICE"],
+      "seller": { "username": "someone", "feedbackPercentage": "99.5" }
+    },
+    {
+      "itemId": "v1|222|0",
+      "title": "ASUS TUF Gaming RTX 5070 Ti OC",
+      "price": { "value": "799", "currency": "USD" }
+    },
+    {
+      "itemId": "v1|333|0",
+      "title": "No price listing"
+    }
+  ]
+}
