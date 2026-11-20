@@ -1,0 +1,10 @@
+# 로컬 개발용 DB. bootRun 하면 Spring Boot가 알아서 켠다(spring-boot-docker-compose).
+services:
+  postgres:
+    image: 'postgres:18'
+    environment:
+      - 'POSTGRES_DB=partstock'
+      - 'POSTGRES_USER=partstock'
+      - 'POSTGRES_PASSWORD=partstock'
+    ports:
+      - '5432'
