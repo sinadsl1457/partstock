@@ -13,7 +13,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -27,10 +29,13 @@ public class ProbeRunner implements ApplicationRunner {
 
 	private final ListingSource source;
 	private final String chipsetKeys;
+	private final ConfigurableApplicationContext context;
 
-	public ProbeRunner(ListingSource source, @Value("${partstock.probe.chipsets:}") String chipsetKeys) {
+	public ProbeRunner(ListingSource source, @Value("${partstock.probe.chipsets:}") String chipsetKeys,
+			ConfigurableApplicationContext context) {
 		this.source = source;
 		this.chipsetKeys = chipsetKeys;
+		this.context = context;
 	}
 
 	@Override
@@ -43,6 +48,7 @@ public class ProbeRunner implements ApplicationRunner {
 				}
 			}
 		}
+		System.exit(SpringApplication.exit(context));
 	}
 
 	private void probe(ChipsetDef chipset) {
