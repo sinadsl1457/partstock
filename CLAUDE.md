@@ -27,6 +27,7 @@ docs/     AI_LOG.md
 - 화면에는 출처(eBay)를 밝히고 eBay로 가는 링크를 둔다.
 - 새 상품·즉시 구매(FIXED_PRICE)만 센다. 이상값은 버리고 중앙값을 시세로 쓴다. 판매 글이 너무 적은 날은 시세를 비워 둔다(기준은 1단계 실측으로 정함).
 - 시세는 하루 1번 수집(부품 가격은 하루 단위면 충분). "실시간"처럼 꾸미지 않는다.
+- 원화 환산은 유럽중앙은행 기준 환율(Frankfurter API, 키 없음)을 `fx_rate`에 날마다 쌓아 쓴다. 주말·휴일은 직전 고시값.
 
 ## 종목 구조
 - 칩셋(예: RTX 5070 Ti, DDR5 32GB) → 제조사(MSI, ASUS…) → 모델(Gaming Trio OC…).
@@ -47,3 +48,7 @@ docs/     AI_LOG.md
 - DB 테이블은 Flyway 마이그레이션 파일로만 바꾼다. 이미 커밋한 마이그레이션은 고치지 않는다.
 - 시간은 `Clock` 빈을 주입받는다(`LocalDate.now()` 직접 호출 금지). 하루의 기준은 UTC.
 - eBay 키는 `server/src/main/resources/application-local.properties`(커밋 안 함), `local` 프로필로 실행.
+- 패키지: `catalog`(종목 정의·제목 가르기, 순수 Java), `price`(시세 계산·저장), `collect`(매일 수집·점검 도구), `ebay`(판매 글 출처), `fx`(환율), `ticker`(종목 표).
+  - 판매 글 출처는 `collect.ListingSource` 인터페이스 뒤에 둔다(eBay 데이터가 나쁘면 바꿔 끼우려고).
+- 데이터 품질 점검(저장 안 함): `./gradlew bootRun --args='--spring.profiles.active=local,probe --partstock.probe.chipsets=rtx-5070-ti'`
+- eBay 응답 예시(`src/test/resources/ebay`)는 지금 문서 기준 가짜다. 키를 받으면 실제 응답으로 바꾸고 파서를 맞춘다.
