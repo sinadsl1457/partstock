@@ -1,0 +1,4 @@
+# 복사해서 application-local.properties로 저장하고 값을 채운다(커밋 안 됨).
+# eBay 개발자 계정 > Application Keys > Production 키
+ebay.client-id=
+ebay.client-secret=
