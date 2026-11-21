@@ -1,0 +1,9 @@
+[Unit]
+Description=partstock DB 백업 매일 04:00 UTC(수집 03:00 뒤)
+
+[Timer]
+OnCalendar=*-*-* 04:00:00 UTC
+Persistent=true
+
+[Install]
+WantedBy=timers.target

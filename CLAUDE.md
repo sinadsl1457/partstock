@@ -5,7 +5,7 @@ eBay 판매 가격으로 그래픽카드·램 시세를 증권 시세판처럼 �
 개인 포트폴리오. NowStation(실시간 데이터·센서)과 겹치지 않게 "수집 → 정제 → 시계열 집계 → 시세판"을 보여 준다.
 
 ## 진행 방식
-- 단계: 1 수집 서버(eBay → 하루 시세 저장) → 2 시세 API + 웹 → 3 Flutter 앱 → 4 AWS 배포.
+- 단계: 1 수집 서버(eBay → 하루 시세 저장) → 수집 서버 먼저 배포(차트는 쌓인 날부터라서, 11/22 결정) → 2 시세 API + 웹 → 3 Flutter 앱 → 4 웹·앱 배포.
 - 단계가 끝나면 멈추고 결과 요약 + 확인 방법을 보고한다. 승인 후 다음 단계.
 - 1단계에서 데이터 품질(칩셋·제조사·모델별 하루 판매 글 수, 가격 흩어짐)을 먼저 숫자로 확인한다. 쓸 만하지 않으면 데이터 출처를 바꾼다.
 - 유료 서비스·결제, 스택 변경은 먼저 묻는다. 데이터 비용 상한은 월 1만 원.
@@ -55,3 +55,10 @@ docs/     AI_LOG.md
   - 판매 글 출처는 `collect.ListingSource` 인터페이스 뒤에 둔다(eBay 데이터가 나쁘면 바꿔 끼우려고).
 - 데이터 품질 점검(저장 안 함): `./gradlew bootRun --args='--spring.profiles.active=local,probe --partstock.probe.chipsets=rtx-5070-ti'`
 - eBay 응답 예시(`src/test/resources/ebay`)는 지금 문서 기준 가짜다. 키를 받으면 실제 응답으로 바꾸고 파서를 맞춘다.
+
+## 배포 (수집 서버)
+- AWS EC2 새 t3.micro 한 대(NowStation과 분리, 11/22 결정). Docker compose로 PostgreSQL + 서버(`deploy/compose.prod.yaml`), 값은 EC2 `~/partstock/.env`.
+- 지금은 맥에서 `deploy/deploy.sh <IP>`로 이미지를 만들어 보낸다(GitHub 레포·CI 전 임시). 웹 포트는 열지 않는다(2단계에서 Caddy + https).
+- 메모리: JVM `-Xmx256m`(실측 약 370MB), PostgreSQL `shared_buffers=32MB`(약 26MB), 스왑 2GB.
+- **시세 기록은 다시 받을 수 없다**(eBay는 지금 올라온 글만 줌). 매일 04:00 UTC `pg_dump` 14일치(`deploy/backup.sh` + systemd 타이머). 하루 약 17KB.
+- 켜질 때 그날 수집 기록이 없으면 바로 수집한다(`partstock.collect.on-start`).

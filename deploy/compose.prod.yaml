@@ -1,0 +1,31 @@
+# 배포 서버(EC2)용. ~/partstock/ 에 이 파일과 .env를 두고 docker compose -f compose.prod.yaml up -d
+services:
+  postgres:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: partstock
+      POSTGRES_USER: partstock
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    # 메모리 1GB 서버라 버퍼를 작게
+    command: ["postgres", "-c", "shared_buffers=32MB", "-c", "max_connections=20"]
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U partstock"]
+      interval: 10s
+      retries: 10
+
+  server:
+    image: partstock-server:${SERVER_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD}
+      EBAY_CLIENT_ID: ${EBAY_CLIENT_ID}
+      EBAY_CLIENT_SECRET: ${EBAY_CLIENT_SECRET}
+
+volumes:
+  pgdata:

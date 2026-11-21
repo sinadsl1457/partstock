@@ -1,0 +1,7 @@
+[Unit]
+Description=partstock DB 백업
+
+[Service]
+Type=oneshot
+User=ec2-user
+ExecStart=/home/ec2-user/partstock/backup.sh
