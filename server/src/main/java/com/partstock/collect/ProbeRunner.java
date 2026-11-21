@@ -52,7 +52,7 @@ public class ProbeRunner implements ApplicationRunner {
 	}
 
 	private void probe(ChipsetDef chipset) {
-		List<Listing> listings = source.search(chipset);
+		List<Listing> listings = source.search(chipset).stream().distinct().toList();
 		Map<String, List<Long>> byTicker = new TreeMap<>();
 		List<String> dropped = new ArrayList<>();
 		for (Listing l : listings) {

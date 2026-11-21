@@ -76,6 +76,8 @@ public class CollectService {
 					errors.add(chipset.key() + ": " + e);
 					continue;
 				}
+				// 같은 판매자가 같은 글을 여러 개 올린 경우 한 번만 센다
+				listings = listings.stream().distinct().toList();
 				seen += listings.size();
 
 				Map<String, List<Long>> byTicker = new LinkedHashMap<>();

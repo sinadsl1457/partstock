@@ -100,6 +100,22 @@ class CollectServiceTest {
 	}
 
 	@Test
+	void 같은_제목_같은_가격_글은_한_번만_센다() {
+		// 한 판매자가 시세보다 비싸게 같은 글을 여러 개 올려 두면 중앙값이 끌려 올라간다(실제 eBay 램 검색에서 확인)
+		source.byChipset.put("rtx-5080", List.of(
+				usd("RTX 5080 a", 100_000), usd("RTX 5080 b", 101_000), usd("RTX 5080 c", 102_000),
+				usd("RTX 5080 gouge", 300_000), usd("RTX 5080 gouge", 300_000), usd("RTX 5080 gouge", 300_000),
+				usd("RTX 5080 gouge", 300_000)));
+
+		collect.collect(DAY);
+
+		assertThat(prices.find("rtx-5080", DAY)).hasValueSatisfying(s -> {
+			assertThat(s.rawCount()).isEqualTo(4); // 중복 4개가 1개로
+			assertThat(s.medianCents()).isEqualTo(101_000); // 남은 비싼 글 1개는 이상값으로 빠짐
+		});
+	}
+
+	@Test
 	void 달러가_아닌_글은_세지_않는다() {
 		source.byChipset.put("rtx-5080", List.of(
 				usd("RTX 5080 a", 100_000), usd("RTX 5080 b", 110_000),
