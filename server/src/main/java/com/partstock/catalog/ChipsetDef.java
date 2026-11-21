@@ -47,7 +47,7 @@ public record ChipsetDef(
 
 	/**
 	 * 데스크톱 램 2개 묶음. 예: ram("ddr5-32gb", 5, 16) → DDR5 32GB (2×16GB)
-	 * 1개짜리·4개짜리는 가격 단위가 달라 섞지 않는다. 제목에 "2x16GB"나 "16GBx2"가 있어야 한다.
+	 * 1개짜리·4개짜리는 가격 단위가 달라 섞지 않는다. 제목에 "2x16(GB)"나 "16GBx2"처럼 구성이 있어야 한다.
 	 */
 	public static ChipsetDef ram(String key, int ddr, int moduleGb) {
 		String gen = String.valueOf(ddr);
@@ -55,7 +55,10 @@ public record ChipsetDef(
 		String size = String.valueOf(moduleGb);
 		Predicate<Title> matcher = t -> t.contains(List.of("DDR", gen))
 				&& !t.contains(List.of("DDR", otherGen))
-				&& (t.contains(List.of("2", "X", size, "GB")) || t.contains(List.of(size, "GB", "X", "2")));
+				// 2x16GB, 2x16, (2x16G), 16GBx2, 16Gx2 — GB를 빼고 쓰는 판매자가 많다
+				&& (t.contains(List.of("2", "X", size))
+						|| t.contains(List.of(size, "GB", "X", "2"))
+						|| t.contains(List.of(size, "G", "X", "2")));
 		String display = "DDR%d %dGB (2×%dGB)".formatted(ddr, moduleGb * 2, moduleGb);
 		String query = "DDR%d %dGB 2x%dGB desktop".formatted(ddr, moduleGb * 2, moduleGb);
 		return new ChipsetDef(key, Category.RAM, display, query, matcher);

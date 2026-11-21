@@ -108,6 +108,10 @@ class ListingClassifierTest {
 			G.SKILL Trident Z5 Neo RGB DDR5-6000 32GB 2x16GB                     | ddr5-32gb/gskill/trident-z5
 			Kingston FURY Beast 32GB (16GBx2) DDR5 5600                          | ddr5-32gb/kingston/fury-beast
 			Crucial Pro 32GB Kit (2 x 16GB) DDR5-5600 UDIMM                      | ddr5-32gb/crucial/pro
+			G.SKILL Trident Z5 RGB Series 32GB (2 x 16GB) 288-Pin PC RAM DDR5 6000 | ddr5-32gb/gskill/trident-z5
+			Patriot Viper Elite 5 32GB (2x16G) DDR5-6000 PC5-48000 C30 UDIMM XMP | ddr5-32gb/patriot/viper
+			TEAMGROUP T-FORCE DELTA RGB DDR5 32GB (2x16) 7800MHz CL38-48-48-84   | ddr5-32gb/teamgroup/delta
+			Corsair Vengeance DDR5 2x16 32GB 6400MHz RAM RGB XMP READY           | ddr5-32gb/corsair/vengeance
 			""")
 	void 램은_세대와_2개_묶음_구성으로_가른다(String title, String expectedModelKey) {
 		assertThat(keys("ddr5-32gb", title)).contains("ddr5-32gb", expectedModelKey);
@@ -120,8 +124,12 @@ class ListingClassifierTest {
 			Crucial 32GB (2x16GB) DDR5 5600 SODIMM Laptop Memory
 			Samsung 32GB 2x16GB DDR5 4800 ECC RDIMM Server
 			Corsair Vengeance LPX 32GB (2x16GB) DDR4 3200
+			Crucial Pro DDR5 Kit 6400MHz 32GB (2x16GB) 64GB (2x32GB) Desktop Memory OC UDIMM
+			Crucial Pro Overclocking 32GB DDR5 6000Mt/s  Desktop Memory Module UDIMM
+			Factory Sealed G.Skill Trident Z5 NEO RGB  32GB (2x16) 6000 CL36  RAM
 			""")
-	void 다른_구성_노트북용_서버용_다른_세대는_버린다(String title) {
+	void 다른_구성_노트북용_서버용_다른_세대_구성_모름_여러_구성_세대_모름은_버린다(String title) {
+		// 세대가 제목에 없으면 검색어만 믿지 않는다(DDR4 글이 섞일 수 있어서)
 		assertThat(keys("ddr5-32gb", title)).isEmpty();
 	}
 }
