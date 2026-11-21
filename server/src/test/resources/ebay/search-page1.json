@@ -1,27 +1,47 @@
 {
-  "_note": "eBay 공개 문서의 item_summary/search 응답 모양을 흉내 낸 것. 키를 받으면 실제 응답으로 바꾼다.",
-  "href": "https://api.ebay.com/buy/browse/v1/item_summary/search?q=RTX%205070%20Ti&limit=200&offset=0",
-  "total": 3,
-  "next": null,
+  "_note": "2026-11-21 eBay Browse API 실제 응답(RTX 5070 Ti)에서 3개만 남기고, 판매자·글 번호·사진 등 저장하지 않는 칸은 지움. 마지막 글은 확인용으로 추가.",
+  "total": 84,
   "limit": 200,
   "offset": 0,
   "itemSummaries": [
     {
-      "itemId": "v1|111|0",
-      "title": "MSI GeForce RTX 5070 Ti 16GB GAMING TRIO OC",
-      "price": { "value": "849.99", "currency": "USD" },
+      "title": "PNY NVIDIA GeForce RTX 5070 Ti OC Triple Fan Graphics Card 16GB GPU GDDR7 NEW",
+      "price": {
+        "value": "1350.00",
+        "currency": "USD"
+      },
       "condition": "New",
-      "buyingOptions": ["FIXED_PRICE"],
-      "seller": { "username": "someone", "feedbackPercentage": "99.5" }
+      "conditionId": "1000",
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ]
     },
     {
-      "itemId": "v1|222|0",
-      "title": "ASUS TUF Gaming RTX 5070 Ti OC",
-      "price": { "value": "799", "currency": "USD" }
+      "title": "MSI Gaming GeForce RTX 5070 Ti 16GB GDDR7 PCI Express 5.0 ATX Graphics Card RTX",
+      "price": {
+        "value": "1507.99",
+        "currency": "USD"
+      },
+      "condition": "New",
+      "conditionId": "1000",
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ]
     },
     {
-      "itemId": "v1|333|0",
-      "title": "No price listing"
+      "title": "GIGABYTE AORUS GeForce RTX 5070 Ti Infinity 16GB GDDR7 GV-N507TAORUS IF-16GD",
+      "price": {
+        "value": "1999.99",
+        "currency": "USD"
+      },
+      "condition": "New",
+      "conditionId": "1000",
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ]
+    },
+    {
+      "title": "(가격 없는 글: 파서가 건너뛰는지 확인용으로 추가)"
     }
   ]
 }

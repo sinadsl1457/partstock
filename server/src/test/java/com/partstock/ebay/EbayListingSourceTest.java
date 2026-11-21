@@ -50,10 +50,11 @@ class EbayListingSourceTest {
 
 		var listings = source("id", "secret").search(RTX_5070_TI);
 
-		// 가격 없는 글은 빠지고, 다음 쪽이 없으니 한 번만 부른다
+		// 가격 없는 글은 빠지고, 다음 쪽이 없으니(실제 응답은 next 칸 자체가 없음) 한 번만 부른다
 		assertThat(listings).containsExactly(
-				new Listing("MSI GeForce RTX 5070 Ti 16GB GAMING TRIO OC", 84_999, "USD"),
-				new Listing("ASUS TUF Gaming RTX 5070 Ti OC", 79_900, "USD"));
+				new Listing("PNY NVIDIA GeForce RTX 5070 Ti OC Triple Fan Graphics Card 16GB GPU GDDR7 NEW", 135_000, "USD"),
+				new Listing("MSI Gaming GeForce RTX 5070 Ti 16GB GDDR7 PCI Express 5.0 ATX Graphics Card RTX", 150_799, "USD"),
+				new Listing("GIGABYTE AORUS GeForce RTX 5070 Ti Infinity 16GB GDDR7 GV-N507TAORUS IF-16GD", 199_999, "USD"));
 		server.verify();
 	}
 

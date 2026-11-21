@@ -19,7 +19,7 @@ import org.springframework.web.client.RestClient;
 
 /**
  * eBay Browse API(item_summary/search)로 미국 eBay의 새 상품·즉시 구매 글을 받는다.
- * 응답 모양은 eBay 공개 문서 기준. 키를 받으면 실제 응답으로 확인한다(src/test/resources/ebay).
+ * 응답 모양은 2026-11-21 실제 응답으로 확인함(src/test/resources/ebay). 다음 쪽이 없으면 next 칸 자체가 없다.
  */
 @Component
 public class EbayListingSource implements ListingSource {
