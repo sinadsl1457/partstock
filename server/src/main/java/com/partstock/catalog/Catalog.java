@@ -28,8 +28,8 @@ public final class Catalog {
 			gpu("rtx-5050", "RTX 5050", NVIDIA, List.of("5050"), Set.of(), null, null),
 			gpu("rx-9070-xt", "RX 9070 XT", AMD, List.of("9070", "XT"), Set.of(), null, null),
 			gpu("rx-9070", "RX 9070", AMD, List.of("9070"), Set.of("XT", "GRE"), null, null),
-			gpu("rx-9060-xt-16gb", "RX 9060 XT 16GB", AMD, List.of("9060", "XT"), Set.of(), 16, 8),
-			gpu("rx-9060-xt-8gb", "RX 9060 XT 8GB", AMD, List.of("9060", "XT"), Set.of(), 8, 16));
+			// 8GB는 미국 eBay 새 상품이 하루 3개 정도라 시세가 안 나와 뺐다(11/21 실측). 16GB 쪽은 8GB 글이 섞이지 않게 계속 거른다
+			gpu("rx-9060-xt-16gb", "RX 9060 XT 16GB", AMD, List.of("9060", "XT"), Set.of(), 16, 8));
 
 	public static final List<ChipsetDef> RAM_CHIPSETS = List.of(
 			ram("ddr5-32gb", 5, 16),
