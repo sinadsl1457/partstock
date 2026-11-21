@@ -115,6 +115,23 @@ class CollectServiceTest {
 		});
 	}
 
+	@Autowired CollectionRunStore runs;
+
+	@Test
+	void 끝까지_돈_수집만_그날_수집으로_친다() {
+		assertThat(runs.hasCompletedRun(DAY)).isFalse();
+
+		source.failing.addAll(com.partstock.catalog.Catalog.GPU_CHIPSETS.stream().map(c -> c.key()).toList());
+		source.failing.addAll(com.partstock.catalog.Catalog.RAM_CHIPSETS.stream().map(c -> c.key()).toList());
+		collect.collect(DAY); // 전부 실패 → FAILED
+		assertThat(runs.hasCompletedRun(DAY)).isFalse();
+
+		source.failing.clear();
+		collect.collect(DAY);
+		assertThat(runs.hasCompletedRun(DAY)).isTrue();
+		assertThat(runs.hasCompletedRun(DAY.plusDays(1))).isFalse();
+	}
+
 	@Test
 	void 달러가_아닌_글은_세지_않는다() {
 		source.byChipset.put("rtx-5080", List.of(

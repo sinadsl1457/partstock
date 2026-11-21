@@ -26,6 +26,14 @@ public class CollectionRunStore {
 				.single();
 	}
 
+	/** 그날 끝까지 돈 수집(OK·PARTIAL)이 있나. 실패·진행 중은 세지 않는다. */
+	public boolean hasCompletedRun(LocalDate day) {
+		return jdbc.sql("select exists(select 1 from collection_run where day = :day and status in ('OK', 'PARTIAL'))")
+				.param("day", day)
+				.query(Boolean.class)
+				.single();
+	}
+
 	public void finish(long id, Instant at, CollectResult r) {
 		jdbc.sql("""
 				update collection_run
