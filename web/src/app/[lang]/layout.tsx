@@ -9,10 +9,13 @@ import "../globals.css";
 const grotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-grotesk" });
 const notoKr = Noto_Sans_KR({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--font-noto-kr" });
 
-export const metadata: Metadata = {
-  title: "partstock",
-  description: "VGA·RAM·CPU·SSD 시세판 (eBay 새 상품 기준)",
-};
+// 한국어 이름 파츠스톡(11/22 사용자 결정), 영어 partstock
+export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Promise<Metadata> {
+  const { lang } = await params;
+  return lang === "ko"
+    ? { title: "파츠스톡 · PC 부품 시세", description: "VGA·RAM·CPU·SSD 시세를 주식처럼. 미국 eBay 새 상품 기준, 매시간 갱신." }
+    : { title: "partstock · PC part prices", description: "GPU, RAM, CPU and SSD prices like a stock ticker. New eBay US listings, updated hourly." };
+}
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
