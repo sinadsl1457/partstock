@@ -1,0 +1,78 @@
+# main에 서버·배포 파일이 바뀐 push가 오면: 테스트 → 이미지를 GHCR에 올림 → EC2가 1분 안에 가져가 교체(pull 방식)
+# → 서버가 새 버전을 알려 주는지 확인. GitHub은 서버에 들어가지 않는다(서버 접속 키·AWS 키 없음). NowStation과 같은 구조.
+name: 서버 테스트·배포
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "server/**"
+      - "deploy/**"
+      - ".dockerignore"
+      - ".github/workflows/server.yml"
+  pull_request:
+    paths: ["server/**"]
+  workflow_dispatch: # Actions 화면에서 손으로 다시 돌리기
+
+permissions:
+  contents: read
+  packages: write # GHCR에 이미지 올리기(GitHub이 주는 임시 토큰)
+
+concurrency:
+  group: server-deploy
+  cancel-in-progress: false
+
+env:
+  IMAGE: ghcr.io/sinadsl1457/partstock-server
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: 테스트(PostgreSQL은 Testcontainers)
+        run: ./gradlew test
+      - name: 실패한 테스트 보고서
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-test-report
+          path: server/build/reports/tests/test
+
+  publish:
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: GHCR 로그인
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: 이미지 만들어 올리기(이름표 = 커밋 번호, 그리고 main)
+        run: |
+          docker build -f server/Dockerfile --build-arg GIT_SHA="$GITHUB_SHA" -t "$IMAGE:$GITHUB_SHA" -t "$IMAGE:main" .
+          docker push "$IMAGE:$GITHUB_SHA"
+          docker push "$IMAGE:main"
+
+  verify:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: 서버가 새 버전으로 바뀌었는지(최대 8분)
+        run: |
+          # EC2가 1분마다 확인 → 받기·교체·기동에 1~3분. 안 바뀌면 되돌림·토큰 만료·타이머 멈춤 중 하나
+          for i in $(seq 1 48); do
+            V=$(curl -sf -m 5 "https://${{ vars.PUBLIC_HOST }}/api/version" | sed -n 's/.*"version":"\([^"]*\)".*/\1/p' || true)
+            if [ "$V" = "$GITHUB_SHA" ]; then echo "배포 확인: ${V:0:7} ($((i*10))초)" | tee -a "$GITHUB_STEP_SUMMARY"; exit 0; fi
+            sleep 10
+          done
+          echo "8분 안에 서버가 ${GITHUB_SHA:0:7}로 바뀌지 않음(지금: ${V:-응답 없음})." >&2
+          echo "EC2에서 확인: journalctl -u partstock-deploy -n 50" >&2
+          exit 1

@@ -229,6 +229,11 @@ class PriceApiTest {
 	}
 
 	@Test
+	void 버전은_자동_배포가_새_서버인지_확인하는_값() throws Exception {
+		mvc.perform(get("/api/version")).andExpect(status().isOk()).andExpect(jsonPath("$.version").value("dev"));
+	}
+
+	@Test
 	void 잘못된_요청() throws Exception {
 		mvc.perform(get("/api/ticker").param("key", "nope")).andExpect(status().isNotFound());
 		mvc.perform(get("/api/chart").param("key", "nope")).andExpect(status().isNotFound());

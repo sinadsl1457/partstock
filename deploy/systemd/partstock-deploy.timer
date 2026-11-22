@@ -1,0 +1,11 @@
+# 1분마다 자동 배포 확인. 상태: systemctl list-timers partstock-deploy / 기록: journalctl -u partstock-deploy
+[Unit]
+Description=partstock 자동 배포 확인(1분마다)
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=1min
+AccuracySec=10s
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,12 @@
+# 서버 이미지는 server/ 와 deploy/ 만 쓴다(레포 루트에서 docker build -f server/Dockerfile .)
+*
+!server/gradlew
+!server/gradle
+!server/settings.gradle.kts
+!server/build.gradle.kts
+!server/src/main
+!deploy/compose.prod.yaml
+!deploy/Caddyfile
+!deploy/backup.sh
+!deploy/remote-deploy.sh
+!deploy/auto-deploy.sh

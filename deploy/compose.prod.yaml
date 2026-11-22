@@ -18,7 +18,8 @@ services:
       retries: 10
 
   server:
-    image: partstock-server:${SERVER_TAG:-latest}
+    # 자동 배포가 .env의 SERVER_IMAGE(ghcr.io/sinadsl1457/partstock-server:<커밋>)를 바꿔 끼운다
+    image: ${SERVER_IMAGE}
     restart: unless-stopped
     depends_on:
       postgres:
