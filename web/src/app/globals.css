@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* 시안의 색: 바탕 회색, 카드 흰색, 글자 진회색. 상승·하락 색은 언어별(한국: 빨강 상승, 영어: 초록 상승) */
+@theme inline {
+  --font-sans: var(--font-inter), var(--font-noto-kr), sans-serif;
+}
+
+body {
+  background: #f5f6f8;
+  color: #111827;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}

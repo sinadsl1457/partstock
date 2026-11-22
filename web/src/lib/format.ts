@@ -1,0 +1,28 @@
+// 가격 글자 만들기. API는 USD 센트 정수만 주고, 원화는 여기서 환율을 곱한다.
+import type { Fx, Price } from "./api";
+import type { Locale } from "./i18n";
+
+export function usd(cents: number): string {
+  const dollars = cents / 100;
+  return "$" + dollars.toLocaleString("en-US", { maximumFractionDigits: dollars >= 100 ? 0 : 2 });
+}
+
+/** 1,858,502원 → "185.9만원" */
+export function krw(cents: number, fx: Fx): string {
+  const won = (cents / 100) * fx.usdKrw;
+  return (won / 10000).toLocaleString("ko-KR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "만원";
+}
+
+/** 큰 글자(대표가)와 작은 글자. 한국어는 원화 크게 + 달러 작게, 영어는 달러만. */
+export function mainPrice(p: Price, fx: Fx | null, locale: Locale): { big: string; small: string | null } {
+  if (locale === "ko" && fx) return { big: krw(p.p25Cents, fx), small: usd(p.p25Cents) };
+  return { big: usd(p.p25Cents), small: null };
+}
+
+export function pct(v: number): string {
+  return (v > 0 ? "+" : "") + v.toFixed(2) + "%";
+}
+
+export function rate(fx: Fx): string {
+  return fx.usdKrw.toLocaleString("ko-KR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
