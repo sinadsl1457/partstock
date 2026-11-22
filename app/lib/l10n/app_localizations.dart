@@ -1,0 +1,450 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations_en.dart';
+import 'app_localizations_ko.dart';
+
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of AppLocalizations
+/// returned by `AppLocalizations.of(context)`.
+///
+/// Applications need to include `AppLocalizations.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'l10n/app_localizations.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: AppLocalizations.localizationsDelegates,
+///   supportedLocales: AppLocalizations.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the AppLocalizations.supportedLocales
+/// property.
+abstract class AppLocalizations {
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
+
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+  }
+
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
+
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[Locale('en'), Locale('ko')];
+
+  /// No description provided for @tabBoard.
+  ///
+  /// In ko, this message translates to:
+  /// **'시세'**
+  String get tabBoard;
+
+  /// No description provided for @tabWatch.
+  ///
+  /// In ko, this message translates to:
+  /// **'관심'**
+  String get tabWatch;
+
+  /// No description provided for @tabSettings.
+  ///
+  /// In ko, this message translates to:
+  /// **'설정'**
+  String get tabSettings;
+
+  /// No description provided for @boardTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'시세'**
+  String get boardTitle;
+
+  /// No description provided for @gpu.
+  ///
+  /// In ko, this message translates to:
+  /// **'그래픽카드'**
+  String get gpu;
+
+  /// No description provided for @ram.
+  ///
+  /// In ko, this message translates to:
+  /// **'램'**
+  String get ram;
+
+  /// No description provided for @colName.
+  ///
+  /// In ko, this message translates to:
+  /// **'종목'**
+  String get colName;
+
+  /// No description provided for @colPrice.
+  ///
+  /// In ko, this message translates to:
+  /// **'대표가 · 24시간'**
+  String get colPrice;
+
+  /// No description provided for @updatedAt.
+  ///
+  /// In ko, this message translates to:
+  /// **'{time} 기준 · 매시간'**
+  String updatedAt(String time);
+
+  /// No description provided for @listingsShort.
+  ///
+  /// In ko, this message translates to:
+  /// **'글 {n}'**
+  String listingsShort(int n);
+
+  /// No description provided for @listings.
+  ///
+  /// In ko, this message translates to:
+  /// **'판매 글 {n}개'**
+  String listings(int n);
+
+  /// No description provided for @tooFew.
+  ///
+  /// In ko, this message translates to:
+  /// **'글 부족'**
+  String get tooFew;
+
+  /// No description provided for @boardNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'대표가 = 미국 eBay 새 상품·즉시 구매 글의 하위 25%. 원화는 기준 환율 환산, 배송비·관세 제외.'**
+  String get boardNote;
+
+  /// No description provided for @vendorNvidia.
+  ///
+  /// In ko, this message translates to:
+  /// **'NVIDIA'**
+  String get vendorNvidia;
+
+  /// No description provided for @vendorAmd.
+  ///
+  /// In ko, this message translates to:
+  /// **'AMD'**
+  String get vendorAmd;
+
+  /// No description provided for @vendorDesktop.
+  ///
+  /// In ko, this message translates to:
+  /// **'데스크톱용'**
+  String get vendorDesktop;
+
+  /// No description provided for @change24h.
+  ///
+  /// In ko, this message translates to:
+  /// **'24시간 {pct}'**
+  String change24h(String pct);
+
+  /// No description provided for @priceHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'하위 25% · 중앙값 {median}'**
+  String priceHint(String median);
+
+  /// No description provided for @rangeChange.
+  ///
+  /// In ko, this message translates to:
+  /// **'{range} 등락'**
+  String rangeChange(String range);
+
+  /// No description provided for @high.
+  ///
+  /// In ko, this message translates to:
+  /// **'최고'**
+  String get high;
+
+  /// No description provided for @low.
+  ///
+  /// In ko, this message translates to:
+  /// **'최저'**
+  String get low;
+
+  /// No description provided for @line.
+  ///
+  /// In ko, this message translates to:
+  /// **'선'**
+  String get line;
+
+  /// No description provided for @candle.
+  ///
+  /// In ko, this message translates to:
+  /// **'봉'**
+  String get candle;
+
+  /// No description provided for @range1d.
+  ///
+  /// In ko, this message translates to:
+  /// **'1일'**
+  String get range1d;
+
+  /// No description provided for @range1w.
+  ///
+  /// In ko, this message translates to:
+  /// **'1주'**
+  String get range1w;
+
+  /// No description provided for @range1m.
+  ///
+  /// In ko, this message translates to:
+  /// **'1달'**
+  String get range1m;
+
+  /// No description provided for @range3m.
+  ///
+  /// In ko, this message translates to:
+  /// **'3달'**
+  String get range3m;
+
+  /// No description provided for @range1y.
+  ///
+  /// In ko, this message translates to:
+  /// **'1년'**
+  String get range1y;
+
+  /// No description provided for @rangeAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체'**
+  String get rangeAll;
+
+  /// No description provided for @bucket1h.
+  ///
+  /// In ko, this message translates to:
+  /// **'1시간 봉'**
+  String get bucket1h;
+
+  /// No description provided for @bucket4h.
+  ///
+  /// In ko, this message translates to:
+  /// **'4시간 봉'**
+  String get bucket4h;
+
+  /// No description provided for @bucket1d.
+  ///
+  /// In ko, this message translates to:
+  /// **'일봉'**
+  String get bucket1d;
+
+  /// No description provided for @bucket7d.
+  ///
+  /// In ko, this message translates to:
+  /// **'주봉'**
+  String get bucket7d;
+
+  /// No description provided for @collecting.
+  ///
+  /// In ko, this message translates to:
+  /// **'{since}부터 매시간 쌓는 중 · 지금 {n}개'**
+  String collecting(String since, int n);
+
+  /// No description provided for @noChart.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 차트로 그릴 시세가 없습니다.'**
+  String get noChart;
+
+  /// No description provided for @makers.
+  ///
+  /// In ko, this message translates to:
+  /// **'제조사별'**
+  String get makers;
+
+  /// No description provided for @models.
+  ///
+  /// In ko, this message translates to:
+  /// **'모델별'**
+  String get models;
+
+  /// No description provided for @modelsNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'판매 글 5개 이상일 때만 시세'**
+  String get modelsNote;
+
+  /// No description provided for @viewOnEbay.
+  ///
+  /// In ko, this message translates to:
+  /// **'eBay에서 보기'**
+  String get viewOnEbay;
+
+  /// No description provided for @danawa.
+  ///
+  /// In ko, this message translates to:
+  /// **'다나와'**
+  String get danawa;
+
+  /// No description provided for @watchTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'관심'**
+  String get watchTitle;
+
+  /// No description provided for @watchEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'관심 종목이 없습니다.\n종목 차트 오른쪽 위 별을 눌러 추가하세요.'**
+  String get watchEmpty;
+
+  /// No description provided for @addWatch.
+  ///
+  /// In ko, this message translates to:
+  /// **'관심 종목에 추가'**
+  String get addWatch;
+
+  /// No description provided for @removeWatch.
+  ///
+  /// In ko, this message translates to:
+  /// **'관심 종목에서 빼기'**
+  String get removeWatch;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'설정'**
+  String get settingsTitle;
+
+  /// No description provided for @jumpDefault.
+  ///
+  /// In ko, this message translates to:
+  /// **'바로가기 기본'**
+  String get jumpDefault;
+
+  /// No description provided for @jumpDefaultHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'종목 화면 아래 진한 버튼이 이쪽으로 열립니다.'**
+  String get jumpDefaultHint;
+
+  /// No description provided for @errorNetwork.
+  ///
+  /// In ko, this message translates to:
+  /// **'인터넷에 연결할 수 없습니다.'**
+  String get errorNetwork;
+
+  /// No description provided for @errorServer.
+  ///
+  /// In ko, this message translates to:
+  /// **'시세 서버에 문제가 있습니다. 잠시 뒤 다시 시도해 주세요.'**
+  String get errorServer;
+
+  /// No description provided for @errorNotFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'없는 종목입니다.'**
+  String get errorNotFound;
+
+  /// No description provided for @showingSaved.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장된 시세를 보여 주는 중'**
+  String get showingSaved;
+
+  /// No description provided for @retry.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 시도'**
+  String get retry;
+
+  /// No description provided for @back.
+  ///
+  /// In ko, this message translates to:
+  /// **'뒤로'**
+  String get back;
+
+  /// No description provided for @source.
+  ///
+  /// In ko, this message translates to:
+  /// **'가격: eBay(미국) · 환율: 유럽중앙은행 기준 환율'**
+  String get source;
+}
+
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
+
+  @override
+  Future<AppLocalizations> load(Locale locale) {
+    return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
+  }
+
+  @override
+  bool isSupported(Locale locale) => <String>['en', 'ko'].contains(locale.languageCode);
+
+  @override
+  bool shouldReload(_AppLocalizationsDelegate old) => false;
+}
+
+AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'en':
+      return AppLocalizationsEn();
+    case 'ko':
+      return AppLocalizationsKo();
+  }
+
+  throw FlutterError(
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
+}

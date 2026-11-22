@@ -17,7 +17,7 @@ eBay 판매 가격으로 그래픽카드·램 시세를 증권 시세판처럼 �
 ```
 server/   Spring Boot 4.2, Java 25, Gradle(Kotlin DSL), PostgreSQL 18
 web/      Next.js 16 + Tailwind + Lightweight Charts
-app/      Flutter (3단계)
+app/      Flutter 3.47 + Cubit
 docs/     AI_LOG.md
 ```
 
@@ -63,6 +63,23 @@ docs/     AI_LOG.md
 - 바로가기 기본값은 브라우저 localStorage(실패해도 eBay 기본). 상승·하락 색은 언어별(한국 빨강↑파랑↓, 영어 초록↑빨강↓).
 - 배포: Vercel(main push → 자동), Root `web`, 지역 `syd1`(API가 시드니), 환경 변수 `PARTSTOCK_API_URL`. 주소 https://partstock-two.vercel.app
 - 커밋 전: `npm run lint`, `npx tsc --noEmit`, `npm run build`. 화면을 바꾸면 브라우저 콘솔·개발 서버 로그 에러까지 확인. API 응답 칸을 바꾸면 서버를 먼저 배포하고 웹을 올린다.
+
+## 앱 (app/) — 3단계
+- Flutter 3.47(Dart 3.13), 개인 프로젝트라 옛 버전 호환 확인은 하지 않는다. Android·iOS 빌드 설정은 템플릿 그대로.
+- 구조(사용자 결정 11/22: Riverpod 말고 원래 쓰던 Bloc): flutter_bloc **Cubit만**, State는 `<name>_state.dart`(freezed), get_it + injectable(외부 객체는 `@module`), go_router 한 파일(`core/router/app_router.dart`, 탭은 StatefulShellRoute), 모델은 freezed + `fromMap` 손 매핑.
+- `getIt<X>()`는 main과 라우트의 `BlocProvider(create:)`에서만. Cubit은 이동·스낵바를 하지 않는다(상태를 보고 위젯이). 시간은 `Clock` 주입.
+- 폴더(상태를 누가 갖고 언제 생기나):
+  - `features/market/data`: API 모델·저장소. 시세 목록·차트·관심이 같이 쓰는 읽기 전용 데이터라 한 곳에(화면은 없음).
+  - `features/board`: 시세 목록 탭. `BoardCubit`은 탭 화면과 함께 산다.
+  - `features/ticker`: 종목 차트. `TickerCubit`은 종목을 열 때 생기고 닫으면 사라진다(종목마다 따로).
+  - `features/watchlist`: 관심 종목. `WatchlistCubit`은 앱 전체 수명(차트 화면의 별과 관심 탭이 같은 상태를 본다), 저장은 SharedPreferences.
+  - `features/settings`: 바로가기 기본값(eBay/다나와). `SettingsCubit` 앱 전체 수명.
+- API 주소는 `--dart-define=API_URL=...`(기본 배포 주소). 연결 실패·시간 초과와 서버 오류를 나눈다. 시세 목록은 마지막 응답을 저장해 먼저 보여 주고 뒤에서 새로 받는다.
+- 화면 글자는 한국어·영어(arb, 폰 언어). 상승·하락 색은 웹과 같게 언어별.
+- 차트: fl_chart(선·봉). 기간 1일·1주·1달·3달·1년·전체, 웹과 같은 API(`/api/chart`).
+- 다음(3-2단계): FCM 목표가 알림 — 서버에 기기·알림 조건 저장, 매시간 수집 직후 확인해서 보냄.
+- 테스트: 저장소는 실제 API 응답 예시(`test/fixtures`)로 단위, Cubit은 가짜 저장소, 화면은 흐름 테스트. 그다음 에뮬레이터에서 직접 눌러 확인.
+- 커밋 전: `dart format`, `flutter analyze`, `flutter test`. 생성 파일(.g.dart, .freezed.dart, .config.dart)은 커밋한다.
 
 ## 화면 (2·3단계)
 - 영어·한국어. 영어는 달러, 한국어는 원화(공식 환율 환산) 크게 + 달러 작게.
