@@ -77,14 +77,14 @@
   "alertInvalid": "Enter a number",
   "alertAlreadyMet": "Already met — fires at the next hourly update",
   "updatedPill": "Updated {time}",
-  "launchSub": "GPU · RAM prices",
+  "launchSub": "GPU · RAM · CPU prices",
   "guideSkip": "Skip",
   "guideNext": "Next",
   "guideStartPush": "Allow alerts & start",
   "guideStart": "Get started",
   "guideLater": "Later",
   "guidePrev": "Back",
-  "guide1Title": "GPU & RAM prices\nat a glance",
+  "guide1Title": "GPU, RAM & CPU prices\nat a glance",
   "guide1Body": "We collect new eBay US listings every hour and show what you can actually buy each chip for.",
   "guide1Badge": "25th pct. of new eBay listings",
   "guide2Title": "Tap for charts,\ndrill into models",
@@ -125,5 +125,9 @@
   "pack_2": "2-stick kit",
   "filterAll": "All",
   "filterEmpty": "No items match",
-  "filterHintMulti": "Pick any. None picked means all"
+  "filterHintMulti": "Pick any. None picked means all",
+  "cpu": "CPU",
+  "vendorIntel": "Intel",
+  "filter_brand": "Brand",
+  "coreGen": "Core {gen}th Gen"
 }

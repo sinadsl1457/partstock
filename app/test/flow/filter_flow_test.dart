@@ -29,6 +29,7 @@ Future<void> setUpApp() async {
   when(() => market.cachedBoard(any())).thenReturn(null);
   when(() => market.board(Category.gpu)).thenAnswer((_) async => boardFixture());
   when(() => market.board(Category.ram)).thenAnswer((_) async => boardFixture('board_ram'));
+  when(() => market.board(Category.cpu)).thenAnswer((_) async => boardFixture('board_cpu'));
   final push = FakePush();
   getIt
     ..registerSingleton<MarketRepository>(market)
@@ -101,5 +102,27 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('RTX 5090'), findsOneWidget);
     expect(find.text('필터'), findsOneWidget);
+  });
+
+  testWidgets('CPU 탭: Intel · 14세대만 고르면 14세대 Intel만', (tester) async {
+    await open(tester);
+    await tester.tap(find.text('CPU').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Ryzen 7 9800X3D'), findsOneWidget);
+
+    await tester.tap(find.text('필터'));
+    await tester.pumpAndSettle();
+    expect(find.text('CPU 필터'), findsOneWidget);
+    await tester.tap(find.text('Intel'));
+    await tester.pump();
+    await tester.tap(find.text('Core 14세대'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('5개 종목 보기'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Core i7-14700K'), findsOneWidget);
+    expect(find.text('Ryzen 7 9800X3D'), findsNothing);
+    expect(find.text('Core Ultra 9 285K'), findsNothing);
+    expect(find.text('필터 2'), findsOneWidget);
   });
 }

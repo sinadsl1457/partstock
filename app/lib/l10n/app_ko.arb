@@ -178,14 +178,14 @@
       }
     }
   },
-  "launchSub": "VGA · RAM 시세",
+  "launchSub": "VGA · RAM · CPU 시세",
   "guideSkip": "건너뛰기",
   "guideNext": "다음",
   "guideStartPush": "알림 허용하고 시작",
   "guideStart": "시작하기",
   "guideLater": "나중에",
   "guidePrev": "이전",
-  "guide1Title": "VGA·RAM 시세를\n한눈에",
+  "guide1Title": "VGA·RAM·CPU 시세를\n한눈에",
   "guide1Body": "미국 eBay 새 상품 가격을 매시간 모아, 칩셋마다 지금 살 수 있는 가격(대표가)을 원화로 보여 드려요.",
   "guide1Badge": "eBay 새 상품 하위 25% · 원화 환산",
   "guide2Title": "누르면 차트,\n내려가면 모델별",
@@ -245,6 +245,17 @@
     "placeholders": {
       "count": {
         "type": "int"
+      }
+    }
+  },
+  "cpu": "CPU",
+  "vendorIntel": "Intel",
+  "filter_brand": "브랜드",
+  "coreGen": "Core {gen}세대",
+  "@coreGen": {
+    "placeholders": {
+      "gen": {
+        "type": "String"
       }
     }
   }

@@ -30,7 +30,13 @@ class TickerScreen extends StatelessWidget {
       builder: (context, s) {
         final cubit = context.read<TickerCubit>();
         final d = s.detail;
-        final category = d == null ? null : (d.ticker.category == 'RAM' ? t.categoryRam : t.categoryVga);
+        final category = d == null
+            ? null
+            : switch (d.ticker.category) {
+                'RAM' => t.categoryRam,
+                'CPU' => t.cpu,
+                _ => t.categoryVga,
+              };
         return Scaffold(
           appBar: AppBar(
             centerTitle: true,

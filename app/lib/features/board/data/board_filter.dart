@@ -23,6 +23,10 @@ const filterGroups = <Category, List<FilterGroup>>{
     // 한국은 1개 단위 판매가 기본이라 1개가 처음 값(11/22 사용자 결정)
     FilterGroup('pack', ['1', '2'], single: true, initial: {'1'}),
   ],
+  Category.cpu: [
+    FilterGroup('brand', ['AMD', 'INTEL']),
+    FilterGroup('series', ['RYZEN9000', 'RYZEN7000', 'ULTRA200', 'CORE14', 'CORE13']),
+  ],
 };
 
 /// facet → 고른 값들

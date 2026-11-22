@@ -83,10 +83,10 @@ void main() {
     phone(tester);
 
     await tester.pumpWidget(PartstockApp(router: createRouter()));
-    expect(find.text('VGA · RAM 시세'), findsOneWidget); // 런치 화면
+    expect(find.text('VGA · RAM · CPU 시세'), findsOneWidget); // 런치 화면
     await passLaunch(tester);
 
-    expect(find.text('VGA·RAM 시세를\n한눈에'), findsOneWidget);
+    expect(find.text('VGA·RAM·CPU 시세를\n한눈에'), findsOneWidget);
     expect(push.permissionAsks, 0); // 설명 전에는 묻지 않는다
     await tester.tap(find.text('다음'));
     await tester.pumpAndSettle();
@@ -134,7 +134,7 @@ void main() {
 
     await tester.pumpWidget(PartstockApp(router: createRouter()));
     await tester.pump(const Duration(milliseconds: 200)); // 애니메이션 중간
-    await tester.tap(find.text('VGA · RAM 시세'), warnIfMissed: false);
+    await tester.tap(find.text('VGA · RAM · CPU 시세'), warnIfMissed: false);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));
 

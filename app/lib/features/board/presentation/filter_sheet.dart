@@ -23,7 +23,15 @@ Future<BoardFilter?> showFilterSheet(
 
 /// 필터 값의 화면 글자: RTX50 → RTX 50, DDR5 그대로, pack 1 → 1개
 String facetValueLabel(AppLocalizations t, String facet, String value) => switch (facet) {
-  'series' => value.replaceFirstMapped(RegExp(r'^(RTX|RX)(\d+)$'), (m) => '${m[1]} ${m[2]}'),
+  'series' => switch (value) {
+    'RYZEN9000' => 'Ryzen 9000',
+    'RYZEN7000' => 'Ryzen 7000',
+    'ULTRA200' => 'Core Ultra 200S',
+    'CORE14' => t.coreGen('14'),
+    'CORE13' => t.coreGen('13'),
+    _ => value.replaceFirstMapped(RegExp(r'^(RTX|RX)(\d+)$'), (m) => '${m[1]} ${m[2]}'),
+  },
+  'brand' => value == 'INTEL' ? 'Intel' : value,
   'pack' => value == '1' ? t.pack_1 : t.pack_2,
   _ => value,
 };
@@ -32,6 +40,7 @@ String facetLabel(AppLocalizations t, String facet) => switch (facet) {
   'series' => t.filter_series,
   'ddr' => t.filter_ddr,
   'pack' => t.filter_pack,
+  'brand' => t.filter_brand,
   _ => facet,
 };
 

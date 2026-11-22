@@ -8,6 +8,7 @@ import '../helpers/fixtures.dart';
 void main() {
   final gpu = boardFixture().items;
   final ram = boardFixture('board_ram').items;
+  final cpu = boardFixture('board_cpu').items;
 
   test('VGA는 처음에 전체, 시리즈를 고르면 그 시리즈만', () {
     final all = initialFilter(Category.gpu);
@@ -74,5 +75,12 @@ void main() {
       'ddr': {'DDR5'},
       'pack': {'1'},
     });
+  });
+
+  test('CPU는 브랜드·시리즈로: Intel 14세대만', () {
+    expect(initialFilter(Category.cpu), {'brand': <String>{}, 'series': <String>{}});
+    final picked = cpu.where((i) => matchesFilter(i, {'brand': {'INTEL'}, 'series': {'CORE14'}})).map((i) => i.key);
+    expect(picked, ['core-i9-14900k', 'core-i7-14700k', 'core-i7-14700kf', 'core-i5-14600k', 'core-i5-14400f']);
+    expect(cpu.where((i) => matchesFilter(i, {'brand': {'AMD'}, 'series': <String>{}})), hasLength(11));
   });
 }

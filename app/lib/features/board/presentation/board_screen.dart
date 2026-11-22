@@ -75,7 +75,7 @@ class BoardScreen extends StatelessWidget {
                   child: Stack(
                     children: [
                       UnderlineTabs<Category>(
-                        items: [(Category.gpu, t.gpu), (Category.ram, t.ram)],
+                        items: [for (final c in Category.values) (c, categoryLabel(t, c))],
                         selected: s.category,
                         onSelect: cubit.select,
                       ),
@@ -157,7 +157,7 @@ class _FilterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
     final changed = changedCount(state.category, state.filter);
-    final label = state.category == Category.gpu ? t.gpu : t.ram;
+    final label = categoryLabel(t, state.category);
     return TextButton.icon(
       style: TextButton.styleFrom(
         foregroundColor: changed > 0 ? AppColors.accent : AppColors.sub,
@@ -185,9 +185,17 @@ class _FilterButton extends StatelessWidget {
   }
 }
 
+/// 탭 이름: 한국어 VGA·RAM·CPU, 영어 GPU·RAM·CPU
+String categoryLabel(AppLocalizations t, Category c) => switch (c) {
+  Category.gpu => t.gpu,
+  Category.ram => t.ram,
+  Category.cpu => t.cpu,
+};
+
 String vendorLabel(AppLocalizations t, String vendor) => switch (vendor) {
   'NVIDIA' => t.vendorNvidia,
   'AMD' => t.vendorAmd,
+  'INTEL' => t.vendorIntel,
   'DESKTOP' => t.vendorDesktop,
   _ => vendor,
 };

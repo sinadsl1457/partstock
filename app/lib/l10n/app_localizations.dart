@@ -557,7 +557,7 @@ abstract class AppLocalizations {
   /// No description provided for @launchSub.
   ///
   /// In ko, this message translates to:
-  /// **'VGA · RAM 시세'**
+  /// **'VGA · RAM · CPU 시세'**
   String get launchSub;
 
   /// No description provided for @guideSkip.
@@ -599,7 +599,7 @@ abstract class AppLocalizations {
   /// No description provided for @guide1Title.
   ///
   /// In ko, this message translates to:
-  /// **'VGA·RAM 시세를\n한눈에'**
+  /// **'VGA·RAM·CPU 시세를\n한눈에'**
   String get guide1Title;
 
   /// No description provided for @guide1Body.
@@ -847,6 +847,30 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'여러 개 고를 수 있어요. 아무것도 안 고르면 전체'**
   String get filterHintMulti;
+
+  /// No description provided for @cpu.
+  ///
+  /// In ko, this message translates to:
+  /// **'CPU'**
+  String get cpu;
+
+  /// No description provided for @vendorIntel.
+  ///
+  /// In ko, this message translates to:
+  /// **'Intel'**
+  String get vendorIntel;
+
+  /// No description provided for @filter_brand.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜드'**
+  String get filter_brand;
+
+  /// No description provided for @coreGen.
+  ///
+  /// In ko, this message translates to:
+  /// **'Core {gen}세대'**
+  String coreGen(String gen);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

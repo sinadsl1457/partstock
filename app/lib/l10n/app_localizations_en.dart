@@ -271,7 +271,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get launchSub => 'GPU · RAM prices';
+  String get launchSub => 'GPU · RAM · CPU prices';
 
   @override
   String get guideSkip => 'Skip';
@@ -292,7 +292,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get guidePrev => 'Back';
 
   @override
-  String get guide1Title => 'GPU & RAM prices\nat a glance';
+  String get guide1Title => 'GPU, RAM & CPU prices\nat a glance';
 
   @override
   String get guide1Body =>
@@ -424,4 +424,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filterHintMulti => 'Pick any. None picked means all';
+
+  @override
+  String get cpu => 'CPU';
+
+  @override
+  String get vendorIntel => 'Intel';
+
+  @override
+  String get filter_brand => 'Brand';
+
+  @override
+  String coreGen(String gen) {
+    return 'Core ${gen}th Gen';
+  }
 }

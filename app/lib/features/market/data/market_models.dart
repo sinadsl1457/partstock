@@ -6,7 +6,8 @@ part 'market_models.freezed.dart';
 
 enum Category {
   gpu('GPU'),
-  ram('RAM');
+  ram('RAM'),
+  cpu('CPU');
 
   const Category(this.code);
   final String code;
