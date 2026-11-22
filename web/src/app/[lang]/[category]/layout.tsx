@@ -76,6 +76,7 @@ async function Aside({ params }: { params: LayoutProps<"/[lang]/[category]">["pa
       key: it.key,
       name: it.name,
       vendor: t.vendor[it.vendor] ?? it.vendor,
+      facets: it.facets ?? {},
       big: m?.big ?? null,
       small: m?.small ?? null,
       changeText: ch ? pct(ch.pct) : `${t.change24h} —`,
@@ -85,14 +86,25 @@ async function Aside({ params }: { params: LayoutProps<"/[lang]/[category]">["pa
   });
   return (
     <aside className="overflow-hidden rounded-xl border border-line bg-surface lg:sticky lg:top-4">
-      <div className="flex justify-between border-b border-line bg-surface-hi px-4 py-2 text-xs text-sub">
-        <span>{category === "gpu" ? t.gpu : t.ram}</span>
-        <span>
-          {t.price}({t.priceHint}) · {t.change24h}
-        </span>
-      </div>
-      <Suspense fallback={<div style={{ height: rows.length * 57 }} />}>
-        <BoardList rows={rows} base={`/${lang}/${category}`} tooFew={t.tooFew} colors={colors} />
+      <Suspense fallback={<div style={{ height: rows.length * 57 + 44 }} />}>
+        <BoardList
+          rows={rows}
+          base={`/${lang}/${category}`}
+          category={category}
+          tooFew={t.tooFew}
+          colors={colors}
+          labels={{
+            filter: t.filter,
+            title: t.filterTitle(category === "gpu" ? t.gpu : t.ram),
+            reset: t.filterReset,
+            apply: t.filterApply,
+            empty: t.filterEmpty,
+            hintMulti: t.filterHintMulti,
+            facet: t.facet,
+            pack: t.pack,
+            priceHeader: `${t.price}(${t.priceHint}) · ${t.change24h}`,
+          }}
+        />
       </Suspense>
       <p className="border-t border-line px-4 py-3 text-xs leading-relaxed text-muted">{t.boardNote}</p>
     </aside>

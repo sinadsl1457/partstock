@@ -19,6 +19,8 @@ export type BoardItem = {
   key: string;
   name: string;
   vendor: string;
+  /** 필터용 분류: GPU {series: "RTX50"}, RAM {ddr: "DDR5", pack: "1"|"2"} */
+  facets: Record<string, string>;
   price: Price | null;
   change: Change | null;
   spark: { t: string; p25Cents: number }[];
