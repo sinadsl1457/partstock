@@ -142,12 +142,15 @@ class PriceApiTest {
 				.andExpect(jsonPath("$.bars[0].lowCents").value(135_000))
 				.andExpect(jsonPath("$.bars[0].closeCents").value(138_000))
 				.andExpect(jsonPath("$.bars[0].samples").value(4))
-				.andExpect(jsonPath("$.bars[1].t").value("2026-11-18T12:00:00Z"));
+				.andExpect(jsonPath("$.bars[1].t").value("2026-11-18T12:00:00Z"))
+				// 첫 수집 시각은 봉 시작(08:00)이 아니라 실제 첫 시세(08:00 = 4시간 전)
+				.andExpect(jsonPath("$.since").value("2026-11-18T08:00:00Z"))
+				.andExpect(jsonPath("$.points").value(5));
 	}
 
 	@Test
 	void 한달_차트는_하루_봉() throws Exception {
-		put("rtx-5070-ti", Instant.parse("2026-11-16T05:00:00Z"), 140_000);
+		put("rtx-5070-ti", Instant.parse("2026-11-16T05:00:00Z"), 140_000); // 주봉 시작(월요일 0시)과 다른 시각
 		put("rtx-5070-ti", Instant.parse("2026-11-16T20:00:00Z"), 141_000);
 		put("rtx-5070-ti", Instant.parse("2026-11-17T05:00:00Z"), 142_000);
 		put("rtx-5070-ti", NOW, 143_000);
@@ -156,7 +159,8 @@ class PriceApiTest {
 				.andExpect(jsonPath("$.bucket").value("1 day"))
 				.andExpect(jsonPath("$.bars[*].t", contains(
 						"2026-11-16T00:00:00Z", "2026-11-17T00:00:00Z", "2026-11-18T00:00:00Z")))
-				.andExpect(jsonPath("$.bars[0].closeCents").value(141_000));
+				.andExpect(jsonPath("$.bars[0].closeCents").value(141_000))
+				.andExpect(jsonPath("$.since").value("2026-11-16T05:00:00Z"));
 	}
 
 	@Test

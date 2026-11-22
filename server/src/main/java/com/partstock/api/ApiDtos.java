@@ -40,6 +40,10 @@ public final class ApiDtos {
 	public record Bar(OffsetDateTime t, long openCents, long highCents, long lowCents, long closeCents,
 			long medianCents, int samples) {}
 
-	/** range: 1d|1w|1m|3m|1y|all, rangePct = 첫 봉 시가 대비 마지막 봉 종가(봉이 2개 미만이면 null). */
-	public record Chart(String key, String range, String bucket, List<Bar> bars, Double rangePct) {}
+	/**
+	 * range: 1d|1w|1m|3m|1y|all, rangePct = 첫 봉 시가 대비 마지막 봉 종가(봉이 2개 미만이면 null).
+	 * since·points = 이 종목을 처음 수집한 시각과 지금까지 쌓인 매시간 시세 수(봉의 시작 시각과 다르다).
+	 */
+	public record Chart(String key, String range, String bucket, List<Bar> bars, Double rangePct,
+			OffsetDateTime since, int points) {}
 }

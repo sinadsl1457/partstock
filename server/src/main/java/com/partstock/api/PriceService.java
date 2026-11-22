@@ -124,7 +124,7 @@ public class PriceService {
 		resolve(key); // 없는 종목이면 404
 		Optional<Latest> latest = query.latest();
 		if (latest.isEmpty()) {
-			return new Chart(key, range.code, range.bucket, List.of(), null);
+			return new Chart(key, range.code, range.bucket, List.of(), null, null, 0);
 		}
 		Instant to = latest.get().ts().toInstant();
 		Instant from = range.span == null ? Instant.EPOCH : to.minus(range.span);
@@ -133,7 +133,8 @@ public class PriceService {
 						b.samples()))
 				.toList();
 		Double pct = bars.size() < 2 ? null : pct(bars.getFirst().openCents(), bars.getLast().closeCents());
-		return new Chart(key, range.code, range.bucket, bars, pct);
+		PriceQuery.Collected c = query.collected(key);
+		return new Chart(key, range.code, range.bucket, bars, pct, c.since(), c.points());
 	}
 
 	private record Resolved(TickerRow row, ChipsetDef chipset, MakerDef maker, TickerInfo info) {}

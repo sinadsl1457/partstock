@@ -122,6 +122,16 @@ public class PriceQuery {
 				.list();
 	}
 
+	/** 이 종목을 처음 수집한 시각과 매시간 시세 수. 없으면 since가 null. */
+	public Collected collected(String key) {
+		return jdbc.sql("select min(ts) as since, count(*) as points from price_snapshot where ticker_key = :key")
+				.param("key", key)
+				.query(Collected.class)
+				.single();
+	}
+
+	public record Collected(OffsetDateTime since, int points) {}
+
 	public record Latest(OffsetDateTime ts, LocalDate day) {}
 
 	public record FxRow(LocalDate day, BigDecimal usdKrw) {}
