@@ -137,7 +137,7 @@ abstract class AppLocalizations {
   /// No description provided for @colPrice.
   ///
   /// In ko, this message translates to:
-  /// **'대표가 · 24시간'**
+  /// **'대표가 · 24H'**
   String get colPrice;
 
   /// No description provided for @updatedAt.
@@ -547,6 +547,234 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'이미 조건에 맞아 다음 정각 수집 때 바로 울립니다'**
   String get alertAlreadyMet;
+
+  /// No description provided for @updatedPill.
+  ///
+  /// In ko, this message translates to:
+  /// **'{time} 업데이트'**
+  String updatedPill(String time);
+
+  /// No description provided for @launchSub.
+  ///
+  /// In ko, this message translates to:
+  /// **'VGA · RAM 시세'**
+  String get launchSub;
+
+  /// No description provided for @guideSkip.
+  ///
+  /// In ko, this message translates to:
+  /// **'건너뛰기'**
+  String get guideSkip;
+
+  /// No description provided for @guideNext.
+  ///
+  /// In ko, this message translates to:
+  /// **'다음'**
+  String get guideNext;
+
+  /// No description provided for @guideStartPush.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림 허용하고 시작'**
+  String get guideStartPush;
+
+  /// No description provided for @guideStart.
+  ///
+  /// In ko, this message translates to:
+  /// **'시작하기'**
+  String get guideStart;
+
+  /// No description provided for @guideLater.
+  ///
+  /// In ko, this message translates to:
+  /// **'나중에'**
+  String get guideLater;
+
+  /// No description provided for @guidePrev.
+  ///
+  /// In ko, this message translates to:
+  /// **'이전'**
+  String get guidePrev;
+
+  /// No description provided for @guide1Title.
+  ///
+  /// In ko, this message translates to:
+  /// **'VGA·RAM 시세를\n한눈에'**
+  String get guide1Title;
+
+  /// No description provided for @guide1Body.
+  ///
+  /// In ko, this message translates to:
+  /// **'미국 eBay 새 상품 가격을 매시간 모아, 칩셋마다 지금 살 수 있는 가격(대표가)을 원화로 보여 드려요.'**
+  String get guide1Body;
+
+  /// No description provided for @guide1Badge.
+  ///
+  /// In ko, this message translates to:
+  /// **'eBay 새 상품 하위 25% · 원화 환산'**
+  String get guide1Badge;
+
+  /// No description provided for @guide2Title.
+  ///
+  /// In ko, this message translates to:
+  /// **'누르면 차트,\n내려가면 모델별'**
+  String get guide2Title;
+
+  /// No description provided for @guide2Body.
+  ///
+  /// In ko, this message translates to:
+  /// **'1일부터 전체까지 선·봉으로 흐름을 보고, 제조사·모델로 내려가 비교하세요. 마음에 들면 eBay나 다나와로 바로 가요.'**
+  String get guide2Body;
+
+  /// No description provided for @guide3Title.
+  ///
+  /// In ko, this message translates to:
+  /// **'원하는 가격이 되면\n알려 드려요'**
+  String get guide3Title;
+
+  /// No description provided for @guide3Body.
+  ///
+  /// In ko, this message translates to:
+  /// **'종목 화면의 종 버튼으로 목표가를 걸어 두세요. 매시간 확인해서 닿으면 푸시로 알려 드려요.'**
+  String get guide3Body;
+
+  /// No description provided for @guide3Demo.
+  ///
+  /// In ko, this message translates to:
+  /// **'RTX 5070 Ti 목표가 도달'**
+  String get guide3Demo;
+
+  /// No description provided for @guide3DemoBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'지금 179.8만원 · 목표 180.0만원 이하'**
+  String get guide3DemoBody;
+
+  /// No description provided for @sectionJump.
+  ///
+  /// In ko, this message translates to:
+  /// **'바로가기 기본'**
+  String get sectionJump;
+
+  /// No description provided for @sectionAlerts.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림'**
+  String get sectionAlerts;
+
+  /// No description provided for @pushStatus.
+  ///
+  /// In ko, this message translates to:
+  /// **'푸시 알림'**
+  String get pushStatus;
+
+  /// No description provided for @pushOn.
+  ///
+  /// In ko, this message translates to:
+  /// **'켜짐'**
+  String get pushOn;
+
+  /// No description provided for @pushOff.
+  ///
+  /// In ko, this message translates to:
+  /// **'꺼짐'**
+  String get pushOff;
+
+  /// No description provided for @pushUnsupported.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 기기는 아직 지원 안 함'**
+  String get pushUnsupported;
+
+  /// No description provided for @pushHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'끄고 켜기는 폰 설정에서'**
+  String get pushHint;
+
+  /// No description provided for @alertsCount.
+  ///
+  /// In ko, this message translates to:
+  /// **'걸어 둔 목표가'**
+  String get alertsCount;
+
+  /// No description provided for @alertsCountValue.
+  ///
+  /// In ko, this message translates to:
+  /// **'{n}개'**
+  String alertsCountValue(String n);
+
+  /// No description provided for @sectionBasis.
+  ///
+  /// In ko, this message translates to:
+  /// **'가격 기준'**
+  String get sectionBasis;
+
+  /// No description provided for @basisPriceLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'대표가'**
+  String get basisPriceLabel;
+
+  /// No description provided for @basisPrice.
+  ///
+  /// In ko, this message translates to:
+  /// **'미국 eBay 새 상품·즉시 구매 글 가격의 하위 25%'**
+  String get basisPrice;
+
+  /// No description provided for @basisFxLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'원화 환산'**
+  String get basisFxLabel;
+
+  /// No description provided for @basisFx.
+  ///
+  /// In ko, this message translates to:
+  /// **'유럽중앙은행 기준 환율(그날 고시) · 배송비·관세 제외'**
+  String get basisFx;
+
+  /// No description provided for @basisUpdateLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'갱신'**
+  String get basisUpdateLabel;
+
+  /// No description provided for @basisUpdate.
+  ///
+  /// In ko, this message translates to:
+  /// **'매시간 정각'**
+  String get basisUpdate;
+
+  /// No description provided for @sectionHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'도움말'**
+  String get sectionHelp;
+
+  /// No description provided for @guideAgain.
+  ///
+  /// In ko, this message translates to:
+  /// **'가이드 다시 보기'**
+  String get guideAgain;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In ko, this message translates to:
+  /// **'앱 버전'**
+  String get appVersion;
+
+  /// No description provided for @categoryVga.
+  ///
+  /// In ko, this message translates to:
+  /// **'VGA'**
+  String get categoryVga;
+
+  /// No description provided for @categoryRam.
+  ///
+  /// In ko, this message translates to:
+  /// **'RAM'**
+  String get categoryRam;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

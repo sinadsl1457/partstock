@@ -73,7 +73,12 @@ docs/     AI_LOG.md
   - `features/board`: 시세 목록 탭. `BoardCubit`은 탭 화면과 함께 산다.
   - `features/ticker`: 종목 차트. `TickerCubit`은 종목을 열 때 생기고 닫으면 사라진다(종목마다 따로).
   - `features/watchlist`: 관심 종목. `WatchlistCubit`은 앱 전체 수명(차트 화면의 별과 관심 탭이 같은 상태를 본다), 저장은 SharedPreferences.
-  - `features/settings`: 바로가기 기본값(eBay/다나와). `SettingsCubit` 앱 전체 수명.
+  - `features/settings`: 바로가기 기본값(eBay/다나와), 가이드를 봤는지. `SettingsCubit` 앱 전체 수명.
+  - `features/onboarding`: 런치 애니메이션·처음 실행 가이드. 앱을 켤 때만 잠깐 있고 사라지는 화면이라 따로(상태는 위젯 안 + SettingsCubit).
+  - `features/alerts`: 목표가 알림. `AlertsCubit` 앱 전체 수명(종 버튼·관심 탭·설정이 같이 봄).
+- 디자인(11/22 사용자 결정, 시안 "디자인 3차"): 블랙 + 그린 다크 테마(`core/presentation/theme.dart`, 공통 부품 `brand.dart`). 녹색 #7EE04B는 강조(브랜드·선택·주 버튼·차트 선)에만, 오르내림은 한국 빨강↑파랑↓ / 영어 청록↑빨강↓. 글꼴 Space Grotesk(OFL, 앱에 넣음) + 한글은 폰 기본.
+- 시작 흐름: 런치 애니메이션(약 1.4초, 누르면 넘김, 움직임 줄이기 켜면 바로 끝) → 처음이면 가이드 → 시세. 알림 권한은 가이드 마지막 장에서 묻는다(건너뛰면 종 버튼 누를 때). iOS는 알림이 없어 가이드 2장.
+- 앱 아이콘·알림 아이콘은 칩 로고를 브라우저로 그려 만든다(`assets/icon`, `dart run flutter_launcher_icons`). 시작 전 바탕(Android·iOS)은 검정.
 - API 주소는 `--dart-define=API_URL=...`(기본 배포 주소). 연결 실패·시간 초과와 서버 오류를 나눈다. 시세 목록은 마지막 응답을 저장해 먼저 보여 주고 뒤에서 새로 받는다.
 - 화면 글자는 한국어·영어(arb, 폰 언어). 상승·하락 색은 웹과 같게 언어별.
 - 차트: fl_chart(선·봉). 기간 1일·1주·1달·3달·1년·전체, 웹과 같은 API(`/api/chart`).

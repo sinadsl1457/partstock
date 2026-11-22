@@ -22,12 +22,13 @@ String krw(int cents, Fx fx) => '${NumberFormat('#,##0.0', 'ko').format(cents / 
 
 String pct(double v) => '${v > 0 ? '+' : ''}${v.toStringAsFixed(2)}%';
 
-/// 한국: 빨강 상승·파랑 하락, 영어권: 초록 상승·빨강 하락
+/// 한국: 빨강 상승·파랑 하락, 영어권: 초록 상승·빨강 하락.
+/// 영어권 상승 초록은 강조색(라임)과 헷갈리지 않게 청록 쪽으로 띄운다.
 ({Color up, Color down}) upDown(BuildContext context) => isKo(context)
-    ? (up: const Color(0xFFDC2626), down: const Color(0xFF2563EB))
-    : (up: const Color(0xFF16A34A), down: const Color(0xFFDC2626));
+    ? (up: const Color(0xFFFF6464), down: const Color(0xFF5C9DFF))
+    : (up: const Color(0xFF34D399), down: const Color(0xFFFF6464));
 
-const neutral = Color(0xFF6B7280);
+const neutral = Color(0xFF8E978F);
 
 Color changeColor(BuildContext context, double? v) {
   if (v == null || v == 0) return neutral;

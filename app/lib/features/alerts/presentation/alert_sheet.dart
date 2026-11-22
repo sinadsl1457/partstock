@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/network/app_failure.dart';
 import '../../../core/presentation/common.dart';
 import '../../../core/presentation/format.dart';
+import '../../../core/presentation/theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../market/data/market_models.dart';
 import '../data/alert_models.dart';
@@ -102,6 +103,7 @@ class _AlertSheetState extends State<AlertSheet> {
     final below = _dir == AlertDirection.below;
     // 고른 방향이 아니라 실제 숫자로: "이상" + 지금보다 낮은 값이면 이미 조건에 맞음
     final alreadyMet = v != null && (below ? v >= _now : v <= _now);
+    final colors = upDown(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(20, 0, 20, 20 + MediaQuery.viewInsetsOf(context).bottom),
       child: Column(
@@ -109,79 +111,118 @@ class _AlertSheetState extends State<AlertSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(t.alertTitle, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-          const SizedBox(height: 4),
-          Text(t.alertNow(_nowText()), style: const TextStyle(color: Color(0xFF4B5563))),
+          const SizedBox(height: 2),
+          Text(t.alertNow(_nowText()), style: const TextStyle(color: AppColors.muted, fontSize: 13)),
           const SizedBox(height: 16),
-          SegmentedButton<AlertDirection>(
-            segments: [
-              ButtonSegment(value: AlertDirection.below, label: Text(t.alertBelow)),
-              ButtonSegment(value: AlertDirection.above, label: Text(t.alertAbove)),
+          Row(
+            children: [
+              Expanded(child: _dirButton('▼ ${t.alertBelow}', below, () => _setDir(AlertDirection.below))),
+              const SizedBox(width: 8),
+              Expanded(child: _dirButton('▲ ${t.alertAbove}', !below, () => _setDir(AlertDirection.above))),
             ],
-            selected: {_dir},
-            showSelectedIcon: false,
-            onSelectionChanged: (s) => setState(() {
-              _dir = s.first;
-              _input.text = _textFor(_pct);
-            }),
           ),
           const SizedBox(height: 16),
           TextField(
             controller: _input,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+            style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w700),
             decoration: InputDecoration(
               labelText: widget.units.usdKrw == null ? t.alertTargetUsd : t.alertTargetKo,
+              labelStyle: const TextStyle(color: AppColors.muted),
               suffixText: widget.units.usdKrw == null ? r'$' : '만원',
-              border: const OutlineInputBorder(),
+              suffixStyle: const TextStyle(fontSize: 18, color: AppColors.muted),
+              enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.accent, width: 2)),
+              focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.accent, width: 2)),
             ),
             // 손으로 넣으면 빠른 % 버튼 선택은 푼다(값과 맞지 않을 수 있어서)
             onChanged: (_) => setState(() => _pct = 0),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           if (diff != null && diff.abs() >= 0.05)
             Text(
               diff < 0 ? t.alertLower(diff.abs().toStringAsFixed(1)) : t.alertHigher(diff.toStringAsFixed(1)),
-              style: TextStyle(fontSize: 13, color: diff < 0 ? upDown(context).down : upDown(context).up),
+              style: TextStyle(fontSize: 13, color: diff < 0 ? colors.down : colors.up),
             ),
           if (alreadyMet)
             Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Text(
                 t.alertAlreadyMet,
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFFB45309)),
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.warn),
               ),
             ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Row(
             children: [
               for (final p in const [3, 5, 10, 15]) ...[
-                Expanded(
-                  child: ChoiceChip(
-                    label: Text('${below ? '−' : '+'}$p%'),
-                    selected: _pct == p,
-                    onSelected: (_) => _pick(p),
-                  ),
-                ),
-                if (p != 15) const SizedBox(width: 6),
+                Expanded(child: _chip('${below ? '−' : '+'}$p%', _pct == p, () => _pick(p))),
+                if (p != 15) const SizedBox(width: 8),
               ],
             ],
           ),
-          const SizedBox(height: 12),
-          Text(t.alertNote, style: const TextStyle(fontSize: 12, color: neutral, height: 1.5)),
+          const SizedBox(height: 14),
+          Text(t.alertNote, style: const TextStyle(fontSize: 12, color: AppColors.muted, height: 1.5)),
           const SizedBox(height: 16),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              minimumSize: const Size.fromHeight(52),
-              backgroundColor: const Color(0xFF111827),
-            ),
-            onPressed: _saving ? null : _save,
-            child: Text(t.alertSave),
-          ),
+          FilledButton(onPressed: _saving ? null : _save, child: Text(t.alertSave)),
         ],
       ),
     );
   }
+
+  void _setDir(AlertDirection d) => setState(() {
+    _dir = d;
+    _input.text = _textFor(_pct == 0 ? 5 : _pct);
+    if (_pct == 0) _pct = 5;
+  });
+
+  Widget _dirButton(String label, bool on, VoidCallback onTap) => Semantics(
+    button: true,
+    selected: on,
+    child: InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Container(
+        height: 46,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: on ? AppColors.accent.withValues(alpha: 0.12) : Colors.transparent,
+          border: Border.all(color: on ? AppColors.accent : AppColors.lineHi),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: on ? FontWeight.w700 : FontWeight.w500,
+            color: on ? AppColors.accent : AppColors.sub,
+          ),
+        ),
+      ),
+    ),
+  );
+
+  Widget _chip(String label, bool on, VoidCallback onTap) => Semantics(
+    button: true,
+    selected: on,
+    child: InkWell(
+      borderRadius: BorderRadius.circular(10),
+      onTap: onTap,
+      child: Container(
+        height: 42,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: on ? AppColors.text : Colors.transparent,
+          border: Border.all(color: on ? AppColors.text : AppColors.lineHi),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: on ? AppColors.bg : AppColors.text),
+        ),
+      ),
+    ),
+  );
 
   String _nowText() {
     final u = widget.units;

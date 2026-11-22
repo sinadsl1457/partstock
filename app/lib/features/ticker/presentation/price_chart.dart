@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/presentation/format.dart';
+import '../../../core/presentation/theme.dart';
 import '../../market/data/market_models.dart';
 import 'ticker_state.dart';
 
@@ -36,8 +37,8 @@ class PriceChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final bars = chart.bars;
     final colors = upDown(context);
-    final trendUp = (chart.rangePct ?? 0) >= 0;
-    final trend = trendUp ? colors.up : colors.down;
+    // 선 차트는 강조색(녹색), 봉은 오르내림 색
+    const line = AppColors.accent;
 
     final lows = bars.map((b) => _value(kind == ChartKind.line ? b.closeCents : b.lowCents));
     final highs = bars.map((b) => _value(kind == ChartKind.line ? b.closeCents : b.highCents));
@@ -83,7 +84,7 @@ class PriceChart extends StatelessWidget {
     );
     final grid = FlGridData(
       drawVerticalLine: false,
-      getDrawingHorizontalLine: (_) => const FlLine(color: Color(0xFFF3F4F6), strokeWidth: 1),
+      getDrawingHorizontalLine: (_) => const FlLine(color: Color(0xFF1A1F1C), strokeWidth: 1),
     );
 
     if (kind == ChartKind.line) {
@@ -98,12 +99,12 @@ class PriceChart extends StatelessWidget {
           borderData: FlBorderData(show: false),
           lineTouchData: LineTouchData(
             touchTooltipData: LineTouchTooltipData(
-              getTooltipColor: (_) => const Color(0xFF111827),
+              getTooltipColor: (_) => AppColors.surfaceHi,
               getTooltipItems: (spots) => [
                 for (final s in spots)
                   LineTooltipItem(
                     '${_time(context, bars[s.x.round()].t)}\n${_axis(s.y)}',
-                    const TextStyle(color: Colors.white, fontSize: 12),
+                    const TextStyle(color: AppColors.text, fontSize: 12, fontFamily: 'SpaceGrotesk'),
                   ),
               ],
             ),
@@ -111,10 +112,26 @@ class PriceChart extends StatelessWidget {
           lineBarsData: [
             LineChartBarData(
               spots: [for (var i = 0; i < bars.length; i++) FlSpot(i.toDouble(), _value(bars[i].closeCents))],
-              color: trend,
-              barWidth: 2,
-              dotData: FlDotData(show: bars.length == 1),
-              belowBarData: BarAreaData(show: true, color: trend.withValues(alpha: 0.12)),
+              color: line,
+              barWidth: 2.4,
+              // 마지막 점만 강조(시안의 빛나는 끝점)
+              dotData: FlDotData(
+                checkToShowDot: (spot, data) => spot.x == data.spots.last.x,
+                getDotPainter: (_, _, _, _) => FlDotCirclePainter(
+                  radius: 4,
+                  color: line,
+                  strokeWidth: 6,
+                  strokeColor: line.withValues(alpha: 0.25),
+                ),
+              ),
+              belowBarData: BarAreaData(
+                show: true,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [line.withValues(alpha: 0.32), line.withValues(alpha: 0)],
+                ),
+              ),
             ),
           ],
         ),
@@ -158,10 +175,10 @@ class PriceChart extends StatelessWidget {
         ),
         candlestickTouchData: CandlestickTouchData(
           touchTooltipData: CandlestickTouchTooltipData(
-            getTooltipColor: (_) => const Color(0xFF111827),
+            getTooltipColor: (_) => AppColors.surfaceHi,
             getTooltipItems: (_, spot, i) => CandlestickTooltipItem(
               '${_time(context, bars[i].t)}\n${_axis(spot.close)}',
-              textStyle: const TextStyle(color: Colors.white, fontSize: 12),
+              textStyle: const TextStyle(color: AppColors.text, fontSize: 12, fontFamily: 'SpaceGrotesk'),
             ),
           ),
         ),

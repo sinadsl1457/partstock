@@ -1,4 +1,5 @@
-// 화면 주소 전부. 탭(시세·관심·설정)은 StatefulShellRoute, 종목 차트는 탭 위로 띄운다(/ticker?key=...).
+// 화면 주소 전부. 런치(/launch) → 처음이면 가이드(/guide) → 탭(시세·관심·설정, StatefulShellRoute).
+// 종목 차트는 탭 위로 띄운다(/ticker?key=...).
 // 종목 키에 '/'가 들어가서(rtx-5070-ti/msi) 경로가 아니라 쿼리로 넘긴다.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +8,8 @@ import 'package:go_router/go_router.dart';
 import '../../features/board/presentation/board_cubit.dart';
 import '../../features/board/presentation/board_screen.dart';
 import '../../features/market/data/market_models.dart';
+import '../../features/onboarding/presentation/guide_screen.dart';
+import '../../features/onboarding/presentation/launch_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/ticker/presentation/ticker_cubit.dart';
 import '../../features/ticker/presentation/ticker_screen.dart';
@@ -16,10 +19,15 @@ import '../../features/watchlist/presentation/watchlist_cubit.dart';
 import '../di/injection.dart';
 import '../presentation/app_shell.dart';
 
-/// 테스트에서는 매번 새로 만든다(라우터 상태가 테스트끼리 섞이지 않게).
-GoRouter createRouter() => GoRouter(
-  initialLocation: '/board',
+/// 테스트에서는 매번 새로 만든다(라우터 상태가 테스트끼리 섞이지 않게). 화면 테스트는 /board에서 시작할 수 있다.
+GoRouter createRouter({String initialLocation = '/launch'}) => GoRouter(
+  initialLocation: initialLocation,
   routes: [
+    GoRoute(path: '/launch', builder: (_, _) => const LaunchScreen()),
+    GoRoute(
+      path: '/guide',
+      builder: (_, state) => GuideScreen(again: state.uri.queryParameters['again'] == '1'),
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, shell) => AppShell(shell: shell),
       branches: [

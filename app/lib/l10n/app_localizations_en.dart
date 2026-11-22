@@ -31,7 +31,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get colName => 'Item';
 
   @override
-  String get colPrice => 'Price · 24h';
+  String get colPrice => 'Price · 24H';
 
   @override
   String updatedAt(String time) {
@@ -264,4 +264,124 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alertAlreadyMet => 'Already met — fires at the next hourly update';
+
+  @override
+  String updatedPill(String time) {
+    return 'Updated $time';
+  }
+
+  @override
+  String get launchSub => 'GPU · RAM prices';
+
+  @override
+  String get guideSkip => 'Skip';
+
+  @override
+  String get guideNext => 'Next';
+
+  @override
+  String get guideStartPush => 'Allow alerts & start';
+
+  @override
+  String get guideStart => 'Get started';
+
+  @override
+  String get guideLater => 'Later';
+
+  @override
+  String get guidePrev => 'Back';
+
+  @override
+  String get guide1Title => 'GPU & RAM prices\nat a glance';
+
+  @override
+  String get guide1Body =>
+      'We collect new eBay US listings every hour and show what you can actually buy each chip for.';
+
+  @override
+  String get guide1Badge => '25th pct. of new eBay listings';
+
+  @override
+  String get guide2Title => 'Tap for charts,\ndrill into models';
+
+  @override
+  String get guide2Body =>
+      'See 1D to all-time in lines or candles, compare brands and models, then jump to eBay or Danawa.';
+
+  @override
+  String get guide3Title => 'We\'ll tell you when\nthe price is right';
+
+  @override
+  String get guide3Body => 'Set a target with the bell on any item. We check every hour and push you when it hits.';
+
+  @override
+  String get guide3Demo => 'RTX 5070 Ti hit your target';
+
+  @override
+  String get guide3DemoBody => 'Now \$1,350 · target ≤ \$1,360';
+
+  @override
+  String get sectionJump => 'Open listings in';
+
+  @override
+  String get sectionAlerts => 'Alerts';
+
+  @override
+  String get pushStatus => 'Push notifications';
+
+  @override
+  String get pushOn => 'On';
+
+  @override
+  String get pushOff => 'Off';
+
+  @override
+  String get pushUnsupported => 'Not on this device yet';
+
+  @override
+  String get pushHint => 'Change in phone settings';
+
+  @override
+  String get alertsCount => 'Price alerts';
+
+  @override
+  String alertsCountValue(String n) {
+    return '$n';
+  }
+
+  @override
+  String get sectionBasis => 'How prices work';
+
+  @override
+  String get basisPriceLabel => 'Price';
+
+  @override
+  String get basisPrice => '25th percentile of new, Buy It Now listings on eBay US';
+
+  @override
+  String get basisFxLabel => 'Currency';
+
+  @override
+  String get basisFx => 'Shown in USD · shipping and tax not included';
+
+  @override
+  String get basisUpdateLabel => 'Updates';
+
+  @override
+  String get basisUpdate => 'Every hour';
+
+  @override
+  String get sectionHelp => 'Help';
+
+  @override
+  String get guideAgain => 'Show guide again';
+
+  @override
+  String get appVersion => 'Version';
+
+  @override
+  String get categoryVga => 'GPU';
+
+  @override
+  String get categoryRam => 'RAM';
 }

@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/di/injection.dart';
+import 'core/presentation/theme.dart';
 import 'core/push/push_service.dart';
 import 'features/alerts/presentation/alerts_cubit.dart';
 import 'features/settings/presentation/settings_cubit.dart';
@@ -63,12 +64,8 @@ class _PartstockAppState extends State<PartstockApp> {
         routerConfig: widget.router,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF111827), surface: Colors.white),
-          scaffoldBackgroundColor: Colors.white,
-          appBarTheme: const AppBarTheme(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
-          navigationBarTheme: const NavigationBarThemeData(backgroundColor: Colors.white),
-        ),
+        theme: buildTheme(),
+        themeMode: ThemeMode.dark,
       ),
     );
   }

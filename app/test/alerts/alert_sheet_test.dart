@@ -28,16 +28,21 @@ void main() {
   }
 
   testWidgets('이상으로 오르면 + 지금보다 낮은 값: 낮은 가격이라 쓰고 바로 울린다고 알린다', (tester) async {
+    final semantics = tester.ensureSemantics();
     await open(tester);
-    await tester.tap(find.text('이상으로 오르면'));
+    await tester.tap(find.textContaining('이상으로 오르면'));
     await tester.pump();
     await tester.enterText(find.byType(TextField), '180.0');
     await tester.pump();
 
     expect(find.text('지금보다 4.0% 낮은 가격'), findsOneWidget);
     expect(find.text('이미 조건에 맞아 다음 정각 수집 때 바로 울립니다'), findsOneWidget);
-    // 손으로 넣으면 빠른 % 버튼 선택은 풀린다
-    expect(tester.widget<ChoiceChip>(find.widgetWithText(ChoiceChip, '+5%')).selected, isFalse);
+    // 손으로 넣으면 빠른 % 버튼 선택은 풀린다(화면 읽기 프로그램이 읽는 "선택됨" 표시로 확인)
+    expect(tester.getSemantics(find.text('+5%')), isNot(containsSemantics(isSelected: true)));
+    await tester.tap(find.text('+10%'));
+    await tester.pump();
+    expect(tester.getSemantics(find.text('+10%')), containsSemantics(isSelected: true, isButton: true));
+    semantics.dispose();
   });
 
   testWidgets('기본(이하, −5%)은 낮은 가격이고 경고 없음', (tester) async {

@@ -31,7 +31,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get colName => '종목';
 
   @override
-  String get colPrice => '대표가 · 24시간';
+  String get colPrice => '대표가 · 24H';
 
   @override
   String updatedAt(String time) {
@@ -262,4 +262,122 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get alertAlreadyMet => '이미 조건에 맞아 다음 정각 수집 때 바로 울립니다';
+
+  @override
+  String updatedPill(String time) {
+    return '$time 업데이트';
+  }
+
+  @override
+  String get launchSub => 'VGA · RAM 시세';
+
+  @override
+  String get guideSkip => '건너뛰기';
+
+  @override
+  String get guideNext => '다음';
+
+  @override
+  String get guideStartPush => '알림 허용하고 시작';
+
+  @override
+  String get guideStart => '시작하기';
+
+  @override
+  String get guideLater => '나중에';
+
+  @override
+  String get guidePrev => '이전';
+
+  @override
+  String get guide1Title => 'VGA·RAM 시세를\n한눈에';
+
+  @override
+  String get guide1Body => '미국 eBay 새 상품 가격을 매시간 모아, 칩셋마다 지금 살 수 있는 가격(대표가)을 원화로 보여 드려요.';
+
+  @override
+  String get guide1Badge => 'eBay 새 상품 하위 25% · 원화 환산';
+
+  @override
+  String get guide2Title => '누르면 차트,\n내려가면 모델별';
+
+  @override
+  String get guide2Body => '1일부터 전체까지 선·봉으로 흐름을 보고, 제조사·모델로 내려가 비교하세요. 마음에 들면 eBay나 다나와로 바로 가요.';
+
+  @override
+  String get guide3Title => '원하는 가격이 되면\n알려 드려요';
+
+  @override
+  String get guide3Body => '종목 화면의 종 버튼으로 목표가를 걸어 두세요. 매시간 확인해서 닿으면 푸시로 알려 드려요.';
+
+  @override
+  String get guide3Demo => 'RTX 5070 Ti 목표가 도달';
+
+  @override
+  String get guide3DemoBody => '지금 179.8만원 · 목표 180.0만원 이하';
+
+  @override
+  String get sectionJump => '바로가기 기본';
+
+  @override
+  String get sectionAlerts => '알림';
+
+  @override
+  String get pushStatus => '푸시 알림';
+
+  @override
+  String get pushOn => '켜짐';
+
+  @override
+  String get pushOff => '꺼짐';
+
+  @override
+  String get pushUnsupported => '이 기기는 아직 지원 안 함';
+
+  @override
+  String get pushHint => '끄고 켜기는 폰 설정에서';
+
+  @override
+  String get alertsCount => '걸어 둔 목표가';
+
+  @override
+  String alertsCountValue(String n) {
+    return '$n개';
+  }
+
+  @override
+  String get sectionBasis => '가격 기준';
+
+  @override
+  String get basisPriceLabel => '대표가';
+
+  @override
+  String get basisPrice => '미국 eBay 새 상품·즉시 구매 글 가격의 하위 25%';
+
+  @override
+  String get basisFxLabel => '원화 환산';
+
+  @override
+  String get basisFx => '유럽중앙은행 기준 환율(그날 고시) · 배송비·관세 제외';
+
+  @override
+  String get basisUpdateLabel => '갱신';
+
+  @override
+  String get basisUpdate => '매시간 정각';
+
+  @override
+  String get sectionHelp => '도움말';
+
+  @override
+  String get guideAgain => '가이드 다시 보기';
+
+  @override
+  String get appVersion => '앱 버전';
+
+  @override
+  String get categoryVga => 'VGA';
+
+  @override
+  String get categoryRam => 'RAM';
 }

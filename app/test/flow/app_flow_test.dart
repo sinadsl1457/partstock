@@ -74,7 +74,7 @@ void main() {
     tester.view.devicePixelRatio = 2.625;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(PartstockApp(router: createRouter()));
+    await tester.pumpWidget(PartstockApp(router: createRouter(initialLocation: '/board')));
     await tester.pumpAndSettle();
 
     expect(find.text('RTX 5070 Ti'), findsOneWidget);
@@ -116,7 +116,7 @@ void main() {
     tester.view.devicePixelRatio = 2.625;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(PartstockApp(router: createRouter()));
+    await tester.pumpWidget(PartstockApp(router: createRouter(initialLocation: '/board')));
     await tester.pumpAndSettle();
     expect(find.text('인터넷에 연결할 수 없습니다.'), findsOneWidget);
 
@@ -149,7 +149,7 @@ void main() {
     tester.view.devicePixelRatio = 2.625;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(PartstockApp(router: createRouter()));
+    await tester.pumpWidget(PartstockApp(router: createRouter(initialLocation: '/board')));
     await tester.pumpAndSettle();
     await tester.tap(find.text('RTX 5070 Ti'));
     await tester.pumpAndSettle();

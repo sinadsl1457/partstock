@@ -53,6 +53,16 @@ class AlertsCubit extends Cubit<AlertsState> {
     }
   }
 
+  /// 종 버튼을 눌렀을 때: 가이드에서 "나중에"를 골라 아직 시작 안 했으면 지금 권한을 묻고, 등록이 실패해 멈춰 있으면 다시.
+  Future<void> ensureStarted(String locale) async {
+    if (state.status != AlertsStatus.starting) return;
+    if (state.token == null) {
+      await start(locale);
+    } else {
+      await reload();
+    }
+  }
+
   Future<void> reload() async {
     final token = state.token;
     if (token == null) return;

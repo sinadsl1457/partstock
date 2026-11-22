@@ -1,10 +1,12 @@
-// 종목 차트 화면: 현재가·24시간 변동 → 큰 차트(기간·선/봉) → 제조사별/모델별. 아래에 eBay·다나와 버튼.
+// 종목 차트 화면: 현재가·24시간 변동 → 큰 차트(기간·선/봉) → 기간 등락·최고·최저 → 제조사별/모델별. 아래에 eBay·다나와·알림.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/presentation/brand.dart';
 import '../../../core/presentation/common.dart';
 import '../../../core/presentation/format.dart';
+import '../../../core/presentation/theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../alerts/data/alert_models.dart';
 import '../../alerts/presentation/alert_sheet.dart';
@@ -23,14 +25,23 @@ class TickerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
     return BlocBuilder<TickerCubit, TickerState>(
       builder: (context, s) {
         final cubit = context.read<TickerCubit>();
         final d = s.detail;
+        final category = d == null ? null : (d.ticker.category == 'RAM' ? t.categoryRam : t.categoryVga);
         return Scaffold(
           appBar: AppBar(
-            title: Text(d?.ticker.name ?? '', style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
             centerTitle: true,
+            title: d == null
+                ? null
+                : Column(
+                    children: [
+                      Text(d.ticker.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                      Text(category!, style: const TextStyle(fontSize: 10, letterSpacing: 0.8, color: AppColors.muted)),
+                    ],
+                  ),
             actions: [_StarButton(tickerKey: s.key)],
           ),
           body: d == null
@@ -56,7 +67,7 @@ class _StarButton extends StatelessWidget {
     return IconButton(
       tooltip: on ? t.removeWatch : t.addWatch,
       onPressed: () => context.read<WatchlistCubit>().toggle(tickerKey),
-      icon: Icon(on ? Icons.star_rounded : Icons.star_outline_rounded, color: on ? const Color(0xFFF59E0B) : null),
+      icon: Icon(on ? Icons.star_rounded : Icons.star_outline_rounded, color: on ? AppColors.accent : AppColors.text),
     );
   }
 }
@@ -94,26 +105,31 @@ class _BodyState extends State<_Body> {
     };
     final bucketLabels = {'1 hour': t.bucket1h, '4 hours': t.bucket4h, '1 day': t.bucket1d, '7 days': t.bucket7d};
 
-    final values = chart == null || chart.bars.isEmpty ? null : chart.bars;
-    final high = values?.map((b) => b.highCents).reduce((a, b) => a > b ? a : b);
-    final low = values?.map((b) => b.lowCents).reduce((a, b) => a < b ? a : b);
+    final bars = chart == null || chart.bars.isEmpty ? null : chart.bars;
+    final high = bars?.map((b) => b.highCents).reduce((a, b) => a > b ? a : b);
+    final low = bars?.map((b) => b.lowCents).reduce((a, b) => a < b ? a : b);
     String money(int cents) => mainPrice(context, cents, d.fx).big;
-
-    final children = _showModels ? d.models : d.makers;
+    final ch = d.change;
 
     return RefreshIndicator(
       onRefresh: cubit.load,
+      color: AppColors.accent,
+      backgroundColor: AppColors.surface,
       child: ListView(
         padding: const EdgeInsets.only(bottom: 24),
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (crumbs.length > 1) Text(crumbs.join(' › '), style: const TextStyle(fontSize: 13, color: neutral)),
+                if (crumbs.length > 1)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Text(crumbs.join('  ›  '), style: const TextStyle(fontSize: 12, color: AppColors.muted)),
+                  ),
                 if (p == null)
-                  Padding(padding: const EdgeInsets.only(top: 6), child: Text(t.tooFew))
+                  Padding(padding: const EdgeInsets.only(top: 6), child: Tag(t.tooFew))
                 else ...[
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -121,30 +137,28 @@ class _BodyState extends State<_Body> {
                     children: [
                       Text(
                         mainPrice(context, p.p25Cents, d.fx).big,
-                        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w700),
+                        style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w700, letterSpacing: -0.6),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 10),
                       if (mainPrice(context, p.p25Cents, d.fx).small case final small?)
-                        Text(small, style: const TextStyle(fontSize: 15, color: Color(0xFF4B5563))),
+                        Text(small, style: const TextStyle(fontSize: 14, color: AppColors.muted)),
                     ],
                   ),
-                  Text(
-                    t.change24h(d.change == null ? '—' : pct(d.change!.pct)),
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: changeColor(context, d.change?.pct),
-                    ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      _ChangeBadge(pct: ch?.pct, label: '24H'),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          [t.priceHint(usd(p.medianCents)), t.listingsShort(p.listingCount)].join(' · '),
+                          style: const TextStyle(fontSize: 12, color: AppColors.muted),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                   _WaitingAlerts(tickerKey: d.ticker.key, fx: d.fx),
-                  Text(
-                    [
-                      t.priceHint(usd(p.medianCents)),
-                      t.listings(p.listingCount),
-                      if (d.updatedAt != null) timeText(context, d.updatedAt!),
-                    ].join(' · '),
-                    style: const TextStyle(fontSize: 12, color: neutral),
-                  ),
                 ],
               ],
             ),
@@ -152,114 +166,109 @@ class _BodyState extends State<_Body> {
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              height: 250,
+              padding: const EdgeInsets.fromLTRB(8, 8, 0, 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.line),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [AppColors.surface, AppColors.bg],
+                ),
+              ),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: _KindToggle(kind: s.kind, onSelect: cubit.selectKind, line: t.line, candle: t.candle),
+                    ),
+                  ),
+                  Expanded(
+                    child: switch (chart) {
+                      _ when s.chartPending => const Center(child: CircularProgressIndicator()),
+                      null || ChartData(bars: []) => Center(
+                        child: Text(t.noChart, style: const TextStyle(color: AppColors.muted)),
+                      ),
+                      final c => PriceChart(chart: c, kind: s.kind, usdKrw: usdKrw),
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: PillGroup<ChartRange>(
+              items: [for (final r in ChartRange.values) (r, rangeLabels[r]!)],
+              selected: s.range,
+              onSelect: cubit.selectRange,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
                 Expanded(
-                  child: Wrap(
-                    spacing: 12,
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                          text: '${t.rangeChange(rangeLabels[s.range]!)} ',
-                          children: [
-                            TextSpan(
-                              text: chart?.rangePct == null ? '—' : pct(chart!.rangePct!),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                color: changeColor(context, chart?.rangePct),
-                              ),
-                            ),
-                          ],
-                        ),
-                        style: const TextStyle(fontSize: 12, color: Color(0xFF4B5563)),
-                      ),
-                      if (high != null)
-                        Text(
-                          '${t.high} ${money(high)}',
-                          style: const TextStyle(fontSize: 12, color: Color(0xFF4B5563)),
-                        ),
-                      if (low != null)
-                        Text('${t.low} ${money(low)}', style: const TextStyle(fontSize: 12, color: Color(0xFF4B5563))),
-                    ],
+                  child: _Stat(
+                    label: t.rangeChange(rangeLabels[s.range]!),
+                    value: chart?.rangePct == null ? '—' : pct(chart!.rangePct!),
+                    color: changeColor(context, chart?.rangePct),
                   ),
                 ),
-                SegmentedButton<ChartKind>(
-                  segments: [
-                    ButtonSegment(value: ChartKind.line, label: Text(t.line)),
-                    ButtonSegment(value: ChartKind.candle, label: Text(t.candle)),
-                  ],
-                  selected: {s.kind},
-                  showSelectedIcon: false,
-                  style: const ButtonStyle(visualDensity: VisualDensity.compact),
-                  onSelectionChanged: (v) => cubit.selectKind(v.first),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _Stat(label: t.high, value: high == null ? '—' : money(high)),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _Stat(label: t.low, value: low == null ? '—' : money(low)),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 240,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 12, right: 4),
-              child: switch (chart) {
-                _ when s.chartPending => const Center(child: CircularProgressIndicator()),
-                null || ChartData(bars: []) => Center(
-                  child: Text(t.noChart, style: const TextStyle(color: neutral)),
-                ),
-                final c => PriceChart(chart: c, kind: s.kind, usdKrw: usdKrw),
-              },
-            ),
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SegmentedButton<ChartRange>(
-              segments: [for (final r in ChartRange.values) ButtonSegment(value: r, label: Text(rangeLabels[r]!))],
-              selected: {s.range},
-              showSelectedIcon: false,
-              style: const ButtonStyle(
-                visualDensity: VisualDensity.compact,
-                padding: WidgetStatePropertyAll(EdgeInsets.zero),
-              ),
-              onSelectionChanged: (v) => cubit.selectRange(v.first),
-            ),
-          ),
           if (chart != null)
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+              padding: const EdgeInsets.fromLTRB(22, 10, 20, 0),
               child: Text(
                 [
                   bucketLabels[chart.bucket] ?? chart.bucket,
                   if (chart.since != null) t.collecting(timeText(context, chart.since!), chart.points),
                 ].join(' · '),
-                style: const TextStyle(fontSize: 11, color: neutral),
+                style: const TextStyle(fontSize: 11, color: AppColors.faint),
               ),
             ),
           if (s.failure != null && s.detail != null)
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-              child: Text(failureText(context, s.failure!), style: const TextStyle(color: Color(0xFFB45309))),
+              child: Text(failureText(context, s.failure!), style: const TextStyle(color: AppColors.warn)),
             ),
 
           if (d.makers.isNotEmpty || d.models.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            const Divider(thickness: 8, height: 8, color: Color(0xFFF3F4F6)),
-            Row(
-              children: [
-                _TabButton(label: t.makers, on: !_showModels, onTap: () => setState(() => _showModels = false)),
-                _TabButton(label: t.models, on: _showModels, onTap: () => setState(() => _showModels = true)),
-              ],
+            const SizedBox(height: 22),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: UnderlineTabs<bool>(
+                items: [(false, t.makers), (true, t.models)],
+                selected: _showModels,
+                onSelect: (v) => setState(() => _showModels = v),
+              ),
             ),
             if (_showModels)
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
-                child: Text(t.modelsNote, style: const TextStyle(fontSize: 12, color: neutral)),
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 2),
+                child: Text(t.modelsNote, style: const TextStyle(fontSize: 11, color: AppColors.muted)),
               ),
-            for (final c in children) _ChildRow(child: c, fx: d.fx),
+            for (final c in _showModels ? d.models : d.makers) _ChildRow(child: c, fx: d.fx),
           ],
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-            child: Text(t.source, style: const TextStyle(fontSize: 11, color: neutral)),
+            padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
+            child: Text(t.source, style: const TextStyle(fontSize: 11, color: AppColors.faint)),
           ),
         ],
       ),
@@ -267,31 +276,99 @@ class _BodyState extends State<_Body> {
   }
 }
 
-class _TabButton extends StatelessWidget {
-  const _TabButton({required this.label, required this.on, required this.onTap});
+/// "▲ 0.40% 24H" 같은 색 띠
+class _ChangeBadge extends StatelessWidget {
+  const _ChangeBadge({required this.pct, required this.label});
+  final double? pct;
   final String label;
-  final bool on;
-  final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Expanded(
-    child: InkWell(
-      onTap: onTap,
-      child: Container(
-        height: 48,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: on ? const Color(0xFF111827) : const Color(0xFFE5E7EB), width: 2)),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: on ? FontWeight.w600 : FontWeight.w500,
-            color: on ? const Color(0xFF111827) : neutral,
+  Widget build(BuildContext context) {
+    final c = changeColor(context, pct);
+    final arrow = pct == null || pct == 0 ? '' : (pct! > 0 ? '▲ ' : '▼ ');
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(color: c.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
+      child: Text(
+        pct == null ? '— $label' : '$arrow${pct!.abs().toStringAsFixed(2)}% $label',
+        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: c),
+      ),
+    );
+  }
+}
+
+class _KindToggle extends StatelessWidget {
+  const _KindToggle({required this.kind, required this.onSelect, required this.line, required this.candle});
+  final ChartKind kind;
+  final ValueChanged<ChartKind> onSelect;
+  final String line;
+  final String candle;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget item(ChartKind k, String label) => Semantics(
+      button: true,
+      selected: kind == k,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(6),
+        onTap: () => onSelect(k),
+        child: Container(
+          constraints: const BoxConstraints(minWidth: 44, minHeight: 32),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            color: kind == k ? AppColors.lineHi : Colors.transparent,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: kind == k ? AppColors.accent : AppColors.muted,
+            ),
           ),
         ),
       ),
+    );
+    return Container(
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: AppColors.bg,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.line),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [item(ChartKind.line, line), item(ChartKind.candle, candle)],
+      ),
+    );
+  }
+}
+
+class _Stat extends StatelessWidget {
+  const _Stat({required this.label, required this.value, this.color = AppColors.text});
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Panel(
+    padding: const EdgeInsets.all(10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 10, color: AppColors.muted, letterSpacing: 0.4)),
+        const SizedBox(height: 2),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            value,
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: color),
+          ),
+        ),
+      ],
     ),
   );
 }
@@ -307,8 +384,12 @@ class _ChildRow extends StatelessWidget {
     final p = child.price;
     return InkWell(
       onTap: () => context.push('/ticker?key=${Uri.encodeQueryComponent(child.key)}'),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: Color(0xFF161A17))),
+        ),
         child: Row(
           children: [
             Expanded(
@@ -316,12 +397,13 @@ class _ChildRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(child.name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
-                  if (p != null) Text(t.listings(p.listingCount), style: const TextStyle(fontSize: 12, color: neutral)),
+                  if (p != null)
+                    Text(t.listingsShort(p.listingCount), style: const TextStyle(fontSize: 11, color: AppColors.muted)),
                 ],
               ),
             ),
             if (p == null)
-              Text(t.tooFew, style: const TextStyle(fontSize: 12, color: neutral))
+              Tag(t.tooFew)
             else
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -343,7 +425,7 @@ class _ChildRow extends StatelessWidget {
   }
 }
 
-/// 아래 고정 버튼: 설정의 기본값(eBay/다나와)이 앞(진한 버튼), 그 옆 목표가 알림(Android만)
+/// 아래 고정 버튼: 설정의 기본값(eBay/다나와)이 앞(녹색 버튼), 그 옆 목표가 알림(Android만)
 class _JumpBar extends StatelessWidget {
   const _JumpBar({required this.detail});
   final TickerDetail detail;
@@ -353,67 +435,64 @@ class _JumpBar extends StatelessWidget {
     final t = AppLocalizations.of(context);
     final links = detail.links;
     final alerts = context.watch<AlertsCubit>().state;
-    final jump = context.watch<SettingsCubit>().state;
+    final jump = context.watch<SettingsCubit>().state.jump;
     final ebay = (label: t.viewOnEbay, url: links.ebay);
     final danawa = (label: t.danawa, url: links.danawa);
     final order = jump == Jump.ebay ? [ebay, danawa] : [danawa, ebay];
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: Color(0xFFE5E7EB))),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(48),
-                  backgroundColor: const Color(0xFF111827),
-                ),
-                onPressed: () => openLink(order[0].url),
-                child: Text(order[0].label),
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.bar,
+        border: Border(top: BorderSide(color: AppColors.line)),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: FilledButton(onPressed: () => openLink(order[0].url), child: Text(order[0].label)),
               ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
-                onPressed: () => openLink(order[1].url),
-                child: Text(order[1].label),
-              ),
-            ),
-            if (alerts.status != AlertsStatus.unsupported && detail.price != null) ...[
               const SizedBox(width: 8),
-              IconButton.outlined(
-                tooltip: t.alertTitle,
-                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-                onPressed: () => _openAlert(context, alerts),
-                icon: const Icon(Icons.notifications_none_rounded),
+              Expanded(
+                child: OutlinedButton(onPressed: () => openLink(order[1].url), child: Text(order[1].label)),
               ),
+              if (alerts.status != AlertsStatus.unsupported && detail.price != null) ...[
+                const SizedBox(width: 8),
+                Tooltip(
+                  message: t.alertTitle,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(52, 52)),
+                    onPressed: () => _openAlert(context),
+                    child: const Icon(Icons.notifications_none_rounded, color: AppColors.accent),
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
-void _openAlert(BuildContext context, AlertsState alerts) {
+Future<void> _openAlert(BuildContext context) async {
   final t = AppLocalizations.of(context);
-  final d = context.read<TickerCubit>().state.detail!;
-  final message = switch (alerts.status) {
+  final cubit = context.read<AlertsCubit>();
+  final messenger = ScaffoldMessenger.of(context);
+  // 가이드에서 "나중에"를 골랐으면 여기서 권한을 묻고, 등록이 멈춰 있으면 다시 시도
+  await cubit.ensureStarted(Localizations.localeOf(context).languageCode);
+  if (!context.mounted) return;
+  final message = switch (cubit.state.status) {
     AlertsStatus.ready => null,
     AlertsStatus.denied => t.alertDenied,
     _ => t.alertNotReady,
   };
-  // 등록이 실패해 준비 중에 멈춰 있으면 다시 시도
-  if (alerts.status == AlertsStatus.starting) context.read<AlertsCubit>().reload();
   if (message != null) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    messenger.showSnackBar(SnackBar(content: Text(message)));
     return;
   }
-  showAlertSheet(context, tickerKey: d.ticker.key, nowCents: d.price!.p25Cents, fx: d.fx);
+  final d = context.read<TickerCubit>().state.detail!;
+  await showAlertSheet(context, tickerKey: d.ticker.key, nowCents: d.price!.p25Cents, fx: d.fx);
 }
 
 /// 이 종목에 걸어 둔 대기 중 알림(현재가 아래 작은 줄)
@@ -428,17 +507,37 @@ class _WaitingAlerts extends StatelessWidget {
     final waiting = context.select<AlertsCubit, List<PriceAlert>>((c) => c.state.waitingFor(tickerKey));
     if (waiting.isEmpty) return const SizedBox.shrink();
     return Padding(
-      padding: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.only(top: 10),
       child: Wrap(
         spacing: 6,
         runSpacing: 6,
         children: [
           for (final a in waiting)
-            InputChip(
-              avatar: const Icon(Icons.notifications_active_outlined, size: 16),
-              label: Text(alertCondition(context, a, fx), style: const TextStyle(fontSize: 12)),
-              deleteButtonTooltipMessage: t.alertDelete,
-              onDeleted: () => context.read<AlertsCubit>().delete(a.id),
+            Container(
+              padding: const EdgeInsets.only(left: 10),
+              decoration: BoxDecoration(
+                color: AppColors.accent.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.notifications_active_outlined, size: 15, color: AppColors.accent),
+                  const SizedBox(width: 6),
+                  Text(
+                    alertCondition(context, a, fx),
+                    style: const TextStyle(fontSize: 12, color: AppColors.accent, fontWeight: FontWeight.w600),
+                  ),
+                  IconButton(
+                    tooltip: t.alertDelete,
+                    visualDensity: VisualDensity.compact,
+                    iconSize: 16,
+                    color: AppColors.muted,
+                    onPressed: () => context.read<AlertsCubit>().delete(a.id),
+                    icon: const Icon(Icons.close_rounded),
+                  ),
+                ],
+              ),
             ),
         ],
       ),

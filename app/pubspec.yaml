@@ -21,6 +21,7 @@ dependencies:
   http: ^1.6.0
   injectable: ^3.0.0
   intl: ^0.20.3
+  package_info_plus: ^10.2.2
   shared_preferences: ^2.5.6
   url_launcher: ^6.3.3
 
@@ -33,7 +34,28 @@ dev_dependencies:
   injectable_generator: ^3.1.3
   bloc_test: ^10.0.0
   mocktail: ^1.0.5
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   generate: true
+  # Space Grotesk(OFL, assets/fonts/OFL.txt). 한글은 폰 기본 글꼴로 이어진다
+  fonts:
+    - family: SpaceGrotesk
+      fonts:
+        - asset: assets/fonts/SpaceGrotesk-Regular.ttf
+        - asset: assets/fonts/SpaceGrotesk-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/SpaceGrotesk-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/SpaceGrotesk-Bold.ttf
+          weight: 700
   uses-material-design: true
+
+# 앱 아이콘: dart run flutter_launcher_icons (원본 assets/icon, 칩 로고를 브라우저로 그려 만든 것)
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/icon/app_icon.png
+  adaptive_icon_background: "#0A0C0B"
+  adaptive_icon_foreground: assets/icon/app_icon_fg.png
+  remove_alpha_ios: true
