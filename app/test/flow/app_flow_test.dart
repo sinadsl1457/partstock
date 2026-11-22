@@ -1,4 +1,5 @@
 // 화면 흐름: 시세 목록 → 종목 차트 → 별 → 관심 탭. 가짜 저장소(실제 API 응답 예시)로 앱 전체를 띄운다.
+import 'package:flutter/foundation.dart' show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -175,5 +176,40 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('목표가 알림'), findsOneWidget);
     expect(find.textContaining('이하'), findsOneWidget);
+  });
+
+  // 11/22 사용자 발견: iOS에서 종목 차트를 왼쪽 끝에서 오른쪽으로 밀어도 뒤로 안 감.
+  // go_router 18이 Flutter 기본 MaterialApp을 못 알아봐서 모든 화면이 전환 없는 페이지였다
+  testWidgets('iOS: 종목 차트에서 왼쪽 끝을 오른쪽으로 밀면 목록으로 돌아간다', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    final repo = await setUpDi();
+    when(() => repo.cachedBoard(any())).thenReturn(null);
+    when(() => repo.board(any())).thenAnswer((_) async => boardFixture());
+    when(() => repo.ticker(any())).thenAnswer((_) async => tickerFixture());
+    when(() => repo.chart(any(), any())).thenAnswer((i) async => chartFixture(i.positionalArguments[1] as ChartRange));
+    tester.platformDispatcher.localesTestValue = const [Locale('ko')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    tester.view.physicalSize = const Size(1179, 2556); // iPhone 크기
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(PartstockApp(router: createRouter(initialLocation: '/board')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('RTX 5070 Ti'));
+    await tester.pumpAndSettle();
+    expect(find.text('제조사별'), findsOneWidget);
+
+    // 화면 왼쪽 끝(5px)에서 오른쪽으로 길게
+    final g = await tester.startGesture(const Offset(5, 400));
+    for (var i = 0; i < 10; i++) {
+      await g.moveBy(const Offset(30, 0));
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await g.up();
+    await tester.pumpAndSettle();
+
+    expect(find.text('제조사별'), findsNothing);
+    expect(find.text('RTX 5090'), findsOneWidget);
+    debugDefaultTargetPlatformOverride = null;
   });
 }

@@ -71,6 +71,7 @@ docs/     AI_LOG.md
 ## 앱 (app/) — 3단계
 - Flutter 3.47(Dart 3.13), 개인 프로젝트라 옛 버전 호환 확인은 하지 않는다. Android·iOS 빌드 설정은 템플릿 그대로.
 - 구조(사용자 결정 11/22: Riverpod 말고 원래 쓰던 Bloc): flutter_bloc **Cubit만**, State는 `<name>_state.dart`(freezed), get_it + injectable(외부 객체는 `@module`), go_router 한 파일(`core/router/app_router.dart`, 탭은 StatefulShellRoute), 모델은 freezed + `fromMap` 손 매핑.
+- 라우트는 `builder` 말고 `pageBuilder`로 `MaterialPage`를 직접 만든다(go_router 18은 material_ui의 MaterialApp만 알아봐서, 맡기면 전환 없는 페이지가 되어 iOS 밀어서 뒤로가기가 안 됨. 11/22).
 - `getIt<X>()`는 main과 라우트의 `BlocProvider(create:)`에서만. Cubit은 이동·스낵바를 하지 않는다(상태를 보고 위젯이). 시간은 `Clock` 주입.
 - 폴더(상태를 누가 갖고 언제 생기나):
   - `features/market/data`: API 모델·저장소. 시세 목록·차트·관심이 같이 쓰는 읽기 전용 데이터라 한 곳에(화면은 없음).
