@@ -68,15 +68,19 @@ class PriceChart extends StatelessWidget {
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 22,
-          interval: (bars.length / 3).clamp(1, double.infinity).floorToDouble(),
+          // 글자는 3개(처음·가운데·끝)만. 칸이 적을 때 모든 점에 붙이면 양 끝 글자가 안으로 밀려 겹친다
+          interval: ((bars.length - 1) / 2).clamp(0.5, double.infinity),
           getTitlesWidget: (v, meta) {
-            final i = v.round();
-            if (i < 0 || i >= bars.length || v != i) return const SizedBox.shrink();
+            if (v < 0 || v > bars.length - 1) return const SizedBox.shrink();
+            // 가운데가 두 점 사이면 두 시각의 가운데(봉 간격이 일정해서 실제 시각과 같다)
+            final lo = bars[v.floor()].t;
+            final hi = bars[v.ceil()].t;
+            final t = lo.add(hi.difference(lo) * (v - v.floor()));
             return SideTitleWidget(
               meta: meta,
               // 양 끝 글자가 차트 밖으로 잘리지 않게 안쪽으로 민다
               fitInside: SideTitleFitInsideData.fromTitleMeta(meta),
-              child: Text(_time(context, bars[i].t), style: const TextStyle(fontSize: 10, color: neutral)),
+              child: Text(_time(context, t), style: const TextStyle(fontSize: 10, color: neutral)),
             );
           },
         ),

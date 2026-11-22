@@ -170,9 +170,16 @@ class _BoardPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
     final c = upDown(context);
-    final rows = [('RTX 5090', '937.6만원', 1.2), ('RTX 5070 Ti', '187.5만원', 0.4), ('RX 9070 XT', '147.3만원', -2.4)];
+    // 예시 숫자(실제 시세 아님). 영어는 달러로
+    final ko = isKo(context);
+    final rows = [
+      ('RTX 5090', ko ? '937.6만원' : r'$6,430', 1.2),
+      ('RTX 5070 Ti', ko ? '187.5만원' : r'$1,286', 0.4),
+      ('RX 9070 XT', ko ? '147.3만원' : r'$1,010', -2.4),
+    ];
     return _PreviewCard(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           UnderlineTabs<int>(items: [(0, t.gpu), (1, t.ram)], selected: 0, onSelect: (_) {}, fontSize: 13),
@@ -223,6 +230,7 @@ class _ChartPreview extends StatelessWidget {
     final t = AppLocalizations.of(context);
     return _PreviewCard(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Text('RTX 5070 Ti  ›  MSI  ›  Gaming Trio', style: TextStyle(fontSize: 12, color: AppColors.muted)),
@@ -314,6 +322,7 @@ class _AlertPreview extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('partstock', style: TextStyle(fontSize: 11, color: AppColors.muted)),
