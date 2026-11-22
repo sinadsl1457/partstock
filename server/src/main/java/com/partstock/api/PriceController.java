@@ -1,6 +1,7 @@
 package com.partstock.api;
 
 import com.partstock.api.ApiDtos.Board;
+import com.partstock.api.ApiDtos.Chart;
 import com.partstock.api.ApiDtos.TickerDetail;
 import com.partstock.catalog.Category;
 import org.springframework.http.HttpStatus;
@@ -11,8 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * GET /api/board?category=GPU|RAM          시세판(칩셋 목록)
- * GET /api/ticker?key=rtx-5070-ti&period=week  종목 상세(키에 /가 들어가서 경로 대신 파라미터)
+ * GET /api/board?category=GPU|RAM                  시세판(칩셋 목록, 24시간 변동, 7일 추이)
+ * GET /api/ticker?key=rtx-5070-ti                  종목 정보와 제조사·모델 목록(키에 /가 들어가서 파라미터)
+ * GET /api/chart?key=rtx-5070-ti&range=1w          차트 봉(1d|1w|1m|3m|1y|all)
  */
 @RestController
 @RequestMapping("/api")
@@ -34,7 +36,12 @@ public class PriceController {
 	}
 
 	@GetMapping("/ticker")
-	public TickerDetail ticker(@RequestParam String key, @RequestParam(defaultValue = "week") String period) {
-		return service.ticker(key, period);
+	public TickerDetail ticker(@RequestParam String key) {
+		return service.ticker(key);
+	}
+
+	@GetMapping("/chart")
+	public Chart chart(@RequestParam String key, @RequestParam(defaultValue = "1w") String range) {
+		return service.chart(key, range);
 	}
 }

@@ -1,21 +1,25 @@
 package com.partstock.api;
 
+import com.partstock.api.ApiDtos.Bar;
 import com.partstock.api.ApiDtos.Board;
 import com.partstock.api.ApiDtos.BoardItem;
-import com.partstock.api.ApiDtos.Candle;
 import com.partstock.api.ApiDtos.Change;
+import com.partstock.api.ApiDtos.Chart;
 import com.partstock.api.ApiDtos.Child;
 import com.partstock.api.ApiDtos.Fx;
-import com.partstock.api.ApiDtos.Point;
 import com.partstock.api.ApiDtos.Price;
+import com.partstock.api.ApiDtos.SparkPoint;
 import com.partstock.api.ApiDtos.TickerDetail;
 import com.partstock.api.ApiDtos.TickerInfo;
+import com.partstock.api.PriceQuery.Latest;
 import com.partstock.api.PriceQuery.QuoteRow;
 import com.partstock.api.PriceQuery.TickerRow;
 import com.partstock.catalog.Catalog;
 import com.partstock.catalog.Category;
 import com.partstock.catalog.ChipsetDef;
 import com.partstock.catalog.MakerDef;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -26,11 +30,41 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-/** 시세판·종목 상세 응답을 만든다. 순서는 코드의 종목 목록(Catalog) 순서. */
+/** 시세판·종목·차트 응답을 만든다. 순서는 코드의 종목 목록(Catalog) 순서. */
 @Service
 public class PriceService {
 
-	static final int SPARK_DAYS = 30;
+	/** 시세판 작은 추이 그래프: 최근 7일 매시간 */
+	static final Duration SPARK = Duration.ofDays(7);
+
+	/** 차트 기간 → (보는 길이, 봉 하나 길이) */
+	enum Range {
+		D1("1d", Duration.ofDays(1), "1 hour"),
+		W1("1w", Duration.ofDays(7), "4 hours"),
+		M1("1m", Duration.ofDays(30), "1 day"),
+		M3("3m", Duration.ofDays(90), "1 day"),
+		Y1("1y", Duration.ofDays(365), "7 days"),
+		ALL("all", null, "7 days");
+
+		final String code;
+		final Duration span;
+		final String bucket;
+
+		Range(String code, Duration span, String bucket) {
+			this.code = code;
+			this.span = span;
+			this.bucket = bucket;
+		}
+
+		static Range of(String code) {
+			for (Range r : values()) {
+				if (r.code.equals(code)) {
+					return r;
+				}
+			}
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "range는 1d|1w|1m|3m|1y|all");
+		}
+	}
 
 	private final PriceQuery query;
 
@@ -39,76 +73,84 @@ public class PriceService {
 	}
 
 	public Board board(Category category) {
-		Optional<LocalDate> latest = query.latestDay();
-		LocalDate day = latest.orElse(null);
+		Optional<Latest> latest = query.latest();
 		List<ChipsetDef> defs = Catalog.chipsets(category);
 		Map<String, QuoteRow> quotes = latest
-				.map(d -> query.quotes("CHIPSET", category.name(), null, null, d))
+				.map(l -> query.quotes("CHIPSET", category.name(), null, null, l.day(), prevAt(l)))
 				.orElse(List.of())
 				.stream()
 				.collect(Collectors.toMap(QuoteRow::key, q -> q));
-		Map<String, List<Point>> spark = latest
-				.map(d -> query.daily(defs.stream().map(ChipsetDef::key).toList(), d.minusDays(SPARK_DAYS - 1), d))
+		Map<String, List<SparkPoint>> spark = latest
+				.map(l -> query.snapshots(defs.stream().map(ChipsetDef::key).toList(),
+						l.ts().toInstant().minus(SPARK), l.ts().toInstant()))
 				.orElse(List.of())
 				.stream()
-				.collect(Collectors.groupingBy(PriceQuery.DailyRow::tickerKey,
-						Collectors.mapping(r -> new Point(r.day(), r.p25Cents(), r.medianCents(), r.p75Cents()),
-								Collectors.toList())));
+				.collect(Collectors.groupingBy(PriceQuery.SnapRow::tickerKey,
+						Collectors.mapping(r -> new SparkPoint(r.ts(), r.p25Cents()), Collectors.toList())));
 
 		List<BoardItem> items = defs.stream()
 				.map(c -> {
 					QuoteRow q = quotes.get(c.key());
 					return new BoardItem(c.key(), c.displayName(), vendor(c), price(q), change(q),
-							spark.getOrDefault(c.key(), List.of()), chipsetLinks(c, null));
+							spark.getOrDefault(c.key(), List.of()), links(c, null, null, null));
 				})
 				.toList();
-		return new Board(category.name(), day, fx(day), items);
+		LocalDate day = latest.map(Latest::day).orElse(null);
+		return new Board(category.name(), day, latest.map(Latest::ts).orElse(null), fx(day), items);
 	}
 
-	/** period: day | week | month | year */
-	public TickerDetail ticker(String key, String period) {
+	public TickerDetail ticker(String key) {
+		Resolved r = resolve(key);
+		TickerRow t = r.row();
+		Optional<Latest> latest = query.latest();
+		LocalDate day = latest.map(Latest::day).orElse(null);
+
+		QuoteRow self = latest.flatMap(l -> query.quotes(t.level(), null, r.chipset().key(), null, l.day(), prevAt(l))
+				.stream().filter(q -> q.key().equals(key)).findFirst()).orElse(null);
+
+		List<Child> makers = List.of();
+		List<Child> models = List.of();
+		if (latest.isPresent() && !"MODEL".equals(t.level())) {
+			List<QuoteRow> under = query.quotes(null, null, r.chipset().key(), key, day, prevAt(latest.get()));
+			makers = children(under, "MAKER", r.chipset());
+			models = children(under, "MODEL", r.chipset());
+		}
+		return new TickerDetail(r.info(), day, latest.map(Latest::ts).orElse(null), fx(day), price(self),
+				change(self), makers, models, links(r.chipset(), t.danawaPcode(), r.maker(), r.info().seriesName()));
+	}
+
+	public Chart chart(String key, String rangeCode) {
+		Range range = Range.of(rangeCode);
+		resolve(key); // 없는 종목이면 404
+		Optional<Latest> latest = query.latest();
+		if (latest.isEmpty()) {
+			return new Chart(key, range.code, range.bucket, List.of(), null);
+		}
+		Instant to = latest.get().ts().toInstant();
+		Instant from = range.span == null ? Instant.EPOCH : to.minus(range.span);
+		List<Bar> bars = query.bars(key, range.bucket, from, to).stream()
+				.map(b -> new Bar(b.t(), b.openCents(), b.highCents(), b.lowCents(), b.closeCents(), b.medianCents(),
+						b.samples()))
+				.toList();
+		Double pct = bars.size() < 2 ? null : pct(bars.getFirst().openCents(), bars.getLast().closeCents());
+		return new Chart(key, range.code, range.bucket, bars, pct);
+	}
+
+	private record Resolved(TickerRow row, ChipsetDef chipset, MakerDef maker, TickerInfo info) {}
+
+	private Resolved resolve(String key) {
 		TickerRow t = query.ticker(key)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 종목: " + key));
 		ChipsetDef chipset = Catalog.chipsets(Category.valueOf(t.category())).stream()
 				.filter(c -> c.key().equals(t.chipsetKey()))
 				.findFirst()
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "목록에서 빠진 칩셋: " + key));
-		Optional<MakerDef> maker = makerDef(chipset, t.makerKey());
+		MakerDef maker = makerDef(chipset, t.makerKey()).orElse(null);
 		String seriesName = "MODEL".equals(t.level()) ? t.displayName() : null;
-		String makerName = maker.map(MakerDef::displayName).orElse(null);
+		String makerName = maker == null ? null : maker.displayName();
 		TickerInfo info = new TickerInfo(t.key(), t.level(), t.category(),
 				fullName(chipset.displayName(), makerName, seriesName), chipset.displayName(), makerName, seriesName);
-
-		LocalDate day = query.latestDay().orElse(null);
-		QuoteRow self = day == null ? null : query.quotes(t.level(), null, chipset.key(), null, day).stream()
-				.filter(q -> q.key().equals(key)).findFirst().orElse(null);
-
-		List<Point> points = List.of();
-		List<Candle> candles = List.of();
-		String p = period == null ? "week" : period;
-		if (day != null) {
-			switch (p) {
-				case "day" -> points = query.daily(List.of(key), day.minusDays(SPARK_DAYS - 1), day).stream()
-						.map(r -> new Point(r.day(), r.p25Cents(), r.medianCents(), r.p75Cents()))
-						.toList();
-				case "week", "month", "year" -> candles = query.candles(key, p, from(p, day), day).stream()
-						.map(c -> new Candle(c.start(), c.openCents(), c.highCents(), c.lowCents(), c.closeCents(),
-								c.days()))
-						.toList();
-				default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "period는 day|week|month|year");
-			}
-		}
-
-		List<Child> makers = List.of();
-		List<Child> models = List.of();
-		if (day != null && !"MODEL".equals(t.level())) {
-			List<QuoteRow> under = query.quotes(null, null, chipset.key(), key, day);
-			makers = children(under, "MAKER", chipset);
-			models = children(under, "MODEL", chipset);
-		}
-		Links links = chipsetLinks(chipset, t, maker.orElse(null), seriesName);
-		return new TickerDetail(info, day, fx(day), price(self), change(self), p, points, candles, makers, models,
-				links);
+		return new Resolved(t, chipset, maker, info);
 	}
 
 	private List<Child> children(List<QuoteRow> rows, String level, ChipsetDef chipset) {
@@ -120,14 +162,16 @@ public class PriceService {
 				.map(r -> {
 					MakerDef m = makerDef(chipset, r.makerKey()).orElse(null);
 					String makerName = m == null ? null : m.displayName();
-					String name = "MODEL".equals(level) ? makerName + " " + r.displayName() : r.displayName();
 					String series = "MODEL".equals(level) ? r.displayName() : null;
-					TickerRow row = new TickerRow(r.key(), r.level(), chipset.category().name(), chipset.key(),
-							r.makerKey(), r.seriesKey(), r.displayName(), r.danawaPcode());
+					String name = series != null ? makerName + " " + series : r.displayName();
 					return new Child(r.key(), r.level(), name, price(r), change(r),
-							chipsetLinks(chipset, row, m, series));
+							links(chipset, r.danawaPcode(), m, series));
 				})
 				.toList();
+	}
+
+	private static Instant prevAt(Latest l) {
+		return l.ts().toInstant().minus(Duration.ofHours(24));
 	}
 
 	private Fx fx(LocalDate day) {
@@ -143,16 +187,11 @@ public class PriceService {
 		if (q == null || q.p25Cents() == null || q.prevP25Cents() == null || q.prevP25Cents() == 0) {
 			return null;
 		}
-		double pct = Math.round((q.p25Cents() - q.prevP25Cents()) * 10000.0 / q.prevP25Cents()) / 100.0;
-		return new Change(q.prevDay(), q.prevP25Cents(), pct);
+		return new Change(q.prevAt(), q.prevP25Cents(), pct(q.prevP25Cents(), q.p25Cents()));
 	}
 
-	private static LocalDate from(String period, LocalDate day) {
-		return switch (period) {
-			case "week" -> day.minusWeeks(26);
-			case "month" -> day.minusMonths(24);
-			default -> LocalDate.of(2000, 1, 1);
-		};
+	private static double pct(long from, long to) {
+		return Math.round((to - from) * 10000.0 / from) / 100.0;
 	}
 
 	private static String vendor(ChipsetDef c) {
@@ -178,16 +217,12 @@ public class PriceService {
 		return sb.toString();
 	}
 
-	private static Links chipsetLinks(ChipsetDef chipset, TickerRow row) {
-		return chipsetLinks(chipset, row, null, null);
-	}
-
 	/** 검색어: 칩셋 → "RTX 5070 Ti", 제조사 → "MSI RTX 5070 Ti", 모델 → "MSI RTX 5070 Ti Gaming Trio" */
-	private static Links chipsetLinks(ChipsetDef chipset, TickerRow row, MakerDef maker, String series) {
+	private static Links links(ChipsetDef chipset, String danawaPcode, MakerDef maker, String series) {
 		String base = chipset.category() == Category.RAM ? ramQuery(chipset) : chipset.displayName();
 		String q = (maker == null ? "" : maker.displayName() + " ") + base + (series == null ? "" : " " + series);
 		String ebayQ = maker == null && series == null ? chipset.ebayQuery() : q;
-		return Links.of(ebayQ, chipset.category().ebayCategoryId, q, row == null ? null : row.danawaPcode());
+		return Links.of(ebayQ, chipset.category().ebayCategoryId, q, danawaPcode);
 	}
 
 	/** "DDR5 32GB (2×16GB)" → "DDR5 32GB 16Gx2" (다나와 표기에 가깝게) */
