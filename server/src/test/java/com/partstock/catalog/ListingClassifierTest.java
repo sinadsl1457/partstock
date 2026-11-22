@@ -11,10 +11,11 @@ import org.junit.jupiter.params.provider.CsvSource;
 class ListingClassifierTest {
 
 	static ChipsetDef chipset(String key) {
-		return Catalog.GPU_CHIPSETS.stream()
+		return java.util.Arrays.stream(Category.values())
+				.flatMap(cat -> Catalog.chipsets(cat).stream())
 				.filter(c -> c.key().equals(key))
 				.findFirst()
-				.orElseGet(() -> Catalog.RAM_CHIPSETS.stream().filter(c -> c.key().equals(key)).findFirst().orElseThrow());
+				.orElseThrow();
 	}
 
 	static List<String> keys(String chipsetKey, String title) {
@@ -190,5 +191,37 @@ class ListingClassifierTest {
 		assertThat(chipset("rx-7900-xtx").facets()).containsEntry("series", "RX7000");
 		assertThat(chipset("ddr5-16gb").facets()).containsEntry("ddr", "DDR5").containsEntry("pack", "1");
 		assertThat(chipset("ddr4-2x8gb").facets()).containsEntry("ddr", "DDR4").containsEntry("pack", "2");
+	}
+
+	// CPU(11/22 점검의 실제 eBay 제목). 번호가 비슷한 다른 CPU를 가른다
+	@ParameterizedTest
+	@CsvSource(delimiter = '|', textBlock = """
+			AMD Ryzen 7 9800X3D 8-Core 16-Thread Processor CPU Socket AM5                    | ryzen-7-9800x3d
+			NEW Sealed Box AMD Ryzen 9 9950X3D 16-Core Socket AM5 CPU 100-100000719WOF      | ryzen-9-9950x3d
+			AMD Ryzen 5 7600X 6-Core 4.7GHz Socket AM5 CPU Processor MPN 100-100000593WOF  | ryzen-5-7600x
+			Intel Core i9-14900K 24-Core 3.20GHz LGA1700 Desktop CPU *New W/ Bad Box*       | core-i9-14900k
+			Intel Core i7-14700KF Unlocked Desktop Processor                                 | core-i7-14700kf
+			Intel Core Ultra 7 265K Desktop Processor                                        | core-ultra-7-265k
+			""")
+	void CPU(String title, String expected) {
+		for (ChipsetDef c : Catalog.CPU_CHIPSETS) {
+			if (c.key().equals(expected)) {
+				assertThat(keys(c.key(), title)).as(c.key()).containsExactly(expected); // CPU는 제조사·모델 단계가 없다
+			} else {
+				assertThat(keys(c.key(), title)).as(c.key()).isEmpty();
+			}
+		}
+	}
+
+	@ParameterizedTest
+	@CsvSource(delimiter = '|', textBlock = """
+			AMD - Ryzen 9 9950X3D2 Dual Edition 16-Core - 32-Thread 4.3GHz (5.6GHz Boost)
+			AMD Ryzen 7 9800X3D + ASUS TUF B650 Motherboard Combo
+			Intel Core i9-14900K ES QS Engineering Sample
+			""")
+	void CPU_다른_제품_묶음_샘플은_버린다(String title) {
+		for (ChipsetDef c : Catalog.CPU_CHIPSETS) {
+			assertThat(keys(c.key(), title)).as(c.key()).isEmpty();
+		}
 	}
 }

@@ -1,6 +1,8 @@
 package com.partstock.catalog;
 
+import static com.partstock.catalog.ChipsetDef.CpuBrand.INTEL;
 import static com.partstock.catalog.ChipsetDef.GpuVendor.AMD;
+import static com.partstock.catalog.ChipsetDef.cpu;
 import static com.partstock.catalog.ChipsetDef.GpuVendor.NVIDIA;
 import static com.partstock.catalog.ChipsetDef.gpu;
 import static com.partstock.catalog.ChipsetDef.ram;
@@ -69,6 +71,37 @@ public final class Catalog {
 			ram("ddr4-2x16gb", 4, 16),
 			ram("ddr4-2x8gb", 4, 8),
 			ram("ddr4-2x32gb", 4, 32));
+
+	/**
+	 * CPU(11/22 사용자 결정: VGA·RAM 다음 분류). AMD Ryzen 9000·7000, Intel Core Ultra 200S·14·13세대.
+	 * CPU는 칩 = 제품이라 제조사·모델 단계가 없다(종목 하나 = 칩 하나).
+	 */
+	public static final List<ChipsetDef> CPU_CHIPSETS = List.of(
+			// 9950X3D2(듀얼 에디션, 더 비쌈)는 다른 제품이라 뒤에 2가 오면 뺀다
+			cpu("ryzen-9-9950x3d", "Ryzen 9 9950X3D", com.partstock.catalog.ChipsetDef.CpuBrand.AMD, "RYZEN9000", List.of("9950", "X", "3", "D"), Set.of("2")),
+			cpu("ryzen-9-9950x", "Ryzen 9 9950X", com.partstock.catalog.ChipsetDef.CpuBrand.AMD, "RYZEN9000", List.of("9950", "X"), Set.of("3")),
+			cpu("ryzen-9-9900x", "Ryzen 9 9900X", com.partstock.catalog.ChipsetDef.CpuBrand.AMD, "RYZEN9000", List.of("9900", "X"), Set.of("3")),
+			cpu("ryzen-7-9800x3d", "Ryzen 7 9800X3D", com.partstock.catalog.ChipsetDef.CpuBrand.AMD, "RYZEN9000", List.of("9800", "X", "3", "D"), Set.of()),
+			cpu("ryzen-7-9700x", "Ryzen 7 9700X", com.partstock.catalog.ChipsetDef.CpuBrand.AMD, "RYZEN9000", List.of("9700", "X"), Set.of("3")),
+			cpu("ryzen-5-9600x", "Ryzen 5 9600X", com.partstock.catalog.ChipsetDef.CpuBrand.AMD, "RYZEN9000", List.of("9600", "X"), Set.of("3")),
+			cpu("ryzen-9-7950x3d", "Ryzen 9 7950X3D", com.partstock.catalog.ChipsetDef.CpuBrand.AMD, "RYZEN7000", List.of("7950", "X", "3", "D"), Set.of()),
+			cpu("ryzen-7-7800x3d", "Ryzen 7 7800X3D", com.partstock.catalog.ChipsetDef.CpuBrand.AMD, "RYZEN7000", List.of("7800", "X", "3", "D"), Set.of()),
+			cpu("ryzen-7-7700x", "Ryzen 7 7700X", com.partstock.catalog.ChipsetDef.CpuBrand.AMD, "RYZEN7000", List.of("7700", "X"), Set.of("3")),
+			cpu("ryzen-5-7600x", "Ryzen 5 7600X", com.partstock.catalog.ChipsetDef.CpuBrand.AMD, "RYZEN7000", List.of("7600", "X"), Set.of("3")),
+			cpu("ryzen-5-7600", "Ryzen 5 7600", com.partstock.catalog.ChipsetDef.CpuBrand.AMD, "RYZEN7000", List.of("7600"), Set.of("X")),
+			cpu("core-ultra-9-285k", "Core Ultra 9 285K", INTEL, "ULTRA200", List.of("285", "K"), Set.of()),
+			cpu("core-ultra-7-265k", "Core Ultra 7 265K", INTEL, "ULTRA200", List.of("265", "K"), Set.of()),
+			cpu("core-ultra-7-265kf", "Core Ultra 7 265KF", INTEL, "ULTRA200", List.of("265", "KF"), Set.of()),
+			cpu("core-ultra-5-245k", "Core Ultra 5 245K", INTEL, "ULTRA200", List.of("245", "K"), Set.of()),
+			cpu("core-i9-14900k", "Core i9-14900K", INTEL, "CORE14", List.of("14900", "K"), Set.of()),
+			cpu("core-i7-14700k", "Core i7-14700K", INTEL, "CORE14", List.of("14700", "K"), Set.of()),
+			cpu("core-i7-14700kf", "Core i7-14700KF", INTEL, "CORE14", List.of("14700", "KF"), Set.of()),
+			cpu("core-i5-14600k", "Core i5-14600K", INTEL, "CORE14", List.of("14600", "K"), Set.of()),
+			cpu("core-i5-14400f", "Core i5-14400F", INTEL, "CORE14", List.of("14400", "F"), Set.of()),
+			cpu("core-i9-13900k", "Core i9-13900K", INTEL, "CORE13", List.of("13900", "K"), Set.of()),
+			cpu("core-i7-13700k", "Core i7-13700K", INTEL, "CORE13", List.of("13700", "K"), Set.of()),
+			cpu("core-i5-13600k", "Core i5-13600K", INTEL, "CORE13", List.of("13600", "K"), Set.of()),
+			cpu("core-i5-13400f", "Core i5-13400F", INTEL, "CORE13", List.of("13400", "F"), Set.of()));
 
 	public static final List<MakerDef> GPU_MAKERS = List.of(
 			MakerDef.of("asus", "ASUS", List.of("ASUS"),
@@ -160,18 +193,35 @@ public final class Catalog {
 			"HEATSINK", "GAMING PC", "GAMING DESKTOP", "DESKTOP PC", "COMPUTER", "PREBUILT", "PRE BUILT",
 			"MINI PC", "CABLE", "ADAPTER", "RISER", "STAND", "HOLDER");
 
+	/** 메인보드·쿨러 묶음, 엔지니어링 샘플(ES·QS), 완본체 */
+	public static final List<String> CPU_EXCLUDES = List.of(
+			"COMBO", "BUNDLE", "MOTHERBOARD", "MOBO", "ENGINEERING SAMPLE", "ES", "QS", "GAMING PC", "DESKTOP PC",
+			"COMPUTER", "PREBUILT");
+
 	public static final List<String> RAM_EXCLUDES = List.of(
 			"SODIMM", "SO DIMM", "ECC", "RDIMM", "LRDIMM", "REGISTERED", "SERVER");
 
 	public static List<ChipsetDef> chipsets(Category category) {
-		return category == Category.GPU ? GPU_CHIPSETS : RAM_CHIPSETS;
+		return switch (category) {
+			case GPU -> GPU_CHIPSETS;
+			case RAM -> RAM_CHIPSETS;
+			case CPU -> CPU_CHIPSETS;
+		};
 	}
 
 	public static List<MakerDef> makers(Category category) {
-		return category == Category.GPU ? GPU_MAKERS : RAM_MAKERS;
+		return switch (category) {
+			case GPU -> GPU_MAKERS;
+			case RAM -> RAM_MAKERS;
+			case CPU -> List.of(); // CPU는 칩 = 제품
+		};
 	}
 
 	public static List<String> excludes(Category category) {
-		return category == Category.GPU ? GPU_EXCLUDES : RAM_EXCLUDES;
+		return switch (category) {
+			case GPU -> GPU_EXCLUDES;
+			case RAM -> RAM_EXCLUDES;
+			case CPU -> CPU_EXCLUDES;
+		};
 	}
 }

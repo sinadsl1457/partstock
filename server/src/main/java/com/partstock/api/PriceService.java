@@ -199,6 +199,9 @@ public class PriceService {
 		if (c.category() == Category.RAM) {
 			return "DESKTOP"; // 화면 글자는 웹·앱이 언어에 맞게 바꾼다
 		}
+		if (c.category() == Category.CPU) {
+			return c.facets().get("brand"); // AMD | INTEL
+		}
 		return c.key().startsWith("rx-") ? "AMD" : "NVIDIA";
 	}
 

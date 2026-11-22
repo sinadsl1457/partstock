@@ -233,6 +233,6 @@ class PriceApiTest {
 		mvc.perform(get("/api/ticker").param("key", "nope")).andExpect(status().isNotFound());
 		mvc.perform(get("/api/chart").param("key", "nope")).andExpect(status().isNotFound());
 		mvc.perform(get("/api/chart").param("key", "rtx-5090").param("range", "5y")).andExpect(status().isBadRequest());
-		mvc.perform(get("/api/board").param("category", "CPU")).andExpect(status().isBadRequest());
+		mvc.perform(get("/api/board").param("category", "MONITOR")).andExpect(status().isBadRequest());
 	}
 }

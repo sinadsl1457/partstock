@@ -105,6 +105,36 @@ public record ChipsetDef(
 		return vendor == GpuVendor.NVIDIA ? "RTX" + number.substring(0, 2) : "RX" + number.charAt(0) + "000";
 	}
 
+	/**
+	 * CPU. 예: cpu("ryzen-7-9800x3d", "Ryzen 7 9800X3D", AMD, "RYZEN9000", List.of("9800", "X", "3", "D"), Set.of())
+	 * 제목은 숫자·글자 사이가 나뉘어 9800X3D → 9800 X 3 D, 14700KF → 14700 KF가 된다.
+	 *
+	 * @param notNext 번호 바로 뒤에 오면 다른 CPU인 토큰. 9950X 뒤의 "3"(9950X3D), 7600 뒤의 X(7600X)
+	 */
+	public static ChipsetDef cpu(String key, String displayName, CpuBrand brand, String series,
+			List<String> model, Set<String> notNext) {
+		Predicate<Title> matcher = t -> {
+			if (brand.familyTokens.stream().noneMatch(f -> t.tokens().contains(f))) {
+				return false;
+			}
+			int at = t.indexOf(model);
+			return at >= 0 && !notNext.contains(t.tokenAt(at + model.size()));
+		};
+		return new ChipsetDef(key, Category.CPU, displayName, displayName, matcher,
+				Map.of("brand", brand.name(), "series", series));
+	}
+
+	public enum CpuBrand {
+		AMD(List.of("RYZEN")),
+		INTEL(List.of("CORE", "INTEL"));
+
+		final List<String> familyTokens;
+
+		CpuBrand(List<String> familyTokens) {
+			this.familyTokens = familyTokens;
+		}
+	}
+
 	public enum GpuVendor {
 		NVIDIA(List.of("RTX", "GEFORCE")),
 		AMD(List.of("RX", "RADEON"));

@@ -123,8 +123,9 @@ class CollectServiceTest {
 		java.time.Instant since = java.time.Instant.EPOCH;
 		assertThat(runs.hasCompletedRunSince(since)).isFalse();
 
-		source.failing.addAll(com.partstock.catalog.Catalog.GPU_CHIPSETS.stream().map(c -> c.key()).toList());
-		source.failing.addAll(com.partstock.catalog.Catalog.RAM_CHIPSETS.stream().map(c -> c.key()).toList());
+		for (var category : com.partstock.catalog.Category.values()) {
+			source.failing.addAll(com.partstock.catalog.Catalog.chipsets(category).stream().map(c -> c.key()).toList());
+		}
 		collect.collect(DAY); // 전부 실패 → FAILED
 		assertThat(runs.hasCompletedRunSince(since)).isFalse();
 
