@@ -77,14 +77,14 @@
   "alertInvalid": "Enter a number",
   "alertAlreadyMet": "Already met — fires at the next hourly update",
   "updatedPill": "Updated {time}",
-  "launchSub": "GPU · RAM · CPU prices",
+  "launchSub": "GPU · RAM · CPU · SSD prices",
   "guideSkip": "Skip",
   "guideNext": "Next",
   "guideStartPush": "Allow alerts & start",
   "guideStart": "Get started",
   "guideLater": "Later",
   "guidePrev": "Back",
-  "guide1Title": "GPU, RAM & CPU prices\nat a glance",
+  "guide1Title": "PC part prices\nat a glance",
   "guide1Body": "We collect new eBay US listings every hour and show what you can actually buy each chip for.",
   "guide1Badge": "25th pct. of new eBay listings",
   "guide2Title": "Tap for charts,\ndrill into models",
@@ -129,5 +129,8 @@
   "cpu": "CPU",
   "vendorIntel": "Intel",
   "filter_brand": "Brand",
-  "coreGen": "Core {gen}th Gen"
+  "coreGen": "Core {gen}th Gen",
+  "ssd": "SSD",
+  "filter_capacity": "Capacity",
+  "filter_iface": "Interface"
 }

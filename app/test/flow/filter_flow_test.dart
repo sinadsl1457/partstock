@@ -30,6 +30,7 @@ Future<void> setUpApp() async {
   when(() => market.board(Category.gpu)).thenAnswer((_) async => boardFixture());
   when(() => market.board(Category.ram)).thenAnswer((_) async => boardFixture('board_ram'));
   when(() => market.board(Category.cpu)).thenAnswer((_) async => boardFixture('board_cpu'));
+  when(() => market.board(Category.ssd)).thenAnswer((_) async => boardFixture('board_ssd'));
   final push = FakePush();
   getIt
     ..registerSingleton<MarketRepository>(market)
@@ -124,5 +125,25 @@ void main() {
     expect(find.text('Ryzen 7 9800X3D'), findsNothing);
     expect(find.text('Core Ultra 9 285K'), findsNothing);
     expect(find.text('필터 2'), findsOneWidget);
+  });
+
+  testWidgets('SSD 탭: 4TB · SATA → Samsung 870 EVO 4TB만, 목록에 규격 표시', (tester) async {
+    await open(tester);
+    await tester.tap(find.text('SSD').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Samsung 990 PRO 1TB'), findsOneWidget);
+    expect(find.text('NVMe Gen4'), findsWidgets);
+
+    await tester.tap(find.text('필터'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('4TB'));
+    await tester.pump();
+    await tester.tap(find.text('SATA'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('1개 종목 보기'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Samsung 870 EVO 4TB'), findsOneWidget);
+    expect(find.text('Samsung 990 PRO 1TB'), findsNothing);
   });
 }

@@ -190,12 +190,16 @@ String categoryLabel(AppLocalizations t, Category c) => switch (c) {
   Category.gpu => t.gpu,
   Category.ram => t.ram,
   Category.cpu => t.cpu,
+  Category.ssd => t.ssd,
 };
 
 String vendorLabel(AppLocalizations t, String vendor) => switch (vendor) {
   'NVIDIA' => t.vendorNvidia,
   'AMD' => t.vendorAmd,
   'INTEL' => t.vendorIntel,
+  'NVME5' => 'NVMe Gen5',
+  'NVME4' => 'NVMe Gen4',
+  'SATA' => 'SATA',
   'DESKTOP' => t.vendorDesktop,
   _ => vendor,
 };

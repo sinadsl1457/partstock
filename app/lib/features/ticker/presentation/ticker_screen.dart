@@ -35,6 +35,7 @@ class TickerScreen extends StatelessWidget {
             : switch (d.ticker.category) {
                 'RAM' => t.categoryRam,
                 'CPU' => t.cpu,
+                'SSD' => t.ssd,
                 _ => t.categoryVga,
               };
         return Scaffold(

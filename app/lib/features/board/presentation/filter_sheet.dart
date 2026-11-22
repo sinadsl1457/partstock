@@ -31,7 +31,19 @@ String facetValueLabel(AppLocalizations t, String facet, String value) => switch
     'CORE13' => t.coreGen('13'),
     _ => value.replaceFirstMapped(RegExp(r'^(RTX|RX)(\d+)$'), (m) => '${m[1]} ${m[2]}'),
   },
-  'brand' => value == 'INTEL' ? 'Intel' : value,
+  'brand' => switch (value) {
+    'INTEL' => 'Intel',
+    'SAMSUNG' => 'Samsung',
+    'CRUCIAL' => 'Crucial',
+    'KINGSTON' => 'Kingston',
+    'SKHYNIX' => 'SK hynix',
+    _ => value,
+  },
+  'iface' => switch (value) {
+    'NVME5' => 'NVMe Gen5',
+    'NVME4' => 'NVMe Gen4',
+    _ => value,
+  },
   'pack' => value == '1' ? t.pack_1 : t.pack_2,
   _ => value,
 };
@@ -41,6 +53,8 @@ String facetLabel(AppLocalizations t, String facet) => switch (facet) {
   'ddr' => t.filter_ddr,
   'pack' => t.filter_pack,
   'brand' => t.filter_brand,
+  'capacity' => t.filter_capacity,
+  'iface' => t.filter_iface,
   _ => facet,
 };
 

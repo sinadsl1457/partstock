@@ -269,7 +269,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get launchSub => 'VGA · RAM · CPU 시세';
+  String get launchSub => 'VGA · RAM · CPU · SSD 시세';
 
   @override
   String get guideSkip => '건너뛰기';
@@ -290,7 +290,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get guidePrev => '이전';
 
   @override
-  String get guide1Title => 'VGA·RAM·CPU 시세를\n한눈에';
+  String get guide1Title => 'PC 부품 시세를\n한눈에';
 
   @override
   String get guide1Body => '미국 eBay 새 상품 가격을 매시간 모아, 칩셋마다 지금 살 수 있는 가격(대표가)을 원화로 보여 드려요.';
@@ -434,4 +434,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String coreGen(String gen) {
     return 'Core $gen세대';
   }
+
+  @override
+  String get ssd => 'SSD';
+
+  @override
+  String get filter_capacity => '용량';
+
+  @override
+  String get filter_iface => '규격';
 }

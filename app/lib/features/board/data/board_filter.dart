@@ -27,6 +27,11 @@ const filterGroups = <Category, List<FilterGroup>>{
     FilterGroup('brand', ['AMD', 'INTEL']),
     FilterGroup('series', ['RYZEN9000', 'RYZEN7000', 'ULTRA200', 'CORE14', 'CORE13']),
   ],
+  Category.ssd: [
+    FilterGroup('capacity', ['1TB', '2TB', '4TB']),
+    FilterGroup('iface', ['NVME5', 'NVME4', 'SATA']),
+    FilterGroup('brand', ['SAMSUNG', 'WD', 'CRUCIAL', 'KINGSTON', 'SKHYNIX']),
+  ],
 };
 
 /// facet → 고른 값들
