@@ -26,3 +26,11 @@ export function pct(v: number): string {
 export function rate(fx: Fx): string {
   return fx.usdKrw.toLocaleString("ko-KR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
+
+/** 업데이트 시각: 한국어는 한국 시간, 영어는 UTC */
+export function time(iso: string, locale: Locale): string {
+  const d = new Date(iso);
+  return locale === "ko"
+    ? d.toLocaleString("ko-KR", { timeZone: "Asia/Seoul", month: "numeric", day: "numeric", hour: "numeric", minute: "2-digit" })
+    : d.toLocaleString("en-US", { timeZone: "UTC", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false }) + " UTC";
+}

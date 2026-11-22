@@ -54,12 +54,15 @@ docs/     AI_LOG.md
 ## 웹 (web/)
 - Next.js 16(App Router, `cacheComponents` 켜짐) + Tailwind + Lightweight Charts(TradingView, 로고는 라이선스 표시라 끄지 않음).
 - 코드를 쓰기 전에 `web/node_modules/next/dist/docs/`의 해당 문서를 본다(AGENTS.md).
-- 주소: `/[lang]/[category]` 시세판, `/[lang]/t/[...key]` 상세. 언어 없는 주소는 `proxy.ts`가 브라우저 언어로 보낸다.
-- 주소(params)·`usePathname`을 읽는 부분은 `<Suspense>` 안에. 서버 → 클라이언트 컴포넌트로 함수를 넘기지 않는다(글자를 만들어 넘김).
-- API 호출은 `lib/api.ts`에서만(`use cache` + `cacheLife('hours')`, 시세는 하루 한 번 바뀜). 상세는 네 기간을 한 번에 받아 기간 버튼이 기다리지 않게.
-- 차트는 점이 2개 미만이면 그리지 않고 "쌓이는 중" 안내. 원화 차트는 지금 환율 하나로 바꿔 그린다(환율 변동이 섞이지 않게).
+- **화면은 코인 거래소 배치**(11/22 사용자 결정: "주식·코인처럼 상품을 누르면 그래프"): 왼쪽 종목 목록(`[category]/layout.tsx`), 오른쪽 고른 종목의 큰 차트(`[category]/[[...key]]/page.tsx`). 주소 `/ko/gpu/rtx-5070-ti/msi`. 휴대폰은 고른 종목 차트가 목록 위.
+  - 차트: 기간 1일·1주·1달·3달·1년·전체, 선(기본)·봉. 여섯 기간을 서버에서 한 번에 받아 버튼이 기다리지 않게.
+  - 시간축은 한국어 KST(+9), 영어 UTC. 원화 차트는 지금 환율 하나로 바꿔 그린다(환율 변동이 섞이지 않게). 눈금은 원 단위.
+  - Next 16은 지나간 화면을 숨겨 둔다(Activity, 최대 3개). 브라우저 시험에서 요소를 셀 때는 `:visible`로.
+- 주소(params)·`usePathname`을 읽는 부분은 `<Suspense>` 안에. 서버 → 클라이언트 컴포넌트로 함수를 넘기지 않는다(글자를 만들어 넘김). layout 파일에서는 컴포넌트·generateStaticParams 외에 내보내지 않는다(`lib/route.ts`).
+- API 호출은 `lib/api.ts`에서만(`use cache`, 10분마다 새로 받음: 시세는 매시간 바뀜).
 - 바로가기 기본값은 브라우저 localStorage(실패해도 eBay 기본). 상승·하락 색은 언어별(한국 빨강↑파랑↓, 영어 초록↑빨강↓).
-- 커밋 전: `npm run lint`, `npx tsc --noEmit`, `npm run build`. 화면을 바꾸면 브라우저 콘솔·개발 서버 로그 에러까지 확인.
+- 배포: Vercel(main push → 자동), Root `web`, 지역 `syd1`(API가 시드니), 환경 변수 `PARTSTOCK_API_URL`. 주소 https://partstock-two.vercel.app
+- 커밋 전: `npm run lint`, `npx tsc --noEmit`, `npm run build`. 화면을 바꾸면 브라우저 콘솔·개발 서버 로그 에러까지 확인. API 응답 칸을 바꾸면 서버를 먼저 배포하고 웹을 올린다.
 
 ## 화면 (2·3단계)
 - 영어·한국어. 영어는 달러, 한국어는 원화(공식 환율 환산) 크게 + 달러 작게.
