@@ -7,7 +7,7 @@ export function isLocale(s: string): s is Locale {
 }
 
 const ko = {
-  tagline: "VGA·RAM·CPU 시세 · eBay 새 상품 기준",
+  tagline: "PC 부품 시세 · eBay 새 상품 기준",
   gpu: "VGA",
   ram: "RAM",
   jumpDefault: "바로가기",
@@ -32,11 +32,11 @@ const ko = {
   filterApply: "{count}개 종목 보기",
   filterEmpty: "조건에 맞는 종목이 없어요",
   filterHintMulti: "여러 개 고를 수 있어요. 아무것도 안 고르면 전체",
-  facet: { series: "시리즈", ddr: "세대", pack: "구성", brand: "브랜드" } as Record<string, string>,
-  brand: { AMD: "AMD", INTEL: "Intel" } as Record<string, string>,
+  facet: { series: "시리즈", ddr: "세대", pack: "구성", brand: "브랜드", capacity: "용량", iface: "규격" } as Record<string, string>,
+  brand: { AMD: "AMD", INTEL: "Intel", SAMSUNG: "Samsung", WD: "WD", CRUCIAL: "Crucial", KINGSTON: "Kingston", SKHYNIX: "SK hynix" } as Record<string, string>,
   coreGen: "Core {gen}세대",
   cpu: "CPU",
-  cat: { gpu: "VGA", ram: "RAM", cpu: "CPU" } as Record<"gpu" | "ram" | "cpu", string>,
+  cat: { gpu: "VGA", ram: "RAM", cpu: "CPU", ssd: "SSD" } as Record<"gpu" | "ram" | "cpu" | "ssd", string>,
   pack: { "1": "1개", "2": "2개 묶음" } as Record<string, string>,
   ranges: { "1d": "1일", "1w": "1주", "1m": "1달", "3m": "3달", "1y": "1년", all: "전체" },
   bucket: { "1 hour": "1시간 봉", "4 hours": "4시간 봉", "1 day": "일봉", "7 days": "주봉" } as Record<string, string>,
@@ -52,13 +52,13 @@ const ko = {
   modelsNote: "판매 글 5개 이상일 때만 시세",
   notFound: "없는 종목입니다.",
   source: "가격: eBay(미국) · 환율: 유럽중앙은행 기준 환율 · 차트: TradingView Lightweight Charts",
-  vendor: { NVIDIA: "NVIDIA", AMD: "AMD", INTEL: "Intel", DESKTOP: "데스크톱용" } as Record<string, string>,
+  vendor: { NVIDIA: "NVIDIA", AMD: "AMD", INTEL: "Intel", DESKTOP: "데스크톱용", NVME5: "NVMe Gen5", NVME4: "NVMe Gen4", SATA: "SATA" } as Record<string, string>,
 };
 
 export type Dict = typeof ko;
 
 const en: Dict = {
-  tagline: "GPU, RAM & CPU prices · new listings on eBay",
+  tagline: "PC part prices · new listings on eBay",
   gpu: "GPU",
   ram: "RAM",
   jumpDefault: "Open in",
@@ -82,11 +82,11 @@ const en: Dict = {
   filterApply: "Show {count} items",
   filterEmpty: "No items match",
   filterHintMulti: "Pick any. None picked means all",
-  facet: { series: "Series", ddr: "Generation", pack: "Pack", brand: "Brand" },
-  brand: { AMD: "AMD", INTEL: "Intel" },
+  facet: { series: "Series", ddr: "Generation", pack: "Pack", brand: "Brand", capacity: "Capacity", iface: "Interface" },
+  brand: { AMD: "AMD", INTEL: "Intel", SAMSUNG: "Samsung", WD: "WD", CRUCIAL: "Crucial", KINGSTON: "Kingston", SKHYNIX: "SK hynix" },
   coreGen: "Core {gen}th Gen",
   cpu: "CPU",
-  cat: { gpu: "GPU", ram: "RAM", cpu: "CPU" },
+  cat: { gpu: "GPU", ram: "RAM", cpu: "CPU", ssd: "SSD" },
   pack: { "1": "Single", "2": "2-stick kit" },
   ranges: { "1d": "1D", "1w": "1W", "1m": "1M", "3m": "3M", "1y": "1Y", all: "All" },
   bucket: { "1 hour": "1h candles", "4 hours": "4h candles", "1 day": "Daily", "7 days": "Weekly" },
@@ -102,7 +102,7 @@ const en: Dict = {
   modelsNote: "Shown with 5+ listings",
   notFound: "No such item.",
   source: "Prices: eBay US · Charts: TradingView Lightweight Charts",
-  vendor: { NVIDIA: "NVIDIA", AMD: "AMD", INTEL: "Intel", DESKTOP: "Desktop" },
+  vendor: { NVIDIA: "NVIDIA", AMD: "AMD", INTEL: "Intel", DESKTOP: "Desktop", NVME5: "NVMe Gen5", NVME4: "NVMe Gen4", SATA: "SATA" },
 };
 
 export function dict(locale: Locale): Dict {

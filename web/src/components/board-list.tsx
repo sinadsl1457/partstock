@@ -158,7 +158,8 @@ export function BoardList({
                 }`}
               >
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-[15px] font-semibold text-ink">{r.name}</div>
+                  {/* SSD는 용량이 이름 끝에 있어 잘리면 안 된다 → 두 줄까지 */}
+                  <div className="line-clamp-2 text-[15px] leading-snug font-semibold text-ink">{r.name}</div>
                   <div className="text-xs text-muted">{r.vendor}</div>
                 </div>
                 <Sparkline points={r.spark} up={colors.up} down={colors.down} />
@@ -206,7 +207,9 @@ function FilterPanel({
         ? (labels.pack[v] ?? v)
         : facet === "brand"
           ? (labels.brand[v] ?? v)
-          : v;
+          : facet === "iface"
+            ? ({ NVME5: "NVMe Gen5", NVME4: "NVMe Gen4" }[v] ?? v)
+            : v;
 
   return (
     <div className="flex flex-col gap-4 border-b border-line bg-surface-hi px-4 py-4">

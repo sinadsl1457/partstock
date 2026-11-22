@@ -1,6 +1,6 @@
-// 시세 목록 필터: 분류(VGA·RAM·CPU)마다 어떤 칸(facet)으로 거르는지. 필터를 늘리면 filterGroups에 한 줄 추가(앱과 같은 규칙).
+// 시세 목록 필터: 분류(VGA·RAM·CPU·SSD)마다 어떤 칸(facet)으로 거르는지. 필터를 늘리면 filterGroups에 한 줄 추가(앱과 같은 규칙).
 // 서버가 종목마다 facets(series, ddr, pack)를 준다.
-export type Cat = "gpu" | "ram" | "cpu";
+export type Cat = "gpu" | "ram" | "cpu" | "ssd";
 
 /** single이면 하나만 고른다(RAM 구성). 아니면 여러 개, 아무것도 안 고르면 전체 */
 export type FilterGroup = { facet: string; values: string[]; single?: boolean; initial: string[] };
@@ -15,6 +15,11 @@ export const filterGroups: Record<Cat, FilterGroup[]> = {
   cpu: [
     { facet: "brand", values: ["AMD", "INTEL"], initial: [] },
     { facet: "series", values: ["RYZEN9000", "RYZEN7000", "ULTRA200", "CORE14", "CORE13"], initial: [] },
+  ],
+  ssd: [
+    { facet: "capacity", values: ["1TB", "2TB", "4TB"], initial: [] },
+    { facet: "iface", values: ["NVME5", "NVME4", "SATA"], initial: [] },
+    { facet: "brand", values: ["SAMSUNG", "WD", "CRUCIAL", "KINGSTON", "SKHYNIX"], initial: [] },
   ],
 };
 
