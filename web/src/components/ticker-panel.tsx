@@ -1,8 +1,9 @@
-// 오른쪽: 고른 종목(없으면 목록 첫 종목)의 현재가·차트·제조사·모델.
-// /ko/gpu, /ko/gpu/rtx-5070-ti, /ko/gpu/rtx-5070-ti/msi, /ko/gpu/rtx-5070-ti/msi/gaming-trio
+// 오른쪽: 고른 종목(없으면 목록 첫 종목)의 현재가·차트·제조사·모델. 두 주소 파일이 같이 쓴다.
+//   [category]/page.tsx        /ko/gpu                 → 목록 첫 종목
+//   [category]/[...key]/page.tsx /ko/gpu/rtx-5070-ti/msi → 그 종목
+// 한 파일([[...key]])로 두면 Vercel이 /ko/gpu용으로 미리 만든 화면을 /ko/gpu/* 전부에 내보냈다(11/22 운영에서 발견).
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { ChartPanel } from "@/components/chart-panel";
 import { JumpButtons } from "@/components/jump";
 import { getBoard, getChart, getTicker, ranges, type Category, type Chart, type Child, type Fx, type Range } from "@/lib/api";
@@ -10,15 +11,7 @@ import { mainPrice, pct, time, usd } from "@/lib/format";
 import { dict, upDownColors, type Locale } from "@/lib/i18n";
 import { checkParams } from "@/lib/route";
 
-export default function TickerPage({ params }: PageProps<"/[lang]/[category]/[[...key]]">) {
-  return (
-    <Suspense fallback={<section className="h-[720px] rounded-xl border border-line bg-surface" />}>
-      <Panel params={params} />
-    </Suspense>
-  );
-}
-
-async function Panel({ params }: { params: PageProps<"/[lang]/[category]/[[...key]]">["params"] }) {
+export async function TickerPanel({ params }: { params: Promise<{ lang: string; category: string; key?: string[] }> }) {
   const p = await params;
   const { lang, category } = checkParams(p.lang, p.category);
   const t = dict(lang);
