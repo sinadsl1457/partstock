@@ -74,5 +74,6 @@
   "condAbove": "≥ {target}",
   "alertFired": "Fired · {price}",
   "alertDelete": "Remove alert",
-  "alertInvalid": "Enter a number"
+  "alertInvalid": "Enter a number",
+  "alertAlreadyMet": "Already met — fires at the next hourly update"
 }

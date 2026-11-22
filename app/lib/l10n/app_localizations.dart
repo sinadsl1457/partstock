@@ -541,6 +541,12 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'가격을 숫자로 넣어 주세요'**
   String get alertInvalid;
+
+  /// No description provided for @alertAlreadyMet.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 조건에 맞아 다음 정각 수집 때 바로 울립니다'**
+  String get alertAlreadyMet;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

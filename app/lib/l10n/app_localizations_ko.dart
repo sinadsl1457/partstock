@@ -259,4 +259,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get alertInvalid => '가격을 숫자로 넣어 주세요';
+
+  @override
+  String get alertAlreadyMet => '이미 조건에 맞아 다음 정각 수집 때 바로 울립니다';
 }

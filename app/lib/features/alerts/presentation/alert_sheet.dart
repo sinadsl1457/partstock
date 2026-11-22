@@ -98,8 +98,10 @@ class _AlertSheetState extends State<AlertSheet> {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
     final v = double.tryParse(_input.text.replaceAll(',', ''));
-    final diff = v == null || _now == 0 ? null : ((v - _now).abs() / _now * 100);
+    final diff = v == null || _now == 0 ? null : (v - _now) / _now * 100;
     final below = _dir == AlertDirection.below;
+    // 고른 방향이 아니라 실제 숫자로: "이상" + 지금보다 낮은 값이면 이미 조건에 맞음
+    final alreadyMet = v != null && (below ? v >= _now : v <= _now);
     return Padding(
       padding: EdgeInsets.fromLTRB(20, 0, 20, 20 + MediaQuery.viewInsetsOf(context).bottom),
       child: Column(
@@ -133,13 +135,22 @@ class _AlertSheetState extends State<AlertSheet> {
               suffixText: widget.units.usdKrw == null ? r'$' : '만원',
               border: const OutlineInputBorder(),
             ),
-            onChanged: (_) => setState(() {}),
+            // 손으로 넣으면 빠른 % 버튼 선택은 푼다(값과 맞지 않을 수 있어서)
+            onChanged: (_) => setState(() => _pct = 0),
           ),
           const SizedBox(height: 6),
-          if (diff != null)
+          if (diff != null && diff.abs() >= 0.05)
             Text(
-              below ? t.alertLower(diff.toStringAsFixed(1)) : t.alertHigher(diff.toStringAsFixed(1)),
-              style: TextStyle(fontSize: 13, color: below ? upDown(context).down : upDown(context).up),
+              diff < 0 ? t.alertLower(diff.abs().toStringAsFixed(1)) : t.alertHigher(diff.toStringAsFixed(1)),
+              style: TextStyle(fontSize: 13, color: diff < 0 ? upDown(context).down : upDown(context).up),
+            ),
+          if (alreadyMet)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                t.alertAlreadyMet,
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFFB45309)),
+              ),
             ),
           const SizedBox(height: 12),
           Row(

@@ -261,4 +261,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alertInvalid => 'Enter a number';
+
+  @override
+  String get alertAlreadyMet => 'Already met — fires at the next hourly update';
 }
