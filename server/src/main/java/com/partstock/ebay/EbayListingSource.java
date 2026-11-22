@@ -29,6 +29,7 @@ public class EbayListingSource implements ListingSource {
 	static final String FILTER = "buyingOptions:{FIXED_PRICE},conditionIds:{1000},itemLocationCountry:US";
 
 	private final RestClient http;
+	private final java.util.concurrent.atomic.AtomicLong requests = new java.util.concurrent.atomic.AtomicLong();
 	private final String clientId;
 	private final String clientSecret;
 	private final int maxPages;
@@ -54,6 +55,7 @@ public class EbayListingSource implements ListingSource {
 		List<Listing> out = new ArrayList<>();
 		for (int page = 0; page < maxPages; page++) {
 			int offset = page * PAGE_SIZE;
+			requests.incrementAndGet();
 			SearchResponse res = http.get()
 					.uri(u -> u.path("/buy/browse/v1/item_summary/search")
 							.queryParam("q", chipset.ebayQuery())
@@ -72,7 +74,8 @@ public class EbayListingSource implements ListingSource {
 			}
 			for (ItemSummary item : res.itemSummaries()) {
 				if (item.title() != null && item.price() != null && item.price().value() != null) {
-					out.add(new Listing(item.title(), toCents(item.price().value()), item.price().currency()));
+					String seller = item.seller() == null ? null : sellerKey(item.seller().username());
+					out.add(new Listing(item.title(), toCents(item.price().value()), item.price().currency(), seller));
 				}
 			}
 			if (res.next() == null || offset + PAGE_SIZE >= res.total()) {
@@ -80,6 +83,25 @@ public class EbayListingSource implements ListingSource {
 			}
 		}
 		return out;
+	}
+
+	@Override
+	public long requestCount() {
+		return requests.get();
+	}
+
+	/** 판매자 이름 → 되돌릴 수 없는 짧은 값(SHA-256 앞 12자리). 이름은 어디에도 남기지 않는다 */
+	static String sellerKey(String username) {
+		if (username == null || username.isBlank()) {
+			return null;
+		}
+		try {
+			byte[] h = java.security.MessageDigest.getInstance("SHA-256")
+					.digest(username.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+			return java.util.HexFormat.of().formatHex(h, 0, 6);
+		} catch (java.security.NoSuchAlgorithmException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	/** "799.99" → 79999 */
@@ -120,7 +142,9 @@ public class EbayListingSource implements ListingSource {
 
 	record SearchResponse(int total, String next, List<ItemSummary> itemSummaries) {}
 
-	record ItemSummary(String title, Price price) {}
+	record ItemSummary(String title, Price price, Seller seller) {}
+
+	record Seller(String username) {}
 
 	record Price(String value, String currency) {}
 }

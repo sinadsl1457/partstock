@@ -153,6 +153,27 @@ class CollectServiceTest {
 	}
 
 	@Test
+	void 한_판매자가_제목만_바꿔_같은_가격에_많이_올린_글은_한_번만_센다() {
+		// 11/22 실제: DDR4 32GB에서 한 판매자가 $344.95 글 197개 → p25·중앙값·p75가 모두 그 값이 됨
+		var listings = new ArrayList<Listing>();
+		for (int i = 0; i < 12; i++) {
+			listings.add(new Listing("RTX 5080 variant " + i, 300_000, "USD", "massseller"));
+		}
+		listings.add(new Listing("RTX 5080 a", 100_000, "USD", "s1"));
+		listings.add(new Listing("RTX 5080 b", 101_000, "USD", "s2"));
+		listings.add(new Listing("RTX 5080 c", 102_000, "USD", "s3"));
+		listings.add(new Listing("RTX 5080 d", 104_000, "USD", "s3")); // 같은 판매자라도 다른 가격은 따로
+		source.byChipset.put("rtx-5080", listings);
+
+		collect.collect(DAY);
+
+		assertThat(prices.find("rtx-5080", DAY)).hasValueSatisfying(s -> {
+			assertThat(s.rawCount()).isEqualTo(5); // 12개 → 1개 + 나머지 4개
+			assertThat(s.p25Cents()).isLessThan(110_000);
+		});
+	}
+
+	@Test
 	void 달러가_아닌_글은_세지_않는다() {
 		source.byChipset.put("rtx-5080", List.of(
 				usd("RTX 5080 a", 100_000), usd("RTX 5080 b", 110_000),

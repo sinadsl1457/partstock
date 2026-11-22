@@ -1,5 +1,5 @@
 {
-  "_note": "2026-11-21 eBay Browse API 실제 응답(RTX 5070 Ti)에서 3개만 남기고, 판매자·글 번호·사진 등 저장하지 않는 칸은 지움. 마지막 글은 확인용으로 추가.",
+  "_note": "2026-11-21 eBay Browse API 실제 응답(RTX 5070 Ti)에서 3개만 남기고, 판매자·글 번호·사진 등 저장하지 않는 칸은 지움. 마지막 글은 확인용으로 추가. 11/22: 같은 판매자 확인용으로 가짜 판매자 이름을 넣음(실제 이름 아님).",
   "total": 84,
   "limit": 200,
   "offset": 0,
@@ -14,7 +14,10 @@
       "conditionId": "1000",
       "buyingOptions": [
         "FIXED_PRICE"
-      ]
+      ],
+      "seller": {
+        "username": "test-store-a"
+      }
     },
     {
       "title": "MSI Gaming GeForce RTX 5070 Ti 16GB GDDR7 PCI Express 5.0 ATX Graphics Card RTX",
@@ -26,7 +29,10 @@
       "conditionId": "1000",
       "buyingOptions": [
         "FIXED_PRICE"
-      ]
+      ],
+      "seller": {
+        "username": "test-store-a"
+      }
     },
     {
       "title": "GIGABYTE AORUS GeForce RTX 5070 Ti Infinity 16GB GDDR7 GV-N507TAORUS IF-16GD",
@@ -38,10 +44,16 @@
       "conditionId": "1000",
       "buyingOptions": [
         "FIXED_PRICE"
-      ]
+      ],
+      "seller": {
+        "username": "test-store-b"
+      }
     },
     {
-      "title": "(가격 없는 글: 파서가 건너뛰는지 확인용으로 추가)"
+      "title": "(가격 없는 글: 파서가 건너뛰는지 확인용으로 추가)",
+      "seller": {
+        "username": "test-store-c"
+      }
     }
   ]
 }

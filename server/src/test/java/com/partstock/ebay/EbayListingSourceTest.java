@@ -1,6 +1,7 @@
 package com.partstock.ebay;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -48,13 +49,19 @@ class EbayListingSourceTest {
 				.andExpect(header("X-EBAY-C-MARKETPLACE-ID", "EBAY_US"))
 				.andRespond(withSuccess(new ClassPathResource("ebay/search-page1.json"), MediaType.APPLICATION_JSON));
 
-		var listings = source("id", "secret").search(RTX_5070_TI);
+		var source = source("id", "secret");
+		var listings = source.search(RTX_5070_TI);
 
 		// 가격 없는 글은 빠지고, 다음 쪽이 없으니(실제 응답은 next 칸 자체가 없음) 한 번만 부른다
-		assertThat(listings).containsExactly(
-				new Listing("PNY NVIDIA GeForce RTX 5070 Ti OC Triple Fan Graphics Card 16GB GPU GDDR7 NEW", 135_000, "USD"),
-				new Listing("MSI Gaming GeForce RTX 5070 Ti 16GB GDDR7 PCI Express 5.0 ATX Graphics Card RTX", 150_799, "USD"),
-				new Listing("GIGABYTE AORUS GeForce RTX 5070 Ti Infinity 16GB GDDR7 GV-N507TAORUS IF-16GD", 199_999, "USD"));
+		assertThat(listings).extracting(Listing::title, Listing::priceCents, Listing::currency).containsExactly(
+				tuple("PNY NVIDIA GeForce RTX 5070 Ti OC Triple Fan Graphics Card 16GB GPU GDDR7 NEW", 135_000L, "USD"),
+				tuple("MSI Gaming GeForce RTX 5070 Ti 16GB GDDR7 PCI Express 5.0 ATX Graphics Card RTX", 150_799L, "USD"),
+				tuple("GIGABYTE AORUS GeForce RTX 5070 Ti Infinity 16GB GDDR7 GV-N507TAORUS IF-16GD", 199_999L, "USD"));
+		// 판매자는 되돌릴 수 없는 값으로만(이름이 남지 않게). 같은 판매자는 같은 값
+		assertThat(listings.get(0).sellerKey()).isEqualTo(listings.get(1).sellerKey()).hasSize(12)
+				.doesNotContain("store");
+		assertThat(listings.get(2).sellerKey()).isNotEqualTo(listings.get(0).sellerKey());
+		assertThat(source.requestCount()).isEqualTo(1);
 		server.verify();
 	}
 

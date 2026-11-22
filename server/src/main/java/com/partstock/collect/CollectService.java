@@ -76,6 +76,7 @@ public class CollectService {
 		tickers.syncChipsets();
 		long runId = runs.start(day, clock.instant());
 		int calls = 0, seen = 0, used = 0, saved = 0;
+		long requestsBefore = source.requestCount();
 		List<String> errors = new ArrayList<>();
 		int chipsetCount = 0;
 		// 같은 제조사·모델 종목을 글마다 다시 넣지 않게
@@ -94,8 +95,8 @@ public class CollectService {
 					errors.add(chipset.key() + ": " + e);
 					continue;
 				}
-				// 같은 판매자가 같은 글을 여러 개 올린 경우 한 번만 센다
-				listings = listings.stream().distinct().toList();
+				// 같은 판매자가 같은 가격 글을 여러 개 올린 경우 한 번만 센다
+				listings = ListingSource.dedupe(listings);
 				seen += listings.size();
 
 				Map<String, List<Long>> byTicker = new LinkedHashMap<>();
@@ -134,7 +135,9 @@ public class CollectService {
 		Status status = errors.isEmpty() ? Status.OK : errors.size() == chipsetCount ? Status.FAILED : Status.PARTIAL;
 		CollectResult result = new CollectResult(status, calls, seen, used, saved, errors);
 		runs.finish(runId, clock.instant(), result);
-		log.info("수집 {} {}: 호출 {} / 글 {} / 사용 {} / 시세 {}", day, status, calls, seen, used, saved);
+		// 칩셋 = 검색한 칩셋 수, eBay 요청 = 실제로 보낸 쪽 요청 수(하루 한도 5,000을 세는 단위)
+		log.info("수집 {} {}: 칩셋 {} / eBay 요청 {} / 글 {} / 사용 {} / 시세 {}", day, status, calls,
+				source.requestCount() - requestsBefore, seen, used, saved);
 		return result;
 	}
 }
