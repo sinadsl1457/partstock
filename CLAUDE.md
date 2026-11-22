@@ -63,6 +63,7 @@ docs/     AI_LOG.md
   - 차트: 기간 1일·1주·1달·3달·1년·전체, 선(기본)·봉. 여섯 기간을 서버에서 한 번에 받아 버튼이 기다리지 않게.
   - 시간축은 한국어 KST(+9), 영어 UTC. 원화 차트는 지금 환율 하나로 바꿔 그린다(환율 변동이 섞이지 않게). 눈금은 원 단위.
   - Next 16은 지나간 화면을 숨겨 둔다(Activity, 최대 3개). 브라우저 시험에서 요소를 셀 때는 `:visible`로.
+- 주소는 `[category]/page.tsx`(분류 첫 화면) + `[category]/[...key]/page.tsx`(종목)로 나누고 내용은 `components/ticker-panel.tsx` 하나. 선택형 `[[...key]]` 한 파일로 두면 Vercel이 `/ko/gpu`용으로 미리 만든 화면을 `/ko/gpu/*` 전부에 내보낸다(로컬 `next start`에서는 안 보임, 11/22). 웹 확인은 Vercel 배포본에서 종목 주소를 바로 열어 본다.
 - 주소(params)·`usePathname`을 읽는 부분은 `<Suspense>` 안에. 서버 → 클라이언트 컴포넌트로 함수를 넘기지 않는다(글자를 만들어 넘김). layout 파일에서는 컴포넌트·generateStaticParams 외에 내보내지 않는다(`lib/route.ts`).
 - API 호출은 `lib/api.ts`에서만(`use cache`, 10분마다 새로 받음: 시세는 매시간 바뀜).
 - 목록 필터(11/22 사용자 결정: 분류마다 필터 창, 나중에 필터가 늘어도 한 표만 고치게): 웹 `lib/filters.ts`, 앱 `features/board/data/board_filter.dart`에 같은 규칙. VGA 시리즈(여러 개, 처음 전체), RAM 세대(여러 개)·구성(하나, 처음 1개). 분류마다 기억(웹 localStorage, 앱 SharedPreferences). 주소에 종목이 없는데 첫 종목이 필터로 가려지면 오른쪽도 필터된 첫 종목으로.
