@@ -11,7 +11,7 @@ const notoKr = Noto_Sans_KR({ subsets: ["latin"], weight: ["400", "500", "700"],
 
 export const metadata: Metadata = {
   title: "partstock",
-  description: "그래픽카드·램 시세판 (eBay 새 상품 기준)",
+  description: "VGA·RAM 시세판 (eBay 새 상품 기준)",
 };
 
 export function generateStaticParams() {

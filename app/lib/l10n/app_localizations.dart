@@ -119,13 +119,13 @@ abstract class AppLocalizations {
   /// No description provided for @gpu.
   ///
   /// In ko, this message translates to:
-  /// **'그래픽카드'**
+  /// **'VGA'**
   String get gpu;
 
   /// No description provided for @ram.
   ///
   /// In ko, this message translates to:
-  /// **'램'**
+  /// **'RAM'**
   String get ram;
 
   /// No description provided for @colName.

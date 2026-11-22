@@ -22,10 +22,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get boardTitle => 'Prices';
 
   @override
-  String get gpu => 'Graphics cards';
+  String get gpu => 'GPU';
 
   @override
-  String get ram => 'Memory';
+  String get ram => 'RAM';
 
   @override
   String get colName => 'Item';

@@ -22,10 +22,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get boardTitle => '시세';
 
   @override
-  String get gpu => '그래픽카드';
+  String get gpu => 'VGA';
 
   @override
-  String get ram => '램';
+  String get ram => 'RAM';
 
   @override
   String get colName => '종목';

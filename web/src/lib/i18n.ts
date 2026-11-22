@@ -7,9 +7,9 @@ export function isLocale(s: string): s is Locale {
 }
 
 const ko = {
-  tagline: "그래픽카드·램 시세 · eBay 새 상품 기준",
-  gpu: "그래픽카드",
-  ram: "램",
+  tagline: "VGA·RAM 시세 · eBay 새 상품 기준",
+  gpu: "VGA",
+  ram: "RAM",
   jumpDefault: "바로가기",
   ebay: "eBay",
   danawa: "다나와",
@@ -47,8 +47,8 @@ export type Dict = typeof ko;
 
 const en: Dict = {
   tagline: "GPU & RAM prices · new listings on eBay",
-  gpu: "Graphics cards",
-  ram: "Memory",
+  gpu: "GPU",
+  ram: "RAM",
   jumpDefault: "Open in",
   ebay: "eBay",
   danawa: "Danawa",
