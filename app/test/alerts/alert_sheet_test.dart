@@ -38,10 +38,10 @@ void main() {
     expect(find.text('지금보다 4.0% 낮은 가격'), findsOneWidget);
     expect(find.text('이미 조건에 맞아 다음 정각 수집 때 바로 울립니다'), findsOneWidget);
     // 손으로 넣으면 빠른 % 버튼 선택은 풀린다(화면 읽기 프로그램이 읽는 "선택됨" 표시로 확인)
-    expect(tester.getSemantics(find.text('+5%')), isNot(containsSemantics(isSelected: true)));
+    expect(tester.getSemantics(find.text('+5%')), isNot(isSemantics(isSelected: true)));
     await tester.tap(find.text('+10%'));
     await tester.pump();
-    expect(tester.getSemantics(find.text('+10%')), containsSemantics(isSelected: true, isButton: true));
+    expect(tester.getSemantics(find.text('+10%')), isSemantics(isSelected: true, isButton: true));
     semantics.dispose();
   });
 

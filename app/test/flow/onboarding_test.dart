@@ -21,7 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../helpers/fakes.dart';
 import '../helpers/fixtures.dart';
 
-class _CountingPush extends FakePush {
+class CountingPush extends FakePush {
   int permissionAsks = 0;
 
   @override
@@ -31,7 +31,7 @@ class _CountingPush extends FakePush {
   }
 }
 
-Future<_CountingPush> setUp({required bool guideSeen}) async {
+Future<CountingPush> setUp({required bool guideSeen}) async {
   await getIt.reset();
   SharedPreferences.setMockInitialValues({'settings.guideSeen': guideSeen});
   final prefs = await SharedPreferences.getInstance();
@@ -47,7 +47,7 @@ Future<_CountingPush> setUp({required bool guideSeen}) async {
     ),
   ).thenAnswer((_) async {});
   when(() => alertsRepo.list(any())).thenAnswer((_) async => []);
-  final push = _CountingPush();
+  final push = CountingPush();
   getIt
     ..registerSingleton<MarketRepository>(market)
     ..registerSingleton<PushService>(push)
