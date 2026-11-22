@@ -128,6 +128,6 @@ docs/     AI_LOG.md
 - 밖에서는 Caddy(80·443)만 보인다: `https://<IP를 -로 이은>.sslip.io/api/*`만 서버로 넘김(`deploy/Caddyfile`). 서버·DB 포트는 compose 안 네트워크에만.
 - EC2는 시드니(ap-southeast-2). 웹(Vercel)도 `syd1`에서 돌려 API와 가깝게(`web/vercel.json`).
 - 메모리: JVM `-Xmx256m`(실측 약 370MB), PostgreSQL `shared_buffers=32MB`(약 26MB), 스왑 2GB.
-- **시세 기록은 다시 받을 수 없다**(eBay는 지금 올라온 글만 줌). 매일 04:00 UTC `pg_dump` 14일치(`deploy/backup.sh` + systemd 타이머). 하루 약 17KB.
+- **시세 기록은 다시 받을 수 없다**(eBay는 지금 올라온 글만 줌). 매일 04:00 UTC `pg_dump`(`deploy/backup.sh` + systemd 타이머): EC2에 14일치 + **S3 `partstock-backup-2611/daily/`에 전부**(11/22). S3는 EC2 역할 `partstock-ec2`(그 버킷에 올리기·목록만, 콘솔에서 만듦)로 올려 서버·맥에 AWS 키가 없다. 버킷 이름은 EC2 `.env`의 `BACKUP_BUCKET`. 되살릴 때는 콘솔에서 내려받아 `pg_restore`.
 - 켜질 때 이번 시각 수집 기록이 없으면 바로 수집한다(`partstock.collect.on-start`). 종목 표는 켜질 때도 코드 목록에 맞춘다(새 칩셋이 다음 수집 전에도 열리게).
 - eBay 호출: 칩셋 101개(VGA 27·RAM 14·CPU 24·SSD 36), 검색마다 최대 5쪽(`ebay.max-pages`, 11/22 5쪽·10쪽 비교로 정함) → 하루 약 3,300번 예상(VGA·RAM만일 때 실측 약 1,800, 무료 5,000, 유료 요금제는 없고 늘리려면 무료 심사 Application Growth Check). 실제 수는 수집 로그의 "eBay 요청"과 eBay `getRateLimits`(매일 08:00 UTC 초기화)로 본다.
