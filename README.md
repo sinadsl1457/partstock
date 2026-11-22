@@ -7,13 +7,15 @@
 - 앱: Flutter(Android·iOS). Android는 목표가 푸시 알림까지
 - API: https://32-236-106-139.sslip.io/api/board?category=GPU
 
-| 웹 | 앱 |
-|---|---|
-| <img src="docs/images/web.png" width="560"> | <img src="docs/images/app-board.png" width="180"> <img src="docs/images/app-ticker.png" width="180"> |
+**웹**
 
-| 목표가 알림 | 분류별 필터 | 설정 | 웹(휴대폰) |
-|---|---|---|---|
-| <img src="docs/images/app-alert.png" width="180"> | <img src="docs/images/app-filter.png" width="180"> | <img src="docs/images/app-settings.png" width="180"> | <img src="docs/images/web-mobile.png" width="180"> |
+<img src="docs/images/web.png" width="100%">
+
+**앱**
+
+| 시세 목록 | 종목 차트 | 목표가 알림 | 분류별 필터 | 설정 |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="docs/images/app-board.png" width="160"> | <img src="docs/images/app-ticker.png" width="160"> | <img src="docs/images/app-alert.png" width="160"> | <img src="docs/images/app-filter.png" width="160"> | <img src="docs/images/app-settings.png" width="160"> |
 
 ## 무엇을 하나
 
