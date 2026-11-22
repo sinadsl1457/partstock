@@ -12,14 +12,14 @@ export function LangSwitch({ locale }: { locale: Locale }) {
       href={swap(to)}
       aria-current={to === locale ? "page" : undefined}
       className={`inline-flex min-h-10 items-center px-3 text-[13px] no-underline ${
-        to === locale ? "bg-gray-900 text-white" : "bg-white text-gray-700 hover:bg-gray-50"
+        to === locale ? "bg-line-hi font-semibold text-accent" : "text-muted hover:text-ink"
       }`}
     >
       {label}
     </Link>
   );
   return (
-    <span className="inline-flex overflow-hidden rounded-lg border border-gray-300">
+    <span className="inline-flex overflow-hidden rounded-lg border border-line-hi">
       {item("ko", "한국어")}
       {item("en", "EN")}
     </span>

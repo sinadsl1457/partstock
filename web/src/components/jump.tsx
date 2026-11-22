@@ -31,7 +31,7 @@ function useJump(): Jump {
 export function JumpSelect({ label, ebay, danawa }: { label: string; ebay: string; danawa: string }) {
   const jump = useJump();
   return (
-    <label className="flex items-center gap-2 text-sm text-gray-600">
+    <label className="flex items-center gap-2 text-sm text-sub">
       {label}
       <select
         value={jump}
@@ -41,7 +41,7 @@ export function JumpSelect({ label, ebay, danawa }: { label: string; ebay: strin
           } catch {}
           window.dispatchEvent(new Event(EVENT));
         }}
-        className="min-h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900"
+        className="min-h-10 rounded-lg border border-line-hi bg-surface px-3 text-sm text-ink"
       >
         <option value="ebay">{ebay}</option>
         <option value="danawa">{danawa}</option>
@@ -77,7 +77,7 @@ export function JumpButtons({
           target="_blank"
           rel="noopener noreferrer"
           className={`${base} inline-flex items-center whitespace-nowrap no-underline ${
-            i === 0 ? "bg-gray-900 text-white hover:bg-gray-700" : "border border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
+            i === 0 ? "bg-accent font-semibold text-on-accent hover:brightness-110" : "border border-line-hi text-ink hover:bg-surface-hi"
           }`}
         >
           {it.label}

@@ -19,7 +19,7 @@ export default function CategoryLayout({ children, params }: LayoutProps<"/[lang
         <TopBar params={params} />
       </Suspense>
       <div className="grid items-start gap-4 lg:grid-cols-[400px_minmax(0,1fr)]">
-        <Suspense fallback={<aside className="h-[640px] rounded-xl border border-gray-200 bg-white" />}>
+        <Suspense fallback={<aside className="h-[640px] rounded-xl border border-line bg-surface" />}>
           <Aside params={params} />
         </Suspense>
         {children}
@@ -37,8 +37,8 @@ async function TopBar({ params }: { params: LayoutProps<"/[lang]/[category]">["p
     <Link
       href={`/${lang}/${c}`}
       aria-current={c === category ? "page" : undefined}
-      className={`inline-flex min-h-10 items-center rounded-lg px-5 text-sm no-underline ${
-        c === category ? "bg-white font-semibold text-gray-900 shadow-sm" : "font-medium text-gray-600"
+      className={`-mb-px inline-flex min-h-11 items-center border-b-2 px-1 text-[17px] no-underline ${
+        c === category ? "border-accent font-bold text-ink" : "border-transparent font-medium text-muted hover:text-ink"
       }`}
     >
       {label}
@@ -46,17 +46,18 @@ async function TopBar({ params }: { params: LayoutProps<"/[lang]/[category]">["p
   );
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <nav className="flex gap-1 rounded-[10px] bg-gray-200 p-1">
+      <nav className="flex gap-6 border-b border-line">
         {tab("gpu", t.gpu)}
         {tab("ram", t.ram)}
       </nav>
       {board.updatedAt ? (
-        <p className="num text-[13px] text-gray-600">
+        <p className="num inline-flex items-center gap-2 rounded-full border border-line-hi px-3 py-1.5 text-[13px] text-sub">
+          <span className="size-1.5 rounded-full bg-accent shadow-[0_0_8px_#7ee04b]" aria-hidden="true" />
           {t.updatedAt(time(board.updatedAt, lang))}
           {lang === "ko" && board.fx && ` · ${t.fx(rate(board.fx), board.fx.day)}`}
         </p>
       ) : (
-        <p className="text-[13px] text-gray-600">{t.noData}</p>
+        <p className="text-[13px] text-sub">{t.noData}</p>
       )}
     </div>
   );
@@ -78,13 +79,13 @@ async function Aside({ params }: { params: LayoutProps<"/[lang]/[category]">["pa
       big: m?.big ?? null,
       small: m?.small ?? null,
       changeText: ch ? pct(ch.pct) : `${t.change24h} —`,
-      changeColor: !ch || ch.pct === 0 ? "#6b7280" : ch.pct > 0 ? colors.up : colors.down,
+      changeColor: !ch || ch.pct === 0 ? "#8e978f" : ch.pct > 0 ? colors.up : colors.down,
       spark: it.spark,
     };
   });
   return (
-    <aside className="overflow-hidden rounded-xl border border-gray-200 bg-white lg:sticky lg:top-4">
-      <div className="flex justify-between border-b border-gray-100 bg-gray-50 px-4 py-2 text-xs text-gray-600">
+    <aside className="overflow-hidden rounded-xl border border-line bg-surface lg:sticky lg:top-4">
+      <div className="flex justify-between border-b border-line bg-surface-hi px-4 py-2 text-xs text-sub">
         <span>{category === "gpu" ? t.gpu : t.ram}</span>
         <span>
           {t.price}({t.priceHint}) · {t.change24h}
@@ -93,7 +94,7 @@ async function Aside({ params }: { params: LayoutProps<"/[lang]/[category]">["pa
       <Suspense fallback={<div style={{ height: rows.length * 57 }} />}>
         <BoardList rows={rows} base={`/${lang}/${category}`} tooFew={t.tooFew} colors={colors} />
       </Suspense>
-      <p className="border-t border-gray-100 px-4 py-3 text-xs leading-relaxed text-gray-500">{t.boardNote}</p>
+      <p className="border-t border-line px-4 py-3 text-xs leading-relaxed text-muted">{t.boardNote}</p>
     </aside>
   );
 }

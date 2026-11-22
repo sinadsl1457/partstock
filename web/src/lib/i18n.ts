@@ -87,5 +87,5 @@ export function dict(locale: Locale): Dict {
 
 /** 상승·하락 색: 한국은 빨강 상승·파랑 하락, 영어권은 초록 상승·빨강 하락 */
 export function upDownColors(locale: Locale) {
-  return locale === "ko" ? { up: "#dc2626", down: "#2563eb" } : { up: "#16a34a", down: "#dc2626" };
+  return locale === "ko" ? { up: "#ff6464", down: "#5c9dff" } : { up: "#34d399", down: "#ff6464" };
 }

@@ -1,12 +1,12 @@
 // 맨 바깥 틀. 언어(/ko, /en)마다 html lang과 머리가 바뀐다.
 import type { Metadata } from "next";
-import { Inter, Noto_Sans_KR } from "next/font/google";
+import { Noto_Sans_KR, Space_Grotesk } from "next/font/google";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/header";
 import { isLocale, locales } from "@/lib/i18n";
 import "../globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const grotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-grotesk" });
 const notoKr = Noto_Sans_KR({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--font-noto-kr" });
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export default async function LangLayout({ children, params }: LayoutProps<"/[la
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
   return (
-    <html lang={lang} className={`${inter.variable} ${notoKr.variable}`}>
+    <html lang={lang} className={`${grotesk.variable} ${notoKr.variable}`}>
       <body className="min-h-screen font-sans antialiased">
         <Header locale={lang} />
         {children}

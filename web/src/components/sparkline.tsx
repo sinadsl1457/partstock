@@ -22,7 +22,9 @@ export function Sparkline({
   const xy = vals.map(
     (v, i) => `${((i / (vals.length - 1)) * (width - 2) + 1).toFixed(1)},${(height - 2 - ((v - min) / span) * (height - 4)).toFixed(1)}`,
   );
-  const color = vals[vals.length - 1] >= vals[0] ? up : down;
+  const last = vals[vals.length - 1];
+  // 그대로면 회색(오른 것처럼 칠하지 않게)
+  const color = last === vals[0] ? "#8e978f" : last > vals[0] ? up : down;
   return (
     <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
       <polyline points={xy.join(" ")} fill="none" stroke={color} strokeWidth={1.5} />

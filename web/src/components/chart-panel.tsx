@@ -13,6 +13,9 @@ import {
 import { useEffect, useRef, useState } from "react";
 import type { Chart, Range } from "@/lib/api";
 
+/** 브랜드 녹색(globals.css --color-accent와 같은 값). 차트 라이브러리는 CSS 변수를 못 읽어서 숫자로 */
+const ACCENT = "#7ee04b";
+
 export type ChartLabels = {
   ranges: Record<Range, string>;
   bucket: Record<string, string>;
@@ -49,7 +52,6 @@ export function ChartPanel({
   const fmt = (v: number) =>
     usdKrw ? v.toLocaleString("ko-KR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "만원" : "$" + Math.round(v).toLocaleString("en-US");
   const pct = chart?.rangePct ?? null;
-  const trend = pct === null || pct >= 0 ? colors.up : colors.down;
   const high = bars.length ? Math.max(...bars.map((b) => b.highCents)) : null;
   const low = bars.length ? Math.min(...bars.map((b) => b.lowCents)) : null;
 
@@ -59,22 +61,22 @@ export function ChartPanel({
     const time = (iso: string) => (Date.parse(iso) / 1000 + shift) as UTCTimestamp;
     const c: IChartApi = createChart(box.current, {
       autoSize: true,
-      layout: { background: { type: ColorType.Solid, color: "#ffffff" }, textColor: "#4b5563", fontFamily: "inherit" },
-      grid: { vertLines: { color: "#f3f4f6" }, horzLines: { color: "#f3f4f6" } },
-      rightPriceScale: { borderColor: "#e5e7eb" },
-      timeScale: { borderColor: "#e5e7eb", timeVisible: range === "1d" || range === "1w", secondsVisible: false },
+      layout: { background: { type: ColorType.Solid, color: "transparent" }, textColor: "#8e978f", fontFamily: "inherit" },
+      grid: { vertLines: { visible: false }, horzLines: { color: "#1a1f1c" } },
+      rightPriceScale: { borderColor: "#1e2320" },
+      timeScale: { borderColor: "#1e2320", timeVisible: range === "1d" || range === "1w", secondsVisible: false },
       // 눈금은 원 단위(100원 반올림)·달러 단위: 한 시간 변화가 몇천 원이라 만원 단위로는 눈금이 다 같아 보임
       localization: {
         priceFormatter: (v: number) =>
           usdKrw ? (Math.round(v * 100) * 100).toLocaleString("ko-KR") : "$" + v.toLocaleString("en-US", { maximumFractionDigits: 2 }),
       },
-      crosshair: { mode: 1 },
+      crosshair: { mode: 1, vertLine: { color: "#2a302c", labelBackgroundColor: "#191d1a" }, horzLine: { color: "#2a302c", labelBackgroundColor: "#191d1a" } },
     });
     if (kind === "line") {
       const s = c.addSeries(AreaSeries, {
-        lineColor: trend,
-        topColor: trend + "33",
-        bottomColor: trend + "05",
+        lineColor: ACCENT,
+        topColor: ACCENT + "59",
+        bottomColor: ACCENT + "00",
         lineWidth: 2,
       });
       s.setData(bars.map((b) => ({ time: time(b.t), value: toPrice(b.closeCents) })));
@@ -100,22 +102,22 @@ export function ChartPanel({
     c.timeScale().fitContent();
     return () => c.remove();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- toPrice는 usdKrw로 정해진다
-  }, [bars, kind, range, usdKrw, tzOffsetHours, trend, colors]);
+  }, [bars, kind, range, usdKrw, tzOffsetHours, colors]);
 
   const pill = (on: boolean) =>
-    `min-h-9 rounded-lg px-3 text-[13px] ${on ? "bg-white font-semibold text-gray-900 shadow-sm" : "font-medium text-gray-600 hover:text-gray-900"}`;
+    `min-h-9 rounded-lg px-3 text-[13px] ${on ? "bg-accent font-semibold text-on-accent" : "font-medium text-muted hover:text-ink"}`;
 
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap gap-1 rounded-[10px] bg-gray-100 p-1" role="group">
+        <div className="flex flex-wrap gap-1 rounded-[10px] p-0" role="group">
           {(Object.keys(labels.ranges) as Range[]).map((r) => (
             <button key={r} type="button" onClick={() => setRange(r)} aria-pressed={r === range} className={pill(r === range)}>
               {labels.ranges[r]}
             </button>
           ))}
         </div>
-        <div className="flex gap-1 rounded-[10px] bg-gray-100 p-1" role="group">
+        <div className="flex gap-1 rounded-[10px] bg-surface-hi p-1" role="group">
           <button type="button" onClick={() => setKind("line")} aria-pressed={kind === "line"} className={pill(kind === "line")}>
             {labels.line}
           </button>
@@ -125,32 +127,32 @@ export function ChartPanel({
         </div>
       </div>
 
-      <div className="num flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-gray-600">
+      <div className="num flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-sub">
         <span>
           {labels.rangeChange}{" "}
-          <b style={{ color: pct === null ? "#6b7280" : pct >= 0 ? colors.up : colors.down }}>
+          <b style={{ color: pct === null || pct === 0 ? "#8e978f" : pct > 0 ? colors.up : colors.down }}>
             {pct === null ? "—" : (pct > 0 ? "+" : "") + pct.toFixed(2) + "%"}
           </b>
         </span>
         {high !== null && (
           <span>
-            {labels.high} <b className="text-gray-900">{fmt(toPrice(high))}</b>
+            {labels.high} <b className="text-ink">{fmt(toPrice(high))}</b>
           </span>
         )}
         {low !== null && (
           <span>
-            {labels.low} <b className="text-gray-900">{fmt(toPrice(low))}</b>
+            {labels.low} <b className="text-ink">{fmt(toPrice(low))}</b>
           </span>
         )}
-        {chart && <span className="text-gray-500">{labels.bucket[chart.bucket] ?? chart.bucket}</span>}
+        {chart && <span className="text-muted">{labels.bucket[chart.bucket] ?? chart.bucket}</span>}
       </div>
 
       {bars.length === 0 ? (
-        <div className="flex h-[380px] items-center justify-center rounded-lg bg-gray-50 text-sm text-gray-500">—</div>
+        <div className="flex h-[380px] items-center justify-center rounded-lg bg-surface-hi text-sm text-muted">—</div>
       ) : (
-        <div ref={box} className="h-[380px] w-full" />
+        <div ref={box} className="h-[380px] w-full rounded-xl border border-line bg-gradient-to-b from-surface to-bg" />
       )}
-      <p className="text-xs text-gray-500">{bars.length === 1 ? labels.tooFewPoints : labels.collecting}</p>
+      <p className="text-xs text-muted">{bars.length === 1 ? labels.tooFewPoints : labels.collecting}</p>
     </div>
   );
 }

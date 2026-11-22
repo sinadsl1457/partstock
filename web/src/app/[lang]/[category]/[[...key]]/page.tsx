@@ -12,7 +12,7 @@ import { checkParams } from "@/lib/route";
 
 export default function TickerPage({ params }: PageProps<"/[lang]/[category]/[[...key]]">) {
   return (
-    <Suspense fallback={<section className="h-[720px] rounded-xl border border-gray-200 bg-white" />}>
+    <Suspense fallback={<section className="h-[720px] rounded-xl border border-line bg-surface" />}>
       <Panel params={params} />
     </Suspense>
   );
@@ -42,8 +42,8 @@ async function Panel({ params }: { params: PageProps<"/[lang]/[category]/[[...ke
   return (
     // 휴대폰에서 종목을 고르고 들어오면 차트가 목록보다 위에
     <section className={`flex min-w-0 flex-col gap-4 ${p.key ? "order-first lg:order-none" : ""}`}>
-      <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5 lg:p-6">
-        <nav aria-label="breadcrumb" className="text-[13px] text-gray-500">
+      <div className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-5 lg:p-6">
+        <nav aria-label="breadcrumb" className="text-[13px] text-muted">
           {parts.map((_, i) => {
             const sub = parts.slice(0, i + 1).join("/");
             const label = i === 0 ? d.ticker.chipsetName : i === 1 ? d.ticker.makerName : d.ticker.seriesName;
@@ -51,9 +51,9 @@ async function Panel({ params }: { params: PageProps<"/[lang]/[category]/[[...ke
               <span key={sub}>
                 {i > 0 && " › "}
                 {i === parts.length - 1 ? (
-                  <span className="text-gray-700">{label}</span>
+                  <span className="text-ink">{label}</span>
                 ) : (
-                  <Link href={`${base}/${sub}`} scroll={false} className="text-gray-500">
+                  <Link href={`${base}/${sub}`} scroll={false} className="text-muted">
                     {label}
                   </Link>
                 )}
@@ -69,21 +69,21 @@ async function Panel({ params }: { params: PageProps<"/[lang]/[category]/[[...ke
               <>
                 <div className="num flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <span className="text-[34px] font-bold leading-tight">{main.big}</span>
-                  {main.small && <span className="text-lg text-gray-600">{main.small}</span>}
+                  {main.small && <span className="text-lg text-sub">{main.small}</span>}
                   <span
                     className="text-base font-semibold"
-                    style={{ color: !ch || ch.pct === 0 ? "#6b7280" : ch.pct > 0 ? colors.up : colors.down }}
+                    style={{ color: !ch || ch.pct === 0 ? "#8e978f" : ch.pct > 0 ? colors.up : colors.down }}
                   >
                     {t.change24h} {ch ? pct(ch.pct) : "—"}
                   </span>
                 </div>
-                <div className="num text-[13px] text-gray-600">
+                <div className="num text-[13px] text-sub">
                   {t.price}({t.priceHint}) · {t.median} {usd(d.price.medianCents)} · {t.listings(d.price.listingCount)}
                   {d.updatedAt && ` · ${time(d.updatedAt, lang)}`}
                 </div>
               </>
             ) : (
-              <span className="w-fit rounded-md bg-gray-100 px-2 py-1 text-sm text-gray-500">{t.tooFew}</span>
+              <span className="w-fit rounded-md bg-surface-hi px-2 py-1 text-sm text-muted">{t.tooFew}</span>
             )}
           </div>
           <JumpButtons links={d.links} ebay={t.viewOnEbay} danawa={t.viewOnDanawa} size="lg" />
@@ -106,7 +106,7 @@ async function Panel({ params }: { params: PageProps<"/[lang]/[category]/[[...ke
             tooFewPoints: t.tooFewPoints,
           }}
         />
-        <p className="text-xs text-gray-500">{t.source}</p>
+        <p className="text-xs text-muted">{t.source}</p>
       </div>
 
       {(d.makers.length > 0 || d.models.length > 0) && (
@@ -139,11 +139,11 @@ function ChildList({
   const t = dict(lang);
   const colors = upDownColors(lang);
   return (
-    <section className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-      <h2 className="border-b border-gray-100 px-5 py-3.5 text-base font-bold">
-        {title} {note && <span className="text-xs font-medium text-gray-500">{note}</span>}
+    <section className="overflow-hidden rounded-xl border border-line bg-surface">
+      <h2 className="border-b border-line px-5 py-3.5 text-base font-bold">
+        {title} {note && <span className="text-xs font-medium text-muted">{note}</span>}
       </h2>
-      <ul className="divide-y divide-gray-50">
+      <ul className="divide-y divide-line">
         {items.map((c) => {
           const m = c.price ? mainPrice(c.price, fx, lang) : null;
           return (
@@ -151,24 +151,24 @@ function ChildList({
               <Link
                 href={`${base}/${c.key}`}
                 scroll={false}
-                className="flex min-h-14 items-center justify-between gap-3 px-5 py-2.5 no-underline hover:bg-gray-50"
+                className="flex min-h-14 items-center justify-between gap-3 px-5 py-2.5 no-underline hover:bg-surface-hi"
               >
                 <div className="min-w-0">
-                  <div className="truncate text-[15px] font-semibold text-gray-900">{c.name}</div>
-                  {c.price && <div className="num text-xs text-gray-500">{t.listings(c.price.listingCount)}</div>}
+                  <div className="truncate text-[15px] font-semibold text-ink">{c.name}</div>
+                  {c.price && <div className="num text-xs text-muted">{t.listings(c.price.listingCount)}</div>}
                 </div>
                 {m ? (
                   <div className="num text-right">
-                    <div className="text-[15px] font-bold text-gray-900">{m.big}</div>
+                    <div className="text-[15px] font-bold text-ink">{m.big}</div>
                     <div
                       className="text-xs"
-                      style={{ color: !c.change || c.change.pct === 0 ? "#6b7280" : c.change.pct > 0 ? colors.up : colors.down }}
+                      style={{ color: !c.change || c.change.pct === 0 ? "#8e978f" : c.change.pct > 0 ? colors.up : colors.down }}
                     >
                       {c.change ? pct(c.change.pct) : m.small}
                     </div>
                   </div>
                 ) : (
-                  <span className="rounded-md bg-gray-100 px-2 py-1 text-[13px] text-gray-500">{t.tooFew}</span>
+                  <span className="rounded-md bg-surface-hi px-2 py-1 text-[13px] text-muted">{t.tooFew}</span>
                 )}
               </Link>
             </li>

@@ -1,13 +1,29 @@
 @import "tailwindcss";
 
-/* 시안의 색: 바탕 회색, 카드 흰색, 글자 진회색. 상승·하락 색은 언어별(한국: 빨강 상승, 영어: 초록 상승) */
+/* 앱과 같은 블랙 + 그린(11/22 시안 3차). 녹색은 강조(로고·선택·주 버튼·차트 선)에만.
+   상승·하락 색은 언어별(lib/i18n upDownColors). */
 @theme inline {
-  --font-sans: var(--font-inter), var(--font-noto-kr), sans-serif;
+  --font-sans: var(--font-grotesk), var(--font-noto-kr), sans-serif;
+  --color-bg: #0a0c0b;
+  --color-surface: #121513;
+  --color-surface-hi: #191d1a;
+  --color-line: #1e2320;
+  --color-line-hi: #2a302c;
+  --color-ink: #edf2ee;
+  --color-sub: #b4bcb5;
+  --color-muted: #8e978f;
+  --color-faint: #5d655f;
+  --color-accent: #7ee04b;
+  --color-on-accent: #0a0c0b;
+}
+
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: #f5f6f8;
-  color: #111827;
+  background: var(--color-bg);
+  color: var(--color-ink);
 }
 
 .num {

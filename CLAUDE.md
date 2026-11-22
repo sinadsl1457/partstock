@@ -60,7 +60,8 @@ docs/     AI_LOG.md
   - Next 16은 지나간 화면을 숨겨 둔다(Activity, 최대 3개). 브라우저 시험에서 요소를 셀 때는 `:visible`로.
 - 주소(params)·`usePathname`을 읽는 부분은 `<Suspense>` 안에. 서버 → 클라이언트 컴포넌트로 함수를 넘기지 않는다(글자를 만들어 넘김). layout 파일에서는 컴포넌트·generateStaticParams 외에 내보내지 않는다(`lib/route.ts`).
 - API 호출은 `lib/api.ts`에서만(`use cache`, 10분마다 새로 받음: 시세는 매시간 바뀜).
-- 바로가기 기본값은 브라우저 localStorage(실패해도 eBay 기본). 상승·하락 색은 언어별(한국 빨강↑파랑↓, 영어 초록↑빨강↓).
+- 바로가기 기본값은 브라우저 localStorage(실패해도 eBay 기본). 상승·하락 색은 언어별(한국 빨강↑파랑↓, 영어 청록↑빨강↓), 변동 없으면 회색.
+- 디자인은 앱과 같은 블랙 + 그린(색 이름은 `globals.css`의 `@theme`: bg·surface·line·ink·sub·muted·accent). 녹색은 로고·선택·주 버튼·차트 선에만. 글꼴 Space Grotesk + Noto Sans KR.
 - 배포: Vercel(main push → 자동), Root `web`, 지역 `syd1`(API가 시드니), 환경 변수 `PARTSTOCK_API_URL`. 주소 https://partstock-two.vercel.app
 - 커밋 전: `npm run lint`, `npx tsc --noEmit`, `npm run build`. 화면을 바꾸면 브라우저 콘솔·개발 서버 로그 에러까지 확인. API 응답 칸을 바꾸면 서버를 먼저 배포하고 웹을 올린다.
 
