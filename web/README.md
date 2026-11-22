@@ -1,10 +1,11 @@
 # partstock 웹 (Next.js)
 
-시세판(`/ko/gpu`, `/ko/ram`)과 종목 상세(`/ko/t/rtx-5070-ti`). 데이터는 server의 시세 API에서 받는다.
+전체 설명·화면·실행 방법은 [루트 README](../README.md).
+
+주소: `/ko/gpu`(분류 첫 화면) · `/ko/gpu/rtx-5070-ti/msi`(종목). 분류는 gpu·ram·cpu·ssd, 언어는 ko·en.
 
 ```bash
-cp .env.example .env.local      # PARTSTOCK_API_URL (기본 http://localhost:8080)
 npm install
-npm run dev                     # http://localhost:3000 → /ko 또는 /en
+PARTSTOCK_API_URL=http://localhost:8080 npm run dev
 npm run lint && npx tsc --noEmit && npm run build
 ```
