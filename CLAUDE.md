@@ -75,7 +75,9 @@ docs/     AI_LOG.md
 
 ## 배포 (수집 서버)
 - AWS EC2 새 t3.micro 한 대(NowStation과 분리, 11/22 결정). Docker compose로 PostgreSQL + 서버(`deploy/compose.prod.yaml`), 값은 EC2 `~/partstock/.env`.
-- 지금은 맥에서 `deploy/deploy.sh <IP>`로 이미지를 만들어 보낸다(GitHub 레포·CI 전 임시). 웹 포트는 열지 않는다(2단계에서 Caddy + https).
+- 지금은 맥에서 `deploy/deploy.sh <IP>`로 이미지를 만들어 보낸다(CI 전 임시).
+- 밖에서는 Caddy(80·443)만 보인다: `https://<IP를 -로 이은>.sslip.io/api/*`만 서버로 넘김(`deploy/Caddyfile`). 서버·DB 포트는 compose 안 네트워크에만.
+- EC2는 시드니(ap-southeast-2). 웹(Vercel)도 `syd1`에서 돌려 API와 가깝게(`web/vercel.json`).
 - 메모리: JVM `-Xmx256m`(실측 약 370MB), PostgreSQL `shared_buffers=32MB`(약 26MB), 스왑 2GB.
 - **시세 기록은 다시 받을 수 없다**(eBay는 지금 올라온 글만 줌). 매일 04:00 UTC `pg_dump` 14일치(`deploy/backup.sh` + systemd 타이머). 하루 약 17KB.
 - 켜질 때 그날 수집 기록이 없으면 바로 수집한다(`partstock.collect.on-start`).

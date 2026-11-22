@@ -10,6 +10,6 @@ cd "$(dirname "$0")/.."
 (cd server && ./gradlew bootJar -q)
 docker buildx build --platform linux/amd64 -t partstock-server:"$TAG" --load server
 docker save partstock-server:"$TAG" | gzip | ssh -i $KEY "$HOST" 'gunzip | docker load'
-scp -i $KEY deploy/compose.prod.yaml deploy/backup.sh "$HOST":partstock/
+scp -i $KEY deploy/compose.prod.yaml deploy/Caddyfile deploy/backup.sh "$HOST":partstock/
 ssh -i $KEY "$HOST" "cd partstock && SERVER_TAG=$TAG docker compose -f compose.prod.yaml up -d && docker image prune -f >/dev/null"
 echo "배포 $TAG 완료. 로그: ssh -i $KEY $HOST 'cd partstock && docker compose -f compose.prod.yaml logs --tail 50 server'"

@@ -1,0 +1,12 @@
+# 밖에서 들어오는 https 입구. 인증서는 Caddy가 Let's Encrypt에서 자동으로 받고 갱신한다.
+# DOMAIN = <IP를 -로 이은>.sslip.io (무료 주소, EC2의 .env)
+{$DOMAIN} {
+	encode gzip
+	# 시세 API만 연다. 서버의 나머지 경로(actuator 등)는 밖에서 안 보이게
+	handle /api/* {
+		reverse_proxy server:8080
+	}
+	handle {
+		respond "partstock api" 404
+	}
+}
