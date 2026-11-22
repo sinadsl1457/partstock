@@ -77,7 +77,7 @@ jobs:
           git log -1 --format=%s | cut -c1-480 > whatsnew/whatsnew-ko-KR
 
       - name: .aab 보관(첫 업로드·손으로 올릴 때)
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: partstock-aab
           path: app/build/app/outputs/bundle/release/app-release.aab
