@@ -185,4 +185,80 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get source => 'Prices: eBay US';
+
+  @override
+  String get alertTitle => 'Price alert';
+
+  @override
+  String get alertBelow => 'Falls to or below';
+
+  @override
+  String get alertAbove => 'Rises to or above';
+
+  @override
+  String get alertTargetKo => 'Target (만원)';
+
+  @override
+  String get alertTargetUsd => 'Target price (\$)';
+
+  @override
+  String alertLower(String pct) {
+    return '$pct% below now';
+  }
+
+  @override
+  String alertHigher(String pct) {
+    return '$pct% above now';
+  }
+
+  @override
+  String alertNow(String price) {
+    return 'Now $price';
+  }
+
+  @override
+  String get alertNote =>
+      'Checked right after each hourly update using the 25th-percentile price. Fires once, then turns off.';
+
+  @override
+  String get alertSave => 'Turn on alert';
+
+  @override
+  String get alertSaved => 'Alert is on';
+
+  @override
+  String get alertDeleted => 'Alert removed';
+
+  @override
+  String get alertLimit => 'Up to 20 waiting alerts';
+
+  @override
+  String get alertDenied => 'Notifications are off. Turn them on for partstock in phone settings.';
+
+  @override
+  String get alertNotReady => 'Alerts are getting ready. Try again shortly.';
+
+  @override
+  String get alertsSection => 'Price alerts';
+
+  @override
+  String condBelow(String target) {
+    return '≤ $target';
+  }
+
+  @override
+  String condAbove(String target) {
+    return '≥ $target';
+  }
+
+  @override
+  String alertFired(String price) {
+    return 'Fired · $price';
+  }
+
+  @override
+  String get alertDelete => 'Remove alert';
+
+  @override
+  String get alertInvalid => 'Enter a number';
 }

@@ -415,6 +415,132 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'가격: eBay(미국) · 환율: 유럽중앙은행 기준 환율'**
   String get source;
+
+  /// No description provided for @alertTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'목표가 알림'**
+  String get alertTitle;
+
+  /// No description provided for @alertBelow.
+  ///
+  /// In ko, this message translates to:
+  /// **'이하로 내려가면'**
+  String get alertBelow;
+
+  /// No description provided for @alertAbove.
+  ///
+  /// In ko, this message translates to:
+  /// **'이상으로 오르면'**
+  String get alertAbove;
+
+  /// No description provided for @alertTargetKo.
+  ///
+  /// In ko, this message translates to:
+  /// **'목표 가격 (만원)'**
+  String get alertTargetKo;
+
+  /// No description provided for @alertTargetUsd.
+  ///
+  /// In ko, this message translates to:
+  /// **'목표 가격 (\$)'**
+  String get alertTargetUsd;
+
+  /// No description provided for @alertLower.
+  ///
+  /// In ko, this message translates to:
+  /// **'지금보다 {pct}% 낮은 가격'**
+  String alertLower(String pct);
+
+  /// No description provided for @alertHigher.
+  ///
+  /// In ko, this message translates to:
+  /// **'지금보다 {pct}% 높은 가격'**
+  String alertHigher(String pct);
+
+  /// No description provided for @alertNow.
+  ///
+  /// In ko, this message translates to:
+  /// **'지금 대표가 {price}'**
+  String alertNow(String price);
+
+  /// No description provided for @alertNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'매시간 수집 직후 대표가(하위 25%)로 확인해서 푸시로 알려 드립니다. 한 번 울리면 꺼집니다.'**
+  String get alertNote;
+
+  /// No description provided for @alertSave.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림 켜기'**
+  String get alertSave;
+
+  /// No description provided for @alertSaved.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림을 켰습니다'**
+  String get alertSaved;
+
+  /// No description provided for @alertDeleted.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림을 지웠습니다'**
+  String get alertDeleted;
+
+  /// No description provided for @alertLimit.
+  ///
+  /// In ko, this message translates to:
+  /// **'대기 중 알림은 20개까지입니다'**
+  String get alertLimit;
+
+  /// No description provided for @alertDenied.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림 권한이 꺼져 있습니다. 폰 설정에서 partstock 알림을 켜 주세요.'**
+  String get alertDenied;
+
+  /// No description provided for @alertNotReady.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림 준비 중입니다. 잠시 뒤 다시 시도해 주세요.'**
+  String get alertNotReady;
+
+  /// No description provided for @alertsSection.
+  ///
+  /// In ko, this message translates to:
+  /// **'목표가 알림'**
+  String get alertsSection;
+
+  /// No description provided for @condBelow.
+  ///
+  /// In ko, this message translates to:
+  /// **'{target} 이하'**
+  String condBelow(String target);
+
+  /// No description provided for @condAbove.
+  ///
+  /// In ko, this message translates to:
+  /// **'{target} 이상'**
+  String condAbove(String target);
+
+  /// No description provided for @alertFired.
+  ///
+  /// In ko, this message translates to:
+  /// **'울림 · {price}'**
+  String alertFired(String price);
+
+  /// No description provided for @alertDelete.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림 지우기'**
+  String get alertDelete;
+
+  /// No description provided for @alertInvalid.
+  ///
+  /// In ko, this message translates to:
+  /// **'가격을 숫자로 넣어 주세요'**
+  String get alertInvalid;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

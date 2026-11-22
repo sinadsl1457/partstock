@@ -79,6 +79,7 @@ docs/     AI_LOG.md
 - 차트: fl_chart(선·봉). 기간 1일·1주·1달·3달·1년·전체, 웹과 같은 API(`/api/chart`).
 - 목표가 알림(FCM, 3-2단계): 회원 가입 없이 FCM 기기 토큰이 사용자(`X-Device-Token` 머리글). 서버 `alert` 패키지가 기기·알림 저장, 매시간 수집 직후 대표가가 목표에 닿으면 한 번 보내고 끈다. 앱을 지운 기기(UNREGISTERED)는 지우고, 잠깐 실패는 다음 시각에 다시.
   - 보내기는 Firebase Admin SDK 대신 구글 인증 라이브러리 + FCM HTTP v1(1GB 서버 메모리). 키 파일이 없으면 보내지 않고 기록만(로컬·테스트).
+  - 할 일: firebase_messaging 17.1에서 `getToken`·`onTokenRefresh`가 `register()`·`onRegistered`(설치 ID)로 바뀌는 중. 서버가 그 ID로 보내는 요청 모양을 확인하고 옮긴다(지금은 검증된 FCM 토큰 방식).
   - Firebase 프로젝트 `partstock-prices`(FlutterFire CLI로 설정). iOS 푸시는 Apple 유료 계정(APNs)이 있어야 해서 **Android만**, iOS는 알림 버튼을 숨긴다.
 - 테스트: 저장소는 실제 API 응답 예시(`test/fixtures`)로 단위, Cubit은 가짜 저장소, 화면은 흐름 테스트. 그다음 에뮬레이터에서 직접 눌러 확인.
 - 커밋 전: `dart format`, `flutter analyze`, `flutter test`. 생성 파일(.g.dart, .freezed.dart, .config.dart)은 커밋한다.

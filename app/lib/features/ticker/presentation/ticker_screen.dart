@@ -6,6 +6,10 @@ import 'package:go_router/go_router.dart';
 import '../../../core/presentation/common.dart';
 import '../../../core/presentation/format.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../alerts/data/alert_models.dart';
+import '../../alerts/presentation/alert_sheet.dart';
+import '../../alerts/presentation/alerts_cubit.dart';
+import '../../alerts/presentation/alerts_state.dart';
 import '../../market/data/market_models.dart';
 import '../../settings/data/settings_repository.dart';
 import '../../settings/presentation/settings_cubit.dart';
@@ -34,7 +38,7 @@ class TickerScreen extends StatelessWidget {
                     ? FailureView(failure: s.failure!, onRetry: cubit.load)
                     : const Center(child: CircularProgressIndicator()))
               : _Body(state: s, detail: d),
-          bottomNavigationBar: d == null ? null : _JumpBar(links: d.links),
+          bottomNavigationBar: d == null ? null : _JumpBar(detail: d),
         );
       },
     );
@@ -132,6 +136,7 @@ class _BodyState extends State<_Body> {
                       color: changeColor(context, d.change?.pct),
                     ),
                   ),
+                  _WaitingAlerts(tickerKey: d.ticker.key, fx: d.fx),
                   Text(
                     [
                       t.priceHint(usd(p.medianCents)),
@@ -338,14 +343,16 @@ class _ChildRow extends StatelessWidget {
   }
 }
 
-/// 아래 고정 버튼: 설정의 기본값(eBay/다나와)이 앞(진한 버튼)
+/// 아래 고정 버튼: 설정의 기본값(eBay/다나와)이 앞(진한 버튼), 그 옆 목표가 알림(Android만)
 class _JumpBar extends StatelessWidget {
-  const _JumpBar({required this.links});
-  final Links links;
+  const _JumpBar({required this.detail});
+  final TickerDetail detail;
 
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
+    final links = detail.links;
+    final alerts = context.watch<AlertsCubit>().state;
     final jump = context.watch<SettingsCubit>().state;
     final ebay = (label: t.viewOnEbay, url: links.ebay);
     final danawa = (label: t.danawa, url: links.danawa);
@@ -376,9 +383,72 @@ class _JumpBar extends StatelessWidget {
                 child: Text(order[1].label),
               ),
             ),
+            if (alerts.status != AlertsStatus.unsupported && detail.price != null) ...[
+              const SizedBox(width: 8),
+              IconButton.outlined(
+                tooltip: t.alertTitle,
+                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+                onPressed: () => _openAlert(context, alerts),
+                icon: const Icon(Icons.notifications_none_rounded),
+              ),
+            ],
           ],
         ),
       ),
     );
   }
+}
+
+void _openAlert(BuildContext context, AlertsState alerts) {
+  final t = AppLocalizations.of(context);
+  final d = context.read<TickerCubit>().state.detail!;
+  final message = switch (alerts.status) {
+    AlertsStatus.ready => null,
+    AlertsStatus.denied => t.alertDenied,
+    _ => t.alertNotReady,
+  };
+  // 등록이 실패해 준비 중에 멈춰 있으면 다시 시도
+  if (alerts.status == AlertsStatus.starting) context.read<AlertsCubit>().reload();
+  if (message != null) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    return;
+  }
+  showAlertSheet(context, tickerKey: d.ticker.key, nowCents: d.price!.p25Cents, fx: d.fx);
+}
+
+/// 이 종목에 걸어 둔 대기 중 알림(현재가 아래 작은 줄)
+class _WaitingAlerts extends StatelessWidget {
+  const _WaitingAlerts({required this.tickerKey, required this.fx});
+  final String tickerKey;
+  final Fx? fx;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
+    final waiting = context.select<AlertsCubit, List<PriceAlert>>((c) => c.state.waitingFor(tickerKey));
+    if (waiting.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Wrap(
+        spacing: 6,
+        runSpacing: 6,
+        children: [
+          for (final a in waiting)
+            InputChip(
+              avatar: const Icon(Icons.notifications_active_outlined, size: 16),
+              label: Text(alertCondition(context, a, fx), style: const TextStyle(fontSize: 12)),
+              deleteButtonTooltipMessage: t.alertDelete,
+              onDeleted: () => context.read<AlertsCubit>().delete(a.id),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// "180.0만원 이하" / "≤ $1,360"
+String alertCondition(BuildContext context, PriceAlert a, Fx? fx) {
+  final t = AppLocalizations.of(context);
+  final target = mainPrice(context, a.targetCents, fx).big;
+  return a.direction == AlertDirection.below ? t.condBelow(target) : t.condAbove(target);
 }

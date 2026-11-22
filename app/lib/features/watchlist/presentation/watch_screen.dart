@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import '../../../core/presentation/common.dart';
 import '../../../core/presentation/format.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../alerts/presentation/alerts_cubit.dart';
+import '../../ticker/presentation/ticker_screen.dart' show alertCondition;
 import 'watch_prices_cubit.dart';
 import 'watch_prices_state.dart';
 import 'watchlist_cubit.dart';
@@ -32,7 +34,8 @@ class WatchScreen extends StatelessWidget {
                   builder: (context) {
                     final keys = context.watch<WatchlistCubit>().state;
                     final s = context.watch<WatchPricesCubit>().state;
-                    if (keys.isEmpty) {
+                    final alerts = context.watch<AlertsCubit>().state.alerts;
+                    if (keys.isEmpty && alerts.isEmpty) {
                       return Center(
                         child: Text(
                           t.watchEmpty,
@@ -41,16 +44,56 @@ class WatchScreen extends StatelessWidget {
                         ),
                       );
                     }
-                    if (s.details.isEmpty && s.failure != null) {
+                    if (keys.isNotEmpty && s.details.isEmpty && s.failure != null) {
                       return FailureView(
                         failure: s.failure!,
                         onRetry: () => context.read<WatchPricesCubit>().load(keys),
                       );
                     }
-                    if (s.details.isEmpty) return const Center(child: CircularProgressIndicator());
+                    if (keys.isNotEmpty && s.details.isEmpty) return const Center(child: CircularProgressIndicator());
                     return RefreshIndicator(
-                      onRefresh: () => context.read<WatchPricesCubit>().load(keys),
-                      child: ListView(children: [for (final k in keys) _row(context, k, s)]),
+                      onRefresh: () async {
+                        await Future.wait([
+                          context.read<WatchPricesCubit>().load(keys),
+                          context.read<AlertsCubit>().reload(),
+                        ]);
+                      },
+                      child: ListView(
+                        children: [
+                          for (final k in keys) _row(context, k, s),
+                          if (alerts.isNotEmpty) ...[
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+                              child: Text(
+                                t.alertsSection,
+                                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: neutral),
+                              ),
+                            ),
+                            for (final a in alerts)
+                              ListTile(
+                                contentPadding: const EdgeInsets.only(left: 20, right: 8),
+                                leading: Icon(
+                                  a.waiting ? Icons.notifications_active_outlined : Icons.notifications_off_outlined,
+                                  color: a.waiting ? const Color(0xFF1D4ED8) : neutral,
+                                ),
+                                title: Text(a.tickerName, style: const TextStyle(fontWeight: FontWeight.w600)),
+                                subtitle: Text(
+                                  [
+                                    alertCondition(context, a, s.details[a.tickerKey]?.fx),
+                                    if (!a.waiting && a.firedCents != null)
+                                      t.alertFired(mainPrice(context, a.firedCents!, s.details[a.tickerKey]?.fx).big),
+                                  ].join(' · '),
+                                ),
+                                trailing: IconButton(
+                                  tooltip: t.alertDelete,
+                                  icon: const Icon(Icons.close_rounded),
+                                  onPressed: () => context.read<AlertsCubit>().delete(a.id),
+                                ),
+                                onTap: () => context.push('/ticker?key=${Uri.encodeQueryComponent(a.tickerKey)}'),
+                              ),
+                          ],
+                        ],
+                      ),
                     );
                   },
                 ),

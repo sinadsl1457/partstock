@@ -5,7 +5,10 @@ import 'package:mocktail/mocktail.dart';
 import 'package:partstock/app.dart';
 import 'package:partstock/core/di/injection.dart';
 import 'package:partstock/core/network/app_failure.dart';
+import 'package:partstock/core/push/push_service.dart';
 import 'package:partstock/core/router/app_router.dart';
+import 'package:partstock/features/alerts/data/alert_models.dart';
+import 'package:partstock/features/alerts/presentation/alerts_cubit.dart';
 import 'package:partstock/features/board/presentation/board_cubit.dart';
 import 'package:partstock/features/market/data/market_models.dart';
 import 'package:partstock/features/market/data/market_repository.dart';
@@ -17,17 +20,32 @@ import 'package:partstock/features/watchlist/presentation/watch_prices_cubit.dar
 import 'package:partstock/features/watchlist/presentation/watchlist_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../helpers/fakes.dart';
 import '../helpers/fixtures.dart';
 
-class MockRepo extends Mock implements MarketRepository {}
+late MockAlertsRepo alertsRepo;
 
-Future<MockRepo> setUpDi() async {
+Future<MockMarketRepo> setUpDi() async {
   await getIt.reset();
   SharedPreferences.setMockInitialValues({});
   final prefs = await SharedPreferences.getInstance();
-  final repo = MockRepo();
+  final repo = MockMarketRepo();
+  alertsRepo = MockAlertsRepo();
+  when(
+    () => alertsRepo.registerDevice(
+      any(),
+      platform: any(named: 'platform'),
+      locale: any(named: 'locale'),
+    ),
+  ).thenAnswer((_) async {});
+  when(() => alertsRepo.list(any())).thenAnswer((_) async => []);
+  final push = FakePush();
+  final alerts = AlertsCubit(push, alertsRepo);
+  await alerts.start('ko');
   getIt
     ..registerSingleton<MarketRepository>(repo)
+    ..registerSingleton<PushService>(push)
+    ..registerSingleton(alerts)
     ..registerSingleton(WatchlistCubit(WatchlistRepository(prefs)))
     ..registerSingleton(SettingsCubit(SettingsRepository(prefs)))
     ..registerFactory(() => BoardCubit(repo))
@@ -40,6 +58,7 @@ void main() {
   setUpAll(() {
     registerFallbackValue(Category.gpu);
     registerFallbackValue(ChartRange.d1);
+    registerFallbackValue(AlertDirection.below);
   });
 
   testWidgets('목록에서 종목을 누르면 차트, 별을 누르면 관심 탭에 나온다', (tester) async {
@@ -105,5 +124,55 @@ void main() {
     await tester.tap(find.text('다시 시도'));
     await tester.pumpAndSettle();
     expect(find.text('RTX 5090'), findsOneWidget);
+  });
+
+  testWidgets('종 버튼 → 목표가 창 → 알림 켜기 → 차트와 관심 탭에 알림이 보인다', (tester) async {
+    final repo = await setUpDi();
+    when(() => repo.cachedBoard(any())).thenReturn(null);
+    when(() => repo.board(any())).thenAnswer((_) async => boardFixture());
+    when(() => repo.ticker(any())).thenAnswer((_) async => tickerFixture());
+    when(() => repo.chart(any(), any())).thenAnswer((i) async => chartFixture(i.positionalArguments[1] as ChartRange));
+    when(() => repo.ticker(any())).thenAnswer((_) async => tickerFixture());
+    when(() => alertsRepo.create(any(), any(), any(), any())).thenAnswer(
+      (i) async => PriceAlert(
+        id: 7,
+        tickerKey: i.positionalArguments[1] as String,
+        tickerName: 'RTX 5070 Ti',
+        direction: i.positionalArguments[2] as AlertDirection,
+        targetCents: i.positionalArguments[3] as int,
+        createdAt: DateTime.utc(2026, 11, 22),
+      ),
+    );
+    tester.platformDispatcher.localesTestValue = const [Locale('ko')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.625;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(PartstockApp(router: createRouter()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('RTX 5070 Ti'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('목표가 알림'));
+    await tester.pumpAndSettle();
+    expect(find.text('알림 켜기'), findsOneWidget);
+    await tester.tap(find.text('알림 켜기'));
+    await tester.pumpAndSettle();
+
+    // 기본: 지금보다 5% 낮은 가격, 이하
+    final call = verify(() => alertsRepo.create('token-1', 'rtx-5070-ti', AlertDirection.below, captureAny()));
+    call.called(1);
+    final p25 = tickerFixture().price!.p25Cents;
+    expect((call.captured.single as int) / p25, closeTo(0.95, 0.001));
+    expect(find.text('알림을 켰습니다'), findsOneWidget);
+    expect(find.byIcon(Icons.notifications_active_outlined), findsOneWidget); // 현재가 아래 알림 표시
+
+    await tester.tap(find.byType(BackButtonIcon));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('관심'));
+    await tester.pumpAndSettle();
+    expect(find.text('목표가 알림'), findsOneWidget);
+    expect(find.textContaining('이하'), findsOneWidget);
   });
 }

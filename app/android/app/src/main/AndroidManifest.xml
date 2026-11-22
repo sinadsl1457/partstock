@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- 시세 API 호출. 템플릿은 디버그용 매니페스트에만 있어서 배포 빌드에서 빠진다 -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- 목표가 알림(Android 13+는 실행 중에 허락을 묻는다) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:label="partstock"
         android:name="${applicationName}"

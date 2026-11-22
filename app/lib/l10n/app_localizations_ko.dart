@@ -184,4 +184,79 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get source => '가격: eBay(미국) · 환율: 유럽중앙은행 기준 환율';
+
+  @override
+  String get alertTitle => '목표가 알림';
+
+  @override
+  String get alertBelow => '이하로 내려가면';
+
+  @override
+  String get alertAbove => '이상으로 오르면';
+
+  @override
+  String get alertTargetKo => '목표 가격 (만원)';
+
+  @override
+  String get alertTargetUsd => '목표 가격 (\$)';
+
+  @override
+  String alertLower(String pct) {
+    return '지금보다 $pct% 낮은 가격';
+  }
+
+  @override
+  String alertHigher(String pct) {
+    return '지금보다 $pct% 높은 가격';
+  }
+
+  @override
+  String alertNow(String price) {
+    return '지금 대표가 $price';
+  }
+
+  @override
+  String get alertNote => '매시간 수집 직후 대표가(하위 25%)로 확인해서 푸시로 알려 드립니다. 한 번 울리면 꺼집니다.';
+
+  @override
+  String get alertSave => '알림 켜기';
+
+  @override
+  String get alertSaved => '알림을 켰습니다';
+
+  @override
+  String get alertDeleted => '알림을 지웠습니다';
+
+  @override
+  String get alertLimit => '대기 중 알림은 20개까지입니다';
+
+  @override
+  String get alertDenied => '알림 권한이 꺼져 있습니다. 폰 설정에서 partstock 알림을 켜 주세요.';
+
+  @override
+  String get alertNotReady => '알림 준비 중입니다. 잠시 뒤 다시 시도해 주세요.';
+
+  @override
+  String get alertsSection => '목표가 알림';
+
+  @override
+  String condBelow(String target) {
+    return '$target 이하';
+  }
+
+  @override
+  String condAbove(String target) {
+    return '$target 이상';
+  }
+
+  @override
+  String alertFired(String price) {
+    return '울림 · $price';
+  }
+
+  @override
+  String get alertDelete => '알림 지우기';
+
+  @override
+  String get alertInvalid => '가격을 숫자로 넣어 주세요';
 }

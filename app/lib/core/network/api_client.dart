@@ -1,4 +1,4 @@
-// 시세 API(Spring 서버) GET 호출. 저장소(MarketRepository)만 부른다.
+// 시세 API(Spring 서버) 호출. 저장소들만 부른다.
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -17,11 +17,26 @@ class ApiClient {
 
   static const timeout = Duration(seconds: 10);
 
-  Future<Map<String, dynamic>> get(String path, Map<String, String> query) async {
+  Future<Map<String, dynamic>> get(String path, Map<String, String> query) async =>
+      await send('GET', path, query: query) as Map<String, dynamic>;
+
+  /// 응답 본문을 JSON으로 풀어서 돌려준다(본문이 없으면 null). 실패는 AppFailure로.
+  Future<Object?> send(
+    String method,
+    String path, {
+    Map<String, String>? query,
+    Map<String, String>? headers,
+    Object? body,
+  }) async {
     final uri = Uri.parse(_base + path).replace(queryParameters: query);
+    final req = http.Request(method, uri)..headers.addAll(headers ?? const {});
+    if (body != null) {
+      req.headers['Content-Type'] = 'application/json';
+      req.body = jsonEncode(body);
+    }
     final http.Response res;
     try {
-      res = await _http.get(uri).timeout(timeout);
+      res = await http.Response.fromStream(await _http.send(req).timeout(timeout));
     } on TimeoutException {
       throw const NetworkFailure();
     } on SocketException {
@@ -30,9 +45,8 @@ class ApiClient {
       throw const NetworkFailure();
     }
     if (res.statusCode == 404) throw const NotFoundFailure();
-    if (res.statusCode < 200 || res.statusCode >= 300) {
-      throw ServerFailure(res.statusCode);
-    }
-    return jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
+    if (res.statusCode < 200 || res.statusCode >= 300) throw ServerFailure(res.statusCode);
+    if (res.bodyBytes.isEmpty) return null;
+    return jsonDecode(utf8.decode(res.bodyBytes));
   }
 }

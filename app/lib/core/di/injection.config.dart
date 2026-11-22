@@ -15,7 +15,11 @@ import 'package:http/http.dart' as _i519;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:partstock/core/di/app_module.dart' as _i917;
 import 'package:partstock/core/network/api_client.dart' as _i968;
+import 'package:partstock/core/push/push_service.dart' as _i893;
 import 'package:partstock/core/time/clock.dart' as _i739;
+import 'package:partstock/features/alerts/data/alerts_repository.dart' as _i208;
+import 'package:partstock/features/alerts/presentation/alerts_cubit.dart'
+    as _i412;
 import 'package:partstock/features/board/presentation/board_cubit.dart'
     as _i772;
 import 'package:partstock/features/market/data/market_repository.dart' as _i261;
@@ -47,6 +51,7 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i519.Client>(() => appModule.httpClient);
     gh.lazySingleton<_i739.Clock>(() => appModule.clock);
+    gh.lazySingleton<_i893.PushService>(() => _i893.FirebasePushService());
     gh.factory<String>(() => appModule.apiUrl, instanceName: 'apiUrl');
     gh.lazySingleton<_i115.SettingsRepository>(
       () => _i115.SettingsRepository(gh<_i460.SharedPreferences>()),
@@ -66,8 +71,17 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i460.SharedPreferences>(),
       ),
     );
+    gh.lazySingleton<_i208.AlertsRepository>(
+      () => _i208.AlertsRepository(gh<_i968.ApiClient>()),
+    );
     gh.factoryParam<_i527.TickerCubit, String, dynamic>(
       (key, _) => _i527.TickerCubit(gh<_i261.MarketRepository>(), key),
+    );
+    gh.lazySingleton<_i412.AlertsCubit>(
+      () => _i412.AlertsCubit(
+        gh<_i893.PushService>(),
+        gh<_i208.AlertsRepository>(),
+      ),
     );
     gh.lazySingleton<_i947.SettingsCubit>(
       () => _i947.SettingsCubit(gh<_i115.SettingsRepository>()),
