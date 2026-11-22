@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 시세 API 호출. 템플릿은 디버그용 매니페스트에만 있어서 배포 빌드에서 빠진다 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="partstock"
         android:name="${applicationName}"
@@ -37,6 +39,11 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
+        <!-- eBay·다나와 링크를 브라우저(또는 그 앱)로 열기 -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

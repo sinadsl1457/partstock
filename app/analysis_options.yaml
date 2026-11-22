@@ -1,7 +1,13 @@
 include: package:flutter_lints/flutter.yaml
 
+formatter:
+  page_width: 120
+
 analyzer:
   exclude:
+    - "**/*.freezed.dart"
+    - "**/*.config.dart"
+    - "lib/l10n/app_localizations*.dart"
     - build/**
     - android/**
     - ios/**
