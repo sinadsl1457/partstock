@@ -103,7 +103,7 @@ export function PriceChart({
         <div ref={box} className="h-[300px] w-full" />
       )}
       <p className="text-[13px] leading-relaxed text-gray-600">
-        {labels.periodNote[period]} {period !== "day" && `${labels.upDown}.`} {labels.accumulating}
+        {labels.periodNote[period]} {period !== "day" && `${labels.upDown}.`} {count >= 2 && labels.accumulating}
       </p>
     </section>
   );
