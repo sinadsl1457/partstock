@@ -26,10 +26,13 @@ public class CollectionRunStore {
 				.single();
 	}
 
-	/** 그날 끝까지 돈 수집(OK·PARTIAL)이 있나. 실패·진행 중은 세지 않는다. */
-	public boolean hasCompletedRun(LocalDate day) {
-		return jdbc.sql("select exists(select 1 from collection_run where day = :day and status in ('OK', 'PARTIAL'))")
-				.param("day", day)
+	/** since 이후 시작해서 끝까지 돈 수집(OK·PARTIAL)이 있나. 실패·진행 중은 세지 않는다. */
+	public boolean hasCompletedRunSince(Instant since) {
+		return jdbc.sql("""
+				select exists(select 1 from collection_run
+				              where started_at >= :since and status in ('OK', 'PARTIAL'))
+				""")
+				.param("since", since.atOffset(ZoneOffset.UTC))
 				.query(Boolean.class)
 				.single();
 	}

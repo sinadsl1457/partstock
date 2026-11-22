@@ -39,6 +39,7 @@ class CollectServiceTest {
 		source.byChipset.clear();
 		source.failing.clear();
 		jdbc.sql("delete from daily_price").update();
+		jdbc.sql("delete from price_snapshot").update();
 		jdbc.sql("delete from collection_run").update();
 	}
 
@@ -118,18 +119,37 @@ class CollectServiceTest {
 	@Autowired CollectionRunStore runs;
 
 	@Test
-	void 끝까지_돈_수집만_그날_수집으로_친다() {
-		assertThat(runs.hasCompletedRun(DAY)).isFalse();
+	void 끝까지_돈_수집만_친다() {
+		java.time.Instant since = java.time.Instant.EPOCH;
+		assertThat(runs.hasCompletedRunSince(since)).isFalse();
 
 		source.failing.addAll(com.partstock.catalog.Catalog.GPU_CHIPSETS.stream().map(c -> c.key()).toList());
 		source.failing.addAll(com.partstock.catalog.Catalog.RAM_CHIPSETS.stream().map(c -> c.key()).toList());
 		collect.collect(DAY); // 전부 실패 → FAILED
-		assertThat(runs.hasCompletedRun(DAY)).isFalse();
+		assertThat(runs.hasCompletedRunSince(since)).isFalse();
 
 		source.failing.clear();
 		collect.collect(DAY);
-		assertThat(runs.hasCompletedRun(DAY)).isTrue();
-		assertThat(runs.hasCompletedRun(DAY.plusDays(1))).isFalse();
+		assertThat(runs.hasCompletedRunSince(since)).isTrue();
+		// 수집 기록의 시작 시각은 테스트 시계가 아니라 실제 지금이라, 먼 미래 기준이면 없음
+		assertThat(runs.hasCompletedRunSince(java.time.Instant.parse("2999-01-01T00:00:00Z"))).isFalse();
+	}
+
+	@Test
+	void 매시간_스냅샷을_쌓고_그날_시세는_가장_최근_값() {
+		source.byChipset.put("rtx-5080", List.of(
+				usd("RTX 5080 a", 100_000), usd("RTX 5080 b", 110_000), usd("RTX 5080 c", 120_000)));
+		collect.collect(java.time.Instant.parse("2026-11-20T03:12:00Z"));
+		source.byChipset.put("rtx-5080", List.of(
+				usd("RTX 5080 a", 200_000), usd("RTX 5080 b", 210_000), usd("RTX 5080 c", 220_000)));
+		collect.collect(java.time.Instant.parse("2026-11-20T04:05:00Z"));
+
+		// 글자로 비교하면 DB 접속의 시간대(테스트 기계는 한국)에 따라 달라져서 시각 자체로 비교
+		var hours = jdbc.sql("select ts from price_snapshot where ticker_key = 'rtx-5080' order by ts")
+				.query(java.time.OffsetDateTime.class).list().stream().map(java.time.OffsetDateTime::toInstant).toList();
+		assertThat(hours).containsExactly(
+				java.time.Instant.parse("2026-11-20T03:00:00Z"), java.time.Instant.parse("2026-11-20T04:00:00Z"));
+		assertThat(prices.find("rtx-5080", DAY)).hasValueSatisfying(s -> assertThat(s.medianCents()).isEqualTo(210_000));
 	}
 
 	@Test

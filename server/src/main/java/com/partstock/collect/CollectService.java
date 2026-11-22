@@ -9,9 +9,13 @@ import com.partstock.collect.CollectResult.Status;
 import com.partstock.collect.ListingSource.Listing;
 import com.partstock.price.DailyPriceStore;
 import com.partstock.price.PriceStats;
+import com.partstock.price.SnapshotStore;
 import com.partstock.ticker.TickerStore;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -25,7 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
- * 하루 시세 수집: 칩셋마다 판매 글을 받아 → 제목으로 종목을 가르고 → 종목별 시세를 계산해 저장.
+ * 시세 수집(매시간): 칩셋마다 판매 글을 받아 → 제목으로 종목을 가르고 → 종목별 시세를 계산해 저장.
  * 판매 글 원본은 이 메서드 안에서만 쓰고 버린다.
  */
 @Service
@@ -36,25 +40,39 @@ public class CollectService {
 	private final ListingSource source;
 	private final TickerStore tickers;
 	private final DailyPriceStore prices;
+	private final SnapshotStore snapshots;
 	private final CollectionRunStore runs;
 	private final Clock clock;
 	private final int minListings;
 
-	public CollectService(ListingSource source, TickerStore tickers, DailyPriceStore prices, CollectionRunStore runs,
+	public CollectService(ListingSource source, TickerStore tickers, DailyPriceStore prices, SnapshotStore snapshots,
+			CollectionRunStore runs,
 			Clock clock, @Value("${partstock.collect.min-listings}") int minListings) {
 		this.source = source;
 		this.tickers = tickers;
 		this.prices = prices;
+		this.snapshots = snapshots;
 		this.runs = runs;
 		this.clock = clock;
 		this.minListings = minListings;
 	}
 
-	public CollectResult collectToday() {
-		return collect(LocalDate.now(clock));
+	public CollectResult collectNow() {
+		return collect(clock.instant());
 	}
 
+	/** 그날 0시(UTC) 수집으로 친다. 테스트용. */
 	public CollectResult collect(LocalDate day) {
+		return collect(day.atStartOfDay(ZoneOffset.UTC).toInstant());
+	}
+
+	/**
+	 * at이 속한 시각(정시)의 스냅샷과 그날 시세(daily_price = 그날 가장 최근 값)를 저장한다.
+	 * 같은 시각에 다시 돌면 덮어쓴다.
+	 */
+	public CollectResult collect(Instant at) {
+		LocalDate day = LocalDate.ofInstant(at, ZoneOffset.UTC);
+		Instant hour = at.truncatedTo(ChronoUnit.HOURS);
 		tickers.syncChipsets();
 		long runId = runs.start(day, clock.instant());
 		int calls = 0, seen = 0, used = 0, saved = 0;
@@ -103,9 +121,11 @@ public class CollectService {
 					Optional<PriceStats> stats = PriceStats.of(entry.getValue(), minListings);
 					if (stats.isPresent()) {
 						prices.upsert(entry.getKey(), day, stats.get());
+						snapshots.upsert(entry.getKey(), hour, stats.get());
 						saved++;
 					} else {
 						prices.delete(entry.getKey(), day);
+						snapshots.delete(entry.getKey(), hour);
 					}
 				}
 			}

@@ -2,7 +2,8 @@ package com.partstock.collect;
 
 import com.partstock.fx.FxRateService;
 import java.time.Clock;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,8 +16,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**
- * 하루 한 번 환율 → 시세 수집. 시각은 partstock.collect.cron(UTC), "-"면 꺼짐(테스트).
- * 켜질 때 그날 수집이 아직 없으면 바로 한 번 돈다(배포·재시작한 날이 비지 않게).
+ * 매시간 환율 → 시세 수집. 시각은 partstock.collect.cron(UTC), "-"면 꺼짐(테스트).
+ * 켜질 때 이번 시각 수집이 아직 없으면 바로 한 번 돈다(배포·재시작으로 한 시간이 비지 않게).
  */
 @Configuration(proxyBeanMethods = false)
 @EnableScheduling
@@ -41,20 +42,20 @@ public class CollectScheduler {
 	}
 
 	@Scheduled(cron = "${partstock.collect.cron}", zone = "UTC")
-	void daily() {
+	void hourly() {
 		fx.collectRecent();
-		collect.collectToday();
+		collect.collectNow();
 	}
 
 	/** 다른 스레드에서: 수집이 몇 분 걸려도 서버 시작을 막지 않게. */
 	@Async
 	@EventListener(ApplicationReadyEvent.class)
 	void catchUp() {
-		LocalDate today = LocalDate.now(clock);
-		if (!onStart || runs.hasCompletedRun(today)) {
+		Instant hour = clock.instant().truncatedTo(ChronoUnit.HOURS);
+		if (!onStart || runs.hasCompletedRunSince(hour)) {
 			return;
 		}
-		log.info("오늘({}) 수집 기록이 없어 시작하자마자 수집", today);
-		daily();
+		log.info("이번 시각({}) 수집 기록이 없어 시작하자마자 수집", hour);
+		hourly();
 	}
 }
