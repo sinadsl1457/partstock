@@ -5,6 +5,8 @@ import com.partstock.catalog.Category;
 import com.partstock.catalog.ChipsetDef;
 import com.partstock.catalog.ListingClassifier.Classification;
 import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Repository;
 
 /** ticker 표. 이미 있으면 건드리지 않는다(사람이 넣은 다나와 번호를 덮지 않게). */
@@ -21,6 +23,15 @@ public class TickerStore {
 
 	public TickerStore(JdbcClient jdbc) {
 		this.jdbc = jdbc;
+	}
+
+	/**
+	 * 서버가 켜질 때도 맞춘다. 새 칩셋을 넣고 배포하면 다음 수집 전에도 종목 화면이 열리게
+	 * (11/22: 수집 때만 맞춰서 배포 직후 새 종목이 다음 정각까지 404였다).
+	 */
+	@EventListener(ApplicationReadyEvent.class)
+	public void syncOnStart() {
+		syncChipsets();
 	}
 
 	/** 코드의 칩셋 목록을 표에 맞춘다. 판매 글이 아직 없어도 시세판에 칩셋은 보이게. */
