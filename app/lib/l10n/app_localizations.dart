@@ -889,6 +889,12 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'규격'**
   String get filter_iface;
+
+  /// No description provided for @privacy.
+  ///
+  /// In ko, this message translates to:
+  /// **'개인정보 처리방침'**
+  String get privacy;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

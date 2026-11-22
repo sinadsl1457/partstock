@@ -1,10 +1,11 @@
-// 설정 탭: 바로가기 기본값, 알림 상태·걸어 둔 목표가, 가격 기준, 가이드 다시 보기·앱 버전.
+// 설정 탭: 바로가기 기본값, 알림 상태·걸어 둔 목표가, 가격 기준, 가이드 다시 보기·개인정보 처리방침·앱 버전.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../core/presentation/brand.dart';
+import '../../../core/presentation/common.dart';
 import '../../../core/presentation/theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../alerts/presentation/alerts_cubit.dart';
@@ -110,6 +111,13 @@ class SettingsScreen extends StatelessWidget {
               child: Column(
                 children: [
                   _Row(title: t.guideAgain, onTap: () => context.push('/guide?again=1')),
+                  const Divider(height: 1),
+                  _Row(
+                    title: t.privacy,
+                    onTap: () => openLink(
+                      'https://partstock-two.vercel.app/${Localizations.localeOf(context).languageCode == 'ko' ? 'ko' : 'en'}/privacy',
+                    ),
+                  ),
                   const Divider(height: 1),
                   _Row(
                     title: t.appVersion,

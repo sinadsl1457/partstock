@@ -132,5 +132,6 @@
   "coreGen": "Core {gen}th Gen",
   "ssd": "SSD",
   "filter_capacity": "Capacity",
-  "filter_iface": "Interface"
+  "filter_iface": "Interface",
+  "privacy": "Privacy policy"
 }

@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.partstock.partstock"
+    namespace = "com.taektoy.partstock"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -18,8 +18,8 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.partstock.partstock"
+        // Play에 올리면 바꿀 수 없다(11/22 사용자 결정: NowStation과 같은 com.taektoy.*)
+        applicationId = "com.taektoy.partstock"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -32,11 +32,23 @@ android {
         versionName = flutter.versionName
     }
 
+    // Play 업로드 키: CI(GitHub Actions)가 비밀값으로 넘긴다(ORG_GRADLE_PROJECT_RELEASE_*). 키는 레포에 두지 않는다.
+    // 값이 없으면(로컬 빌드) 디버그 키로 서명해 flutter run --release가 그대로 된다.
+    val releaseStore = findProperty("RELEASE_STORE_FILE") as String?
+    signingConfigs {
+        if (releaseStore != null) {
+            create("release") {
+                storeFile = file(releaseStore)
+                storePassword = findProperty("RELEASE_STORE_PASSWORD") as String
+                keyAlias = findProperty("RELEASE_KEY_ALIAS") as String
+                keyPassword = findProperty("RELEASE_KEY_PASSWORD") as String
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName(if (releaseStore != null) "release" else "debug")
         }
     }
 }

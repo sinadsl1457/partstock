@@ -443,4 +443,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get filter_iface => '규격';
+
+  @override
+  String get privacy => '개인정보 처리방침';
 }

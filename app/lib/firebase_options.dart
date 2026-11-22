@@ -48,12 +48,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDdh3ih-6jMZ3mS1RBpArAbt8Hw5z_Bu8Q',
-    appId: '1:312117423732:android:0e4b0256399f2418e12b21',
+    appId: '1:312117423732:android:26cf739afe6f5506e12b21',
     messagingSenderId: '312117423732',
     projectId: 'partstock-prices',
     storageBucket: 'partstock-prices.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCyyUqmvgNfR7uFivW3_CbX6SqScp3RlAk',
     appId: '1:312117423732:ios:06ffad9e26837224e12b21',

@@ -261,5 +261,6 @@
   },
   "ssd": "SSD",
   "filter_capacity": "용량",
-  "filter_iface": "규격"
+  "filter_iface": "규격",
+  "privacy": "개인정보 처리방침"
 }

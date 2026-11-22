@@ -447,4 +447,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filter_iface => 'Interface';
+
+  @override
+  String get privacy => 'Privacy policy';
 }

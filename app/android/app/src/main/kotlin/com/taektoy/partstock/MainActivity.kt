@@ -1,4 +1,4 @@
-package com.partstock.partstock
+package com.taektoy.partstock
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -113,6 +113,15 @@ docs/     AI_LOG.md
 - 데이터 품질 점검(저장 안 함): `./gradlew bootRun --args='--spring.profiles.active=local,probe --partstock.probe.chipsets=rtx-5070-ti'`
 - eBay 응답 예시(`src/test/resources/ebay`)는 지금 문서 기준 가짜다. 키를 받으면 실제 응답으로 바꾸고 파서를 맞춘다.
 
+## CI/CD (11/22 사용자 결정: 서버·앱 둘 다, NowStation과 같은 방식)
+- 서버 `.github/workflows/server.yml`: main에 server·deploy가 바뀐 push → 테스트(Testcontainers) → 이미지(레포 루트에서 `docker build -f server/Dockerfile`, 안에서 jar 빌드)를 GHCR `ghcr.io/sinadsl1457/partstock-server:<커밋>`·`:main`에 올림 → EC2 타이머(`partstock-deploy.timer`, 1분)가 새 이미지를 보고 스스로 교체(`deploy/auto-deploy.sh` → `remote-deploy.sh`, 2분 안에 `/api/version`이 새 커밋이 아니면 되돌리고 그 커밋은 다시 시도 안 함) → Actions가 `https://<PUBLIC_HOST>/api/version`으로 확인. GitHub은 서버에 들어가지 않는다(서버엔 GHCR 읽기 전용 토큰만). 배포 설정 파일은 이미지 안 `/deploy`에서 꺼내 쓴다.
+- 앱 `.github/workflows/app.yml`: app이 바뀐 push·PR → 생성 파일 일치·포맷·분석·테스트·APK 빌드.
+- 앱 `.github/workflows/app-release.yml`: 태그 `app-v*` 또는 손으로 → 서명된 .aab(versionCode = 커밋 수) → Play 업로드(`PLAY_SERVICE_ACCOUNT_JSON`). Play 첫 .aab는 Console에서 손으로(결과물 artifact 사용).
+- Android 앱 ID `com.taektoy.partstock`(Play에 올리면 못 바꿈, NowStation과 같은 꼴). iOS 번들 ID는 `com.partstock.partstock` 그대로(무료 서명 앱 자리 문제, 스토어 출시 계획 없음).
+- 업로드 키: 맥 `~/.ssh/partstock-upload.jks` + `.properties`(커밋 금지), GitHub 비밀값 `RELEASE_*`. 로컬 빌드는 키가 없으면 디버그 키로 서명.
+- 개인정보 처리방침: 웹 `/ko/privacy`·`/en/privacy`(앱 설정에서도 연결). 저장하는 것이 바뀌면 같이 고친다.
+- `deploy/deploy.sh`(맥에서 손 배포)는 자동 배포가 멈췄을 때만.
+
 ## 배포 (수집 서버)
 - AWS EC2 새 t3.micro 한 대(NowStation과 분리, 11/22 결정). Docker compose로 PostgreSQL + 서버(`deploy/compose.prod.yaml`), 값은 EC2 `~/partstock/.env`.
 - 지금은 맥에서 `deploy/deploy.sh <IP>`로 이미지를 만들어 보낸다(CI 전 임시).

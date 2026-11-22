@@ -1,0 +1,43 @@
+# 앱이 바뀐 push·PR마다: 분석 → 테스트 → APK가 만들어지는지. 출시는 app-release.yml(태그 app-v*).
+name: 앱 검사
+
+on:
+  push:
+    branches: [main]
+    paths: ["app/**", ".github/workflows/app.yml"]
+  pull_request:
+    paths: ["app/**"]
+  workflow_dispatch:
+
+concurrency:
+  group: app-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.7" # 개발 PC와 같은 버전(CLAUDE.md: 옛 버전 호환은 보지 않음)
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: 생성 파일이 커밋돼 있는지(build_runner·gen-l10n을 돌리지 않아도 되게)
+        run: |
+          flutter gen-l10n
+          dart run build_runner build -d
+          git diff --exit-code -- lib || { echo "생성 파일이 코드와 다르다: 로컬에서 build_runner·gen-l10n 후 커밋" >&2; exit 1; }
+      - run: dart format --output=none --set-exit-if-changed lib test
+      - run: flutter analyze
+      - run: flutter test
+      - name: APK가 만들어지는지(디버그 키 서명)
+        run: flutter build apk --release
