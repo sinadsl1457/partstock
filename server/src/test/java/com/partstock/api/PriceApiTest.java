@@ -43,6 +43,9 @@ class PriceApiTest {
 
 	@BeforeEach
 	void setUp() {
+		// 종목을 가리키는 알림부터 지워야 종목 표를 비울 수 있다(다른 테스트가 남긴 알림)
+		jdbc.sql("delete from price_alert").update();
+		jdbc.sql("delete from device").update();
 		jdbc.sql("delete from daily_price").update();
 		jdbc.sql("delete from price_snapshot").update();
 		jdbc.sql("delete from fx_rate").update();

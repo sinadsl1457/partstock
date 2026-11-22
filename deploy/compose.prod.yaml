@@ -27,6 +27,9 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       EBAY_CLIENT_ID: ${EBAY_CLIENT_ID}
       EBAY_CLIENT_SECRET: ${EBAY_CLIENT_SECRET}
+    volumes:
+      # FCM 서비스 계정 키(커밋 안 함). EC2 ~/partstock/firebase.json, 본인만 읽기
+      - ./firebase.json:/run/secrets/firebase.json:ro
 
   caddy:
     image: caddy:2

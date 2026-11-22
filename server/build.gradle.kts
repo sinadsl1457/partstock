@@ -25,6 +25,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	// Boot 4에서 RestClient.Builder 자동 설정이 별도 모듈(webmvc만으로는 안 생김)
 	implementation("org.springframework.boot:spring-boot-starter-restclient")
+	// FCM 보내기용 구글 인증(서비스 계정 → 접근 토큰). Firebase Admin SDK는 1GB 서버에 무거워서 HTTP API를 직접 부른다
+	implementation("com.google.auth:google-auth-library-oauth2-http:1.58.0")
 	implementation("org.flywaydb:flyway-database-postgresql")
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 	runtimeOnly("org.postgresql:postgresql")

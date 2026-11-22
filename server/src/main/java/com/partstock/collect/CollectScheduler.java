@@ -1,5 +1,6 @@
 package com.partstock.collect;
 
+import com.partstock.alert.AlertService;
 import com.partstock.fx.FxRateService;
 import java.time.Clock;
 import java.time.Instant;
@@ -16,7 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**
- * 매시간 환율 → 시세 수집. 시각은 partstock.collect.cron(UTC), "-"면 꺼짐(테스트).
+ * 매시간 환율 → 시세 수집 → 목표가 알림. 시각은 partstock.collect.cron(UTC), "-"면 꺼짐(테스트).
  * 켜질 때 이번 시각 수집이 아직 없으면 바로 한 번 돈다(배포·재시작으로 한 시간이 비지 않게).
  */
 @Configuration(proxyBeanMethods = false)
@@ -28,14 +29,17 @@ public class CollectScheduler {
 
 	private final CollectService collect;
 	private final FxRateService fx;
+	private final AlertService alerts;
 	private final CollectionRunStore runs;
 	private final Clock clock;
 	private final boolean onStart;
 
-	public CollectScheduler(CollectService collect, FxRateService fx, CollectionRunStore runs, Clock clock,
+	public CollectScheduler(CollectService collect, FxRateService fx, AlertService alerts, CollectionRunStore runs,
+			Clock clock,
 			@Value("${partstock.collect.on-start:false}") boolean onStart) {
 		this.collect = collect;
 		this.fx = fx;
+		this.alerts = alerts;
 		this.runs = runs;
 		this.clock = clock;
 		this.onStart = onStart;
@@ -45,6 +49,8 @@ public class CollectScheduler {
 	void hourly() {
 		fx.collectRecent();
 		collect.collectNow();
+		// 방금 받은 시세로 목표가 알림 확인
+		alerts.checkAndSend();
 	}
 
 	/** 다른 스레드에서: 수집이 몇 분 걸려도 서버 시작을 막지 않게. */
