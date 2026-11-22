@@ -1,6 +1,6 @@
-// 시세 목록 필터: 분류(VGA·RAM)마다 어떤 칸(facet)으로 거르는지. 필터를 늘리면 filterGroups에 한 줄 추가(앱과 같은 규칙).
+// 시세 목록 필터: 분류(VGA·RAM·CPU)마다 어떤 칸(facet)으로 거르는지. 필터를 늘리면 filterGroups에 한 줄 추가(앱과 같은 규칙).
 // 서버가 종목마다 facets(series, ddr, pack)를 준다.
-export type Cat = "gpu" | "ram";
+export type Cat = "gpu" | "ram" | "cpu";
 
 /** single이면 하나만 고른다(RAM 구성). 아니면 여러 개, 아무것도 안 고르면 전체 */
 export type FilterGroup = { facet: string; values: string[]; single?: boolean; initial: string[] };
@@ -11,6 +11,10 @@ export const filterGroups: Record<Cat, FilterGroup[]> = {
     { facet: "ddr", values: ["DDR5", "DDR4"], initial: [] },
     // 한국은 1개 단위 판매가 기본이라 1개가 처음 값(11/22 사용자 결정)
     { facet: "pack", values: ["1", "2"], single: true, initial: ["1"] },
+  ],
+  cpu: [
+    { facet: "brand", values: ["AMD", "INTEL"], initial: [] },
+    { facet: "series", values: ["RYZEN9000", "RYZEN7000", "ULTRA200", "CORE14", "CORE13"], initial: [] },
   ],
 };
 
@@ -49,7 +53,10 @@ export function parseFilter(c: Cat, raw: string | null): BoardFilter {
   );
 }
 
-/** RTX50 → RTX 50 */
-export function seriesLabel(v: string): string {
-  return v.replace(/^(RTX|RX)(\d+)$/, "$1 $2");
+/** RTX50 → RTX 50, RYZEN9000 → Ryzen 9000. Core 14·13세대는 언어별 글자(coreGen)로 */
+export function seriesLabel(v: string, coreGen: string): string {
+  const fixed: Record<string, string> = { RYZEN9000: "Ryzen 9000", RYZEN7000: "Ryzen 7000", ULTRA200: "Core Ultra 200S" };
+  const gen = /^CORE(\d+)$/.exec(v);
+  if (gen) return coreGen.replace("{gen}", gen[1]);
+  return fixed[v] ?? v.replace(/^(RTX|RX)(\d+)$/, "$1 $2");
 }

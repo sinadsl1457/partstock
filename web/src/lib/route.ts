@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation";
 import { isLocale, type Locale } from "./i18n";
 
-export const categories = ["gpu", "ram"] as const;
+export const categories = ["gpu", "ram", "cpu"] as const;
 export type Cat = (typeof categories)[number];
 
 export function checkParams(lang: string, category: string): { lang: Locale; category: Cat } {

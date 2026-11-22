@@ -35,6 +35,7 @@ async function TopBar({ params }: { params: LayoutProps<"/[lang]/[category]">["p
   const board = await getBoard(category.toUpperCase() as Category);
   const tab = (c: Cat, label: string) => (
     <Link
+      key={c}
       href={`/${lang}/${c}`}
       aria-current={c === category ? "page" : undefined}
       className={`-mb-px inline-flex min-h-11 items-center border-b-2 px-1 text-[17px] no-underline ${
@@ -47,8 +48,7 @@ async function TopBar({ params }: { params: LayoutProps<"/[lang]/[category]">["p
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <nav className="flex gap-6 border-b border-line">
-        {tab("gpu", t.gpu)}
-        {tab("ram", t.ram)}
+        {categories.map((c) => tab(c, t.cat[c]))}
       </nav>
       {board.updatedAt ? (
         <p className="num inline-flex items-center gap-2 rounded-full border border-line-hi px-3 py-1.5 text-[13px] text-sub">
@@ -95,13 +95,15 @@ async function Aside({ params }: { params: LayoutProps<"/[lang]/[category]">["pa
           colors={colors}
           labels={{
             filter: t.filter,
-            title: t.filterTitle(category === "gpu" ? t.gpu : t.ram),
+            title: t.filterTitle(t.cat[category]),
             reset: t.filterReset,
             apply: t.filterApply,
             empty: t.filterEmpty,
             hintMulti: t.filterHintMulti,
             facet: t.facet,
             pack: t.pack,
+            brand: t.brand,
+            coreGen: t.coreGen,
             priceHeader: `${t.price}(${t.priceHint}) · ${t.change24h}`,
           }}
         />

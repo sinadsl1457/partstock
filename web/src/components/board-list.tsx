@@ -38,6 +38,9 @@ export type FilterLabels = {
   hintMulti: string;
   facet: Record<string, string>;
   pack: Record<string, string>;
+  brand: Record<string, string>;
+  /** "Core {gen}세대" */
+  coreGen: string;
   priceHeader: string;
 };
 
@@ -197,7 +200,13 @@ function FilterPanel({
   const [f, setF] = useState<BoardFilter>(current);
   const count = rows.filter((r) => matchesFilter(r.facets, f)).length;
   const valueLabel = (facet: string, v: string) =>
-    facet === "series" ? seriesLabel(v) : facet === "pack" ? (labels.pack[v] ?? v) : v;
+    facet === "series"
+      ? seriesLabel(v, labels.coreGen)
+      : facet === "pack"
+        ? (labels.pack[v] ?? v)
+        : facet === "brand"
+          ? (labels.brand[v] ?? v)
+          : v;
 
   return (
     <div className="flex flex-col gap-4 border-b border-line bg-surface-hi px-4 py-4">

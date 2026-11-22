@@ -6,7 +6,7 @@ import { cacheLife } from "next/cache";
 const BASE = process.env.PARTSTOCK_API_URL ?? "http://localhost:8080";
 const LIFE = { stale: 300, revalidate: 600, expire: 3600 };
 
-export type Category = "GPU" | "RAM";
+export type Category = "GPU" | "RAM" | "CPU";
 export type Range = "1d" | "1w" | "1m" | "3m" | "1y" | "all";
 export const ranges: Range[] = ["1d", "1w", "1m", "3m", "1y", "all"];
 
