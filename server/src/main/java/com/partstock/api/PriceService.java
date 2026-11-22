@@ -91,7 +91,7 @@ public class PriceService {
 		List<BoardItem> items = defs.stream()
 				.map(c -> {
 					QuoteRow q = quotes.get(c.key());
-					return new BoardItem(c.key(), c.displayName(), vendor(c), price(q), change(q),
+					return new BoardItem(c.key(), c.displayName(), vendor(c), c.facets(), price(q), change(q),
 							spark.getOrDefault(c.key(), List.of()), links(c, null, null, null));
 				})
 				.toList();

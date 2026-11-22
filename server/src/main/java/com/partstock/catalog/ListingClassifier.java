@@ -52,8 +52,10 @@ public final class ListingClassifier {
 		return tie ? null : best;
 	}
 
+	/** "NON-ECC"(일반 데스크톱 램)처럼 NON이 붙은 말은 제외어로 보지 않는다 */
 	private static boolean excluded(Title title, List<String> phrases) {
-		return phrases.stream().anyMatch(title::contains);
+		Title t = title.withoutNegated();
+		return phrases.stream().anyMatch(t::contains);
 	}
 
 	/** maker·series는 못 찾으면 null. */

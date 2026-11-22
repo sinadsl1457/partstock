@@ -49,4 +49,17 @@ public record Title(List<String> tokens) {
 	public String tokenAt(int i) {
 		return i >= 0 && i < tokens.size() ? tokens.get(i) : "";
 	}
+
+	/** "NON ECC"처럼 NON과 바로 뒤 단어를 뺀 제목 */
+	public Title withoutNegated() {
+		List<String> out = new java.util.ArrayList<>();
+		for (int i = 0; i < tokens.size(); i++) {
+			if (tokens.get(i).equals("NON")) {
+				i++;
+				continue;
+			}
+			out.add(tokens.get(i));
+		}
+		return new Title(out);
+	}
 }

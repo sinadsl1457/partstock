@@ -4,6 +4,7 @@ import static com.partstock.catalog.ChipsetDef.GpuVendor.AMD;
 import static com.partstock.catalog.ChipsetDef.GpuVendor.NVIDIA;
 import static com.partstock.catalog.ChipsetDef.gpu;
 import static com.partstock.catalog.ChipsetDef.ram;
+import static com.partstock.catalog.ChipsetDef.ramSingle;
 import static com.partstock.catalog.MakerDef.SeriesDef;
 
 import java.util.List;
@@ -29,16 +30,45 @@ public final class Catalog {
 			gpu("rx-9070-xt", "RX 9070 XT", AMD, List.of("9070", "XT"), Set.of(), null, null),
 			gpu("rx-9070", "RX 9070", AMD, List.of("9070"), Set.of("XT", "GRE"), null, null),
 			// 8GB는 미국 eBay 새 상품이 하루 3개 정도라 시세가 안 나와 뺐다(11/21 실측). 16GB 쪽은 8GB 글이 섞이지 않게 계속 거른다
-			gpu("rx-9060-xt-16gb", "RX 9060 XT 16GB", AMD, List.of("9060", "XT"), Set.of(), 16, 8));
+			gpu("rx-9060-xt-16gb", "RX 9060 XT 16GB", AMD, List.of("9060", "XT"), Set.of(), 16, 8),
+			// 이전 세대(11/22 사용자 결정: 40 시리즈까지, AMD는 같은 세대 RX 7000). 새 상품이 적어 데이터 없는 시각이 잦다
+			// (11/22 점검: 4080 Super·4060 Ti 16GB·7900 XT·7900 GRE는 1~3개)
+			gpu("rtx-4090", "RTX 4090", NVIDIA, List.of("4090"), Set.of("D"), null, null),
+			gpu("rtx-4080-super", "RTX 4080 Super", NVIDIA, List.of("4080", "SUPER"), Set.of(), null, null),
+			gpu("rtx-4080", "RTX 4080", NVIDIA, List.of("4080"), Set.of("SUPER"), null, null),
+			gpu("rtx-4070-ti-super", "RTX 4070 Ti Super", NVIDIA, List.of("4070", "TI", "SUPER"), Set.of(), null, null),
+			gpu("rtx-4070-ti", "RTX 4070 Ti", NVIDIA, List.of("4070", "TI"), Set.of("SUPER"), null, null),
+			gpu("rtx-4070-super", "RTX 4070 Super", NVIDIA, List.of("4070", "SUPER"), Set.of(), null, null),
+			gpu("rtx-4070", "RTX 4070", NVIDIA, List.of("4070"), Set.of("TI", "SUPER"), null, null),
+			gpu("rtx-4060-ti-16gb", "RTX 4060 Ti 16GB", NVIDIA, List.of("4060", "TI"), Set.of(), 16, 8),
+			gpu("rtx-4060-ti-8gb", "RTX 4060 Ti 8GB", NVIDIA, List.of("4060", "TI"), Set.of(), 8, 16),
+			gpu("rtx-4060", "RTX 4060", NVIDIA, List.of("4060"), Set.of("TI"), null, null),
+			gpu("rx-7900-xtx", "RX 7900 XTX", AMD, List.of("7900", "XTX"), Set.of(), null, null),
+			gpu("rx-7900-xt", "RX 7900 XT", AMD, List.of("7900", "XT"), Set.of(), null, null),
+			gpu("rx-7900-gre", "RX 7900 GRE", AMD, List.of("7900", "GRE"), Set.of(), null, null),
+			gpu("rx-7800-xt", "RX 7800 XT", AMD, List.of("7800", "XT"), Set.of(), null, null),
+			gpu("rx-7700-xt", "RX 7700 XT", AMD, List.of("7700", "XT"), Set.of(), null, null),
+			gpu("rx-7600", "RX 7600", AMD, List.of("7600"), Set.of("XT"), null, null));
 
+	/**
+	 * 1개짜리가 기본(한국은 1개 단위 판매가 흔함, 11/22 사용자 결정), 2개 묶음은 필터로 본다.
+	 * 2개 묶음 키는 11/22에 ddr5-32gb → ddr5-2x16gb로 옮겼다(V5 마이그레이션, 1개짜리가 그 이름을 씀).
+	 */
 	public static final List<ChipsetDef> RAM_CHIPSETS = List.of(
-			ram("ddr5-32gb", 5, 16),
-			ram("ddr5-64gb", 5, 32),
-			ram("ddr5-96gb", 5, 48),
-			ram("ddr5-16gb", 5, 8),
-			ram("ddr4-32gb", 4, 16),
-			ram("ddr4-16gb", 4, 8),
-			ram("ddr4-64gb", 4, 32));
+			ramSingle("ddr5-16gb", 5, 16),
+			ramSingle("ddr5-32gb", 5, 32),
+			ramSingle("ddr5-8gb", 5, 8),
+			ramSingle("ddr5-48gb", 5, 48),
+			ramSingle("ddr4-16gb", 4, 16),
+			ramSingle("ddr4-8gb", 4, 8),
+			ramSingle("ddr4-32gb", 4, 32),
+			ram("ddr5-2x16gb", 5, 16),
+			ram("ddr5-2x32gb", 5, 32),
+			ram("ddr5-2x48gb", 5, 48),
+			ram("ddr5-2x8gb", 5, 8),
+			ram("ddr4-2x16gb", 4, 16),
+			ram("ddr4-2x8gb", 4, 8),
+			ram("ddr4-2x32gb", 4, 32));
 
 	public static final List<MakerDef> GPU_MAKERS = List.of(
 			MakerDef.of("asus", "ASUS", List.of("ASUS"),

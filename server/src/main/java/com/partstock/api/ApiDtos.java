@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * API 응답 모양. 가격은 모두 USD 센트 정수(웹·앱이 원화로 바꿀 때 fx.usdKrw를 곱한다).
@@ -22,8 +23,9 @@ public final class ApiDtos {
 
 	public record SparkPoint(OffsetDateTime t, long p25Cents) {}
 
-	public record BoardItem(String key, String name, String vendor, Price price, Change change,
-			List<SparkPoint> spark, Links links) {}
+	/** facets: 화면 필터용 분류(GPU series, RAM ddr·pack). 글자는 웹·앱이 바꾼다 */
+	public record BoardItem(String key, String name, String vendor, Map<String, String> facets, Price price,
+			Change change, List<SparkPoint> spark, Links links) {}
 
 	/** updatedAt = 가장 최근 수집 시각. */
 	public record Board(String category, LocalDate day, OffsetDateTime updatedAt, Fx fx, List<BoardItem> items) {}

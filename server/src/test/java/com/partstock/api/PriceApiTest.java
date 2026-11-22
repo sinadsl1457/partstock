@@ -201,12 +201,17 @@ class PriceApiTest {
 
 	@Test
 	void 램_다나와_검색어는_다나와_표기에_가깝게() throws Exception {
-		put("ddr5-32gb", NOW, 58_000);
+		put("ddr5-2x16gb", NOW, 58_000);
 
 		mvc.perform(get("/api/board").param("category", "ram"))
-				.andExpect(jsonPath("$.items[0].key").value("ddr5-32gb"))
-				.andExpect(jsonPath("$.items[0].vendor").value("DESKTOP"))
+				.andExpect(jsonPath("$.items[0].key").value("ddr5-16gb"))
+				.andExpect(jsonPath("$.items[0].facets.pack").value("1"))
 				.andExpect(jsonPath("$.items[0].links.danawa").value(
+						"https://search.danawa.com/dsearch.php?query=DDR5%2016GB"))
+				.andExpect(jsonPath("$.items[7].key").value("ddr5-2x16gb"))
+				.andExpect(jsonPath("$.items[7].vendor").value("DESKTOP"))
+				.andExpect(jsonPath("$.items[7].facets.ddr").value("DDR5"))
+				.andExpect(jsonPath("$.items[7].links.danawa").value(
 						"https://search.danawa.com/dsearch.php?query=DDR5%2032GB%2016Gx2"));
 	}
 

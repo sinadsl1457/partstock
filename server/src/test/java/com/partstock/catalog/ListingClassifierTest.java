@@ -104,17 +104,17 @@ class ListingClassifierTest {
 
 	@ParameterizedTest
 	@CsvSource(delimiter = '|', textBlock = """
-			Corsair Vengeance RGB 32GB (2x16GB) DDR5 6000MHz CL30 Desktop Memory | ddr5-32gb/corsair/vengeance-rgb
-			G.SKILL Trident Z5 Neo RGB DDR5-6000 32GB 2x16GB                     | ddr5-32gb/gskill/trident-z5
-			Kingston FURY Beast 32GB (16GBx2) DDR5 5600                          | ddr5-32gb/kingston/fury-beast
-			Crucial Pro 32GB Kit (2 x 16GB) DDR5-5600 UDIMM                      | ddr5-32gb/crucial/pro
-			G.SKILL Trident Z5 RGB Series 32GB (2 x 16GB) 288-Pin PC RAM DDR5 6000 | ddr5-32gb/gskill/trident-z5
-			Patriot Viper Elite 5 32GB (2x16G) DDR5-6000 PC5-48000 C30 UDIMM XMP | ddr5-32gb/patriot/viper
-			TEAMGROUP T-FORCE DELTA RGB DDR5 32GB (2x16) 7800MHz CL38-48-48-84   | ddr5-32gb/teamgroup/delta
-			Corsair Vengeance DDR5 2x16 32GB 6400MHz RAM RGB XMP READY           | ddr5-32gb/corsair/vengeance
+			Corsair Vengeance RGB 32GB (2x16GB) DDR5 6000MHz CL30 Desktop Memory | ddr5-2x16gb/corsair/vengeance-rgb
+			G.SKILL Trident Z5 Neo RGB DDR5-6000 32GB 2x16GB                     | ddr5-2x16gb/gskill/trident-z5
+			Kingston FURY Beast 32GB (16GBx2) DDR5 5600                          | ddr5-2x16gb/kingston/fury-beast
+			Crucial Pro 32GB Kit (2 x 16GB) DDR5-5600 UDIMM                      | ddr5-2x16gb/crucial/pro
+			G.SKILL Trident Z5 RGB Series 32GB (2 x 16GB) 288-Pin PC RAM DDR5 6000 | ddr5-2x16gb/gskill/trident-z5
+			Patriot Viper Elite 5 32GB (2x16G) DDR5-6000 PC5-48000 C30 UDIMM XMP | ddr5-2x16gb/patriot/viper
+			TEAMGROUP T-FORCE DELTA RGB DDR5 32GB (2x16) 7800MHz CL38-48-48-84   | ddr5-2x16gb/teamgroup/delta
+			Corsair Vengeance DDR5 2x16 32GB 6400MHz RAM RGB XMP READY           | ddr5-2x16gb/corsair/vengeance
 			""")
 	void 램은_세대와_2개_묶음_구성으로_가른다(String title, String expectedModelKey) {
-		assertThat(keys("ddr5-32gb", title)).contains("ddr5-32gb", expectedModelKey);
+		assertThat(keys("ddr5-2x16gb", title)).contains("ddr5-2x16gb", expectedModelKey);
 	}
 
 	@ParameterizedTest
@@ -123,6 +123,7 @@ class ListingClassifierTest {
 			Corsair Vengeance 64GB (2x32GB) DDR5 6000
 			Crucial 32GB (2x16GB) DDR5 5600 SODIMM Laptop Memory
 			Samsung 32GB 2x16GB DDR5 4800 ECC RDIMM Server
+			Kingston 32GB (2x16GB) DDR5 4800 ECC Registered
 			Corsair Vengeance LPX 32GB (2x16GB) DDR4 3200
 			Crucial Pro DDR5 Kit 6400MHz 32GB (2x16GB) 64GB (2x32GB) Desktop Memory OC UDIMM
 			Crucial Pro Overclocking 32GB DDR5 6000Mt/s  Desktop Memory Module UDIMM
@@ -130,6 +131,64 @@ class ListingClassifierTest {
 			""")
 	void 다른_구성_노트북용_서버용_다른_세대_구성_모름_여러_구성_세대_모름은_버린다(String title) {
 		// 세대가 제목에 없으면 검색어만 믿지 않는다(DDR4 글이 섞일 수 있어서)
-		assertThat(keys("ddr5-32gb", title)).isEmpty();
+		assertThat(keys("ddr5-2x16gb", title)).isEmpty();
+	}
+
+	// 1개짜리(11/22 점검의 실제 eBay 제목). "(1 x 8GB)"를 묶음으로 잘못 봐서 버리던 것을 고정
+	@ParameterizedTest
+	@CsvSource(delimiter = '|', textBlock = """
+			ddr5-8gb  | Crucial 8GB (1 x 8GB) PC5-38400 (DDR5-4800) UDIMM Memory (CT8G48C40U5)
+			ddr5-8gb  | NEW PNY 8GB 1x8GB PC5 DDR5 5600 Desktop Memory RAM MD8GSD5560046-TB
+			ddr5-8gb  | A-Tech 8GB DDR5 4800 MHz PC5-38400 Desktop 288-Pin DIMM Non-ECC Memory RAM 1x 8G
+			ddr5-8gb  | G.SKILL Flare X5 Series DDR5 RAM (AMD Expo) 8GB (1X8Gb) up to 6000Mt/S* CL30-38-
+			ddr5-16gb | SK Hynix 16GB DDR5 5600MHz PC5-44800 1Rx8 UDIMM Desktop RAM HMCG78AGBUA081N
+			ddr5-32gb | Crucial Pro Overclocking 32GB DDR5 6000Mt/s  Desktop Memory Module UDIMM
+			""")
+	void 램_1개짜리(String chipsetKey, String title) {
+		assertThat(keys(chipsetKey, title)).contains(chipsetKey);
+	}
+
+	@ParameterizedTest
+	@CsvSource(delimiter = '|', textBlock = """
+			ddr5-16gb | PNY DDR5 16GB (2x8GB) 5600MHz CL46 Performance Desktop Memory Kit
+			ddr5-16gb | G.SKILL F56000J3038F8GH2FX5 16GB DDR5 6000 Desktop Memory Kit CL30
+			ddr5-16gb | NEW 32GB (2x16GB) PNY DDR5 PC5-6000 Desktop RAM PC UDIMM
+			ddr5-16gb | Kingston FURY Beast 32GB (16GBx2) DDR5 5600
+			ddr5-16gb | Samsung 16GB DDR5 4800 2PCS Desktop RAM
+			ddr5-16gb | Crucial 16GB DDR4 3200 Desktop Memory
+			ddr5-8gb  | SK Hynix 16GB DDR5 5600MHz PC5-44800 1Rx8 UDIMM Desktop RAM HMCG78AGBUA081N
+			""")
+	void 램_1개짜리에_묶음_다른_용량_다른_세대는_넣지_않는다(String chipsetKey, String title) {
+		assertThat(keys(chipsetKey, title)).isEmpty();
+	}
+
+	// 40 시리즈: 같은 번호의 Ti·Super를 가른다(11/22 점검의 실제 제목)
+	@ParameterizedTest
+	@CsvSource(delimiter = '|', textBlock = """
+			ASUS Prime GeForce RTX 4070 Ti SUPER 16GB GDDR6X Graphics Card - NEW SHIPS TODAY | rtx-4070-ti-super
+			MSI Gaming GeForce RTX 4070 Ti 12GB GDDR6X PCI Express 4.0 Video Card RTX 4070 T  | rtx-4070-ti
+			MSI Ventus GeForce RTX 4070 12GB GDDR6X PCI Express 4.0 ATX Video Card RTX 4070    | rtx-4070
+			ZOTAC Gaming GeForce RTX 4080 16GB AMP Extreme AIRO GDDR6X  ZT-D40810B-10P *NEW*  | rtx-4080
+			ASRock Challenger Radeon RX 7600 8GB GDDR6 PCI Express 4.0 x8 ATX Graphics Card   | rx-7600
+			""")
+	void 그래픽카드_40_시리즈(String title, String expected) {
+		for (String key : List.of("rtx-4070-ti-super", "rtx-4070-ti", "rtx-4070-super", "rtx-4070", "rtx-4080",
+				"rtx-4080-super", "rx-7600")) {
+			if (key.equals(expected)) {
+				assertThat(keys(key, title)).as(key).contains(key);
+			} else {
+				assertThat(keys(key, title)).as(key).isEmpty();
+			}
+		}
+	}
+
+	@Test
+	void 필터용_분류() {
+		assertThat(chipset("rtx-4070").facets()).containsEntry("series", "RTX40");
+		assertThat(chipset("rtx-5090").facets()).containsEntry("series", "RTX50");
+		assertThat(chipset("rx-9070-xt").facets()).containsEntry("series", "RX9000");
+		assertThat(chipset("rx-7900-xtx").facets()).containsEntry("series", "RX7000");
+		assertThat(chipset("ddr5-16gb").facets()).containsEntry("ddr", "DDR5").containsEntry("pack", "1");
+		assertThat(chipset("ddr4-2x8gb").facets()).containsEntry("ddr", "DDR4").containsEntry("pack", "2");
 	}
 }

@@ -1,6 +1,7 @@
 package com.partstock.catalog;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -13,7 +14,9 @@ public record ChipsetDef(
 		Category category,
 		String displayName,
 		String ebayQuery,
-		Predicate<Title> matcher) {
+		Predicate<Title> matcher,
+		/** 화면 필터용 분류(GPU: series=RTX50…, RAM: ddr=DDR5, pack=1|2). 필터를 늘리면 여기 키만 늘린다 */
+		Map<String, String> facets) {
 
 	public boolean matches(Title title) {
 		return matcher.test(title);
@@ -42,11 +45,11 @@ public record ChipsetDef(
 			}
 			return otherGb == null || !t.contains(List.of(otherGb.toString(), "GB"));
 		};
-		return new ChipsetDef(key, Category.GPU, displayName, displayName, matcher);
+		return new ChipsetDef(key, Category.GPU, displayName, displayName, matcher, Map.of("series", series(vendor, model.get(0))));
 	}
 
 	/**
-	 * 데스크톱 램 2개 묶음. 예: ram("ddr5-32gb", 5, 16) → DDR5 32GB (2×16GB)
+	 * 데스크톱 램 2개 묶음. 예: ram("ddr5-2x16gb", 5, 16) → DDR5 32GB (2×16GB)
 	 * 1개짜리·4개짜리는 가격 단위가 달라 섞지 않는다. 제목에 "2x16(GB)"나 "16GBx2"처럼 구성이 있어야 한다.
 	 */
 	public static ChipsetDef ram(String key, int ddr, int moduleGb) {
@@ -61,7 +64,45 @@ public record ChipsetDef(
 						|| t.contains(List.of(size, "G", "X", "2")));
 		String display = "DDR%d %dGB (2×%dGB)".formatted(ddr, moduleGb * 2, moduleGb);
 		String query = "DDR%d %dGB 2x%dGB desktop".formatted(ddr, moduleGb * 2, moduleGb);
-		return new ChipsetDef(key, Category.RAM, display, query, matcher);
+		return new ChipsetDef(key, Category.RAM, display, query, matcher, Map.of("ddr", "DDR" + ddr, "pack", "2"));
+	}
+
+	/** 램 용량 중 흔한 값. 1개짜리 제목에 다른 용량이 같이 있으면(묶음 합계 등) 어느 쪽인지 몰라 뺀다 */
+	private static final List<Integer> RAM_SIZES = List.of(4, 8, 16, 24, 32, 48, 64, 96, 128);
+
+	/**
+	 * 데스크톱 램 1개짜리. 예: ramSingle("ddr5-16gb", 5, 16) → DDR5 16GB
+	 * 한국은 1개 단위 판매가 기본이라 이쪽이 기본 종목(11/22 사용자 결정). 묶음 표시(2x, x2, KIT, 2PCS…)가 있으면 뺀다.
+	 */
+	public static ChipsetDef ramSingle(String key, int ddr, int gb) {
+		String gen = String.valueOf(ddr);
+		String otherGen = ddr == 5 ? "4" : "5";
+		String size = String.valueOf(gb);
+		Predicate<Title> matcher = t -> t.contains(List.of("DDR", gen))
+				&& !t.contains(List.of("DDR", otherGen))
+				&& (t.contains(List.of(size, "GB")) || t.contains(List.of(size, "G")))
+				&& !isKit(t)
+				&& RAM_SIZES.stream().filter(o -> o != gb).map(String::valueOf)
+						.noneMatch(o -> t.contains(List.of(o, "GB")) || t.contains(List.of(o, "G")));
+		String display = "DDR%d %dGB".formatted(ddr, gb);
+		String query = "DDR%d %dGB desktop memory".formatted(ddr, gb);
+		return new ChipsetDef(key, Category.RAM, display, query, matcher, Map.of("ddr", "DDR" + ddr, "pack", "1"));
+	}
+
+	/** 묶음 표시: "2x16GB"·"(2 x 8GB)"처럼 개수 × , "16GBx2"처럼 용량 × 개수, "2PCS"·"KIT". "1 x 8GB"(1개)는 묶음이 아니다 */
+	private static boolean isKit(Title t) {
+		for (String n : List.of("2", "3", "4", "8")) {
+			if (t.contains(List.of(n, "X")) || t.contains(List.of("GB", "X", n)) || t.contains(List.of("G", "X", n))
+					|| t.contains(List.of(n, "PCS")) || t.contains(List.of(n, "PACK")) || t.contains(List.of(n, "STICKS"))) {
+				return true;
+			}
+		}
+		return t.tokens().contains("KIT") || t.tokens().contains("KITS");
+	}
+
+	/** 칩셋 번호로 세대: 5070 → RTX50, 4070 → RTX40, 9070 → RX9000, 7900 → RX7000 */
+	static String series(GpuVendor vendor, String number) {
+		return vendor == GpuVendor.NVIDIA ? "RTX" + number.substring(0, 2) : "RX" + number.charAt(0) + "000";
 	}
 
 	public enum GpuVendor {
