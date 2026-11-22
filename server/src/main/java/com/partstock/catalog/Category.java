@@ -4,9 +4,10 @@ package com.partstock.catalog;
 public enum Category {
 	GPU("27386"),
 	RAM("170083"),
-	CPU("164");
+	CPU("164"),
+	SSD("175669");
 
-	/** eBay 카테고리: Graphics/Video Cards, Memory (RAM), CPUs/Processors(11/22 실제 응답으로 확인) */
+	/** eBay 카테고리: Graphics/Video Cards, Memory (RAM), CPUs/Processors, Solid State Drives(11/22 실제 응답으로 확인) */
 	public final String ebayCategoryId;
 
 	Category(String ebayCategoryId) {

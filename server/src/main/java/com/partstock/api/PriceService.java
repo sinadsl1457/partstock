@@ -202,6 +202,9 @@ public class PriceService {
 		if (c.category() == Category.CPU) {
 			return c.facets().get("brand"); // AMD | INTEL
 		}
+		if (c.category() == Category.SSD) {
+			return c.facets().get("iface"); // NVME5 | NVME4 | SATA (이름에 브랜드가 있어 규격을 보여 준다)
+		}
 		return c.key().startsWith("rx-") ? "AMD" : "NVIDIA";
 	}
 

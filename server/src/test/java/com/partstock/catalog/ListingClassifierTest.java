@@ -224,4 +224,38 @@ class ListingClassifierTest {
 			assertThat(keys(c.key(), title)).as(c.key()).isEmpty();
 		}
 	}
+
+	// SSD(11/22 점검의 실제 eBay 제목): 모델 + 용량. 2000GB도 2TB
+	@ParameterizedTest
+	@CsvSource(delimiter = '|', textBlock = """
+			NEW Samsung 990 PRO 2TB NVMe PCIe 4.0 M.2 2280 SSD MZ-V9P2T0/AM (AMX)          | 990-pro-2tb
+			Samsung 990PRO 2000GB M.2 NVMe Internal SSD                                     | 990-pro-2tb
+			SAMSUNG 990 EVO Plus 1TB PCIe 4.0/5.0 NVMe M.2 2280 Internal SSD               | 990-evo-plus-1tb
+			WD_BLACK SN850X 2TB NVMe SSD M.2 2280 PCIe 4.0 x4 Internal Solid State Drive  | sn850x-2tb
+			Western Digital 4TB WD Blue SN5000 NVMe Internal SSD                            | -
+			""")
+	void SSD(String title, String expected) {
+		for (ChipsetDef c : Catalog.SSD_CHIPSETS) {
+			if (c.key().equals(expected)) {
+				assertThat(keys(c.key(), title)).as(c.key()).containsExactly(expected);
+			} else {
+				assertThat(keys(c.key(), title)).as(c.key()).isEmpty(); // SN5000 4TB는 목록에 없는 용량
+			}
+		}
+	}
+
+	@ParameterizedTest
+	@CsvSource(delimiter = '|', textBlock = """
+			SAMSUNG 990 PRO 1TB 2TB 4TB M.2 2280 PCIe 4.0 x4 NVMe 2.0 V7 V-NAND 3bit MLC SSD
+			Samsung 990 1TB NVMe M.2 Internal SSD MZ-V9V1T0 Sealed
+			WD_BLACK 4TB SN850P NVMe M.2 SSD With Heatsink Model WDBBYV0040BNC Brand New
+			Crucial BX500 1TB 3D NAND SATA 2.5Inch Up to 540MBs Internal SSD CT1000BX500SSD1
+			Samsung T7 Portable SSD 2TB USB 3.2 External
+			Lot of 5 Samsung 870 EVO 1TB SATA SSD
+			""")
+	void SSD_여러_용량_다른_모델_외장_묶음은_버린다(String title) {
+		for (ChipsetDef c : Catalog.SSD_CHIPSETS) {
+			assertThat(keys(c.key(), title)).as(c.key()).isEmpty();
+		}
+	}
 }

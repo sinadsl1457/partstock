@@ -3,6 +3,7 @@ package com.partstock.catalog;
 import static com.partstock.catalog.ChipsetDef.CpuBrand.INTEL;
 import static com.partstock.catalog.ChipsetDef.GpuVendor.AMD;
 import static com.partstock.catalog.ChipsetDef.cpu;
+import static com.partstock.catalog.ChipsetDef.ssd;
 import static com.partstock.catalog.ChipsetDef.GpuVendor.NVIDIA;
 import static com.partstock.catalog.ChipsetDef.gpu;
 import static com.partstock.catalog.ChipsetDef.ram;
@@ -103,6 +104,48 @@ public final class Catalog {
 			cpu("core-i5-13600k", "Core i5-13600K", INTEL, "CORE13", List.of("13600", "K"), Set.of()),
 			cpu("core-i5-13400f", "Core i5-13400F", INTEL, "CORE13", List.of("13400", "F"), Set.of()));
 
+	/**
+	 * SSD(11/22 사용자 결정). 인기 NVMe·SATA 14모델 × 용량. 종목 = 모델 + 용량(용량마다 값이 달라서).
+	 * 방열판 포함 판(PS5용 등)은 같은 종목으로 센다.
+	 */
+	public static final List<ChipsetDef> SSD_CHIPSETS = List.of(
+			ssd("990-pro-1tb", "Samsung 990 PRO", com.partstock.catalog.ChipsetDef.SsdBrand.SAMSUNG, "NVME4", List.of("990", "PRO"), Set.of(), 1),
+			ssd("990-pro-2tb", "Samsung 990 PRO", com.partstock.catalog.ChipsetDef.SsdBrand.SAMSUNG, "NVME4", List.of("990", "PRO"), Set.of(), 2),
+			ssd("990-pro-4tb", "Samsung 990 PRO", com.partstock.catalog.ChipsetDef.SsdBrand.SAMSUNG, "NVME4", List.of("990", "PRO"), Set.of(), 4),
+			ssd("990-evo-plus-1tb", "Samsung 990 EVO Plus", com.partstock.catalog.ChipsetDef.SsdBrand.SAMSUNG, "NVME4", List.of("990", "EVO", "PLUS"), Set.of(), 1),
+			ssd("990-evo-plus-2tb", "Samsung 990 EVO Plus", com.partstock.catalog.ChipsetDef.SsdBrand.SAMSUNG, "NVME4", List.of("990", "EVO", "PLUS"), Set.of(), 2),
+			ssd("990-evo-plus-4tb", "Samsung 990 EVO Plus", com.partstock.catalog.ChipsetDef.SsdBrand.SAMSUNG, "NVME4", List.of("990", "EVO", "PLUS"), Set.of(), 4),
+			ssd("9100-pro-1tb", "Samsung 9100 PRO", com.partstock.catalog.ChipsetDef.SsdBrand.SAMSUNG, "NVME5", List.of("9100", "PRO"), Set.of(), 1),
+			ssd("9100-pro-2tb", "Samsung 9100 PRO", com.partstock.catalog.ChipsetDef.SsdBrand.SAMSUNG, "NVME5", List.of("9100", "PRO"), Set.of(), 2),
+			ssd("9100-pro-4tb", "Samsung 9100 PRO", com.partstock.catalog.ChipsetDef.SsdBrand.SAMSUNG, "NVME5", List.of("9100", "PRO"), Set.of(), 4),
+			ssd("870-evo-1tb", "Samsung 870 EVO", com.partstock.catalog.ChipsetDef.SsdBrand.SAMSUNG, "SATA", List.of("870", "EVO"), Set.of(), 1),
+			ssd("870-evo-2tb", "Samsung 870 EVO", com.partstock.catalog.ChipsetDef.SsdBrand.SAMSUNG, "SATA", List.of("870", "EVO"), Set.of(), 2),
+			ssd("870-evo-4tb", "Samsung 870 EVO", com.partstock.catalog.ChipsetDef.SsdBrand.SAMSUNG, "SATA", List.of("870", "EVO"), Set.of(), 4),
+			ssd("sn850x-1tb", "WD Black SN850X", com.partstock.catalog.ChipsetDef.SsdBrand.WD, "NVME4", List.of("SN", "850", "X"), Set.of(), 1),
+			ssd("sn850x-2tb", "WD Black SN850X", com.partstock.catalog.ChipsetDef.SsdBrand.WD, "NVME4", List.of("SN", "850", "X"), Set.of(), 2),
+			ssd("sn850x-4tb", "WD Black SN850X", com.partstock.catalog.ChipsetDef.SsdBrand.WD, "NVME4", List.of("SN", "850", "X"), Set.of(), 4),
+			ssd("sn8100-1tb", "WD Black SN8100", com.partstock.catalog.ChipsetDef.SsdBrand.WD, "NVME5", List.of("SN", "8100"), Set.of(), 1),
+			ssd("sn8100-2tb", "WD Black SN8100", com.partstock.catalog.ChipsetDef.SsdBrand.WD, "NVME5", List.of("SN", "8100"), Set.of(), 2),
+			ssd("sn8100-4tb", "WD Black SN8100", com.partstock.catalog.ChipsetDef.SsdBrand.WD, "NVME5", List.of("SN", "8100"), Set.of(), 4),
+			ssd("sn5000-1tb", "WD Blue SN5000", com.partstock.catalog.ChipsetDef.SsdBrand.WD, "NVME4", List.of("SN", "5000"), Set.of(), 1),
+			ssd("sn5000-2tb", "WD Blue SN5000", com.partstock.catalog.ChipsetDef.SsdBrand.WD, "NVME4", List.of("SN", "5000"), Set.of(), 2),
+			ssd("t705-1tb", "Crucial T705", com.partstock.catalog.ChipsetDef.SsdBrand.CRUCIAL, "NVME5", List.of("T", "705"), Set.of(), 1),
+			ssd("t705-2tb", "Crucial T705", com.partstock.catalog.ChipsetDef.SsdBrand.CRUCIAL, "NVME5", List.of("T", "705"), Set.of(), 2),
+			ssd("t705-4tb", "Crucial T705", com.partstock.catalog.ChipsetDef.SsdBrand.CRUCIAL, "NVME5", List.of("T", "705"), Set.of(), 4),
+			ssd("t500-1tb", "Crucial T500", com.partstock.catalog.ChipsetDef.SsdBrand.CRUCIAL, "NVME4", List.of("T", "500"), Set.of(), 1),
+			ssd("t500-2tb", "Crucial T500", com.partstock.catalog.ChipsetDef.SsdBrand.CRUCIAL, "NVME4", List.of("T", "500"), Set.of(), 2),
+			ssd("p3-plus-1tb", "Crucial P3 Plus", com.partstock.catalog.ChipsetDef.SsdBrand.CRUCIAL, "NVME4", List.of("P", "3", "PLUS"), Set.of(), 1),
+			ssd("p3-plus-2tb", "Crucial P3 Plus", com.partstock.catalog.ChipsetDef.SsdBrand.CRUCIAL, "NVME4", List.of("P", "3", "PLUS"), Set.of(), 2),
+			ssd("p3-plus-4tb", "Crucial P3 Plus", com.partstock.catalog.ChipsetDef.SsdBrand.CRUCIAL, "NVME4", List.of("P", "3", "PLUS"), Set.of(), 4),
+			ssd("mx500-1tb", "Crucial MX500", com.partstock.catalog.ChipsetDef.SsdBrand.CRUCIAL, "SATA", List.of("MX", "500"), Set.of(), 1),
+			ssd("mx500-2tb", "Crucial MX500", com.partstock.catalog.ChipsetDef.SsdBrand.CRUCIAL, "SATA", List.of("MX", "500"), Set.of(), 2),
+			ssd("kc3000-1tb", "Kingston KC3000", com.partstock.catalog.ChipsetDef.SsdBrand.KINGSTON, "NVME4", List.of("KC", "3000"), Set.of(), 1),
+			ssd("kc3000-2tb", "Kingston KC3000", com.partstock.catalog.ChipsetDef.SsdBrand.KINGSTON, "NVME4", List.of("KC", "3000"), Set.of(), 2),
+			ssd("nv3-1tb", "Kingston NV3", com.partstock.catalog.ChipsetDef.SsdBrand.KINGSTON, "NVME4", List.of("NV", "3"), Set.of(), 1),
+			ssd("nv3-2tb", "Kingston NV3", com.partstock.catalog.ChipsetDef.SsdBrand.KINGSTON, "NVME4", List.of("NV", "3"), Set.of(), 2),
+			ssd("p41-1tb", "SK hynix Platinum P41", com.partstock.catalog.ChipsetDef.SsdBrand.SKHYNIX, "NVME4", List.of("P", "41"), Set.of(), 1),
+			ssd("p41-2tb", "SK hynix Platinum P41", com.partstock.catalog.ChipsetDef.SsdBrand.SKHYNIX, "NVME4", List.of("P", "41"), Set.of(), 2));
+
 	public static final List<MakerDef> GPU_MAKERS = List.of(
 			MakerDef.of("asus", "ASUS", List.of("ASUS"),
 					SeriesDef.of("rog-astral", "ROG Astral", "ROG ASTRAL", "ASTRAL"),
@@ -198,6 +241,10 @@ public final class Catalog {
 			"COMBO", "BUNDLE", "MOTHERBOARD", "MOBO", "ENGINEERING SAMPLE", "ES", "QS", "GAMING PC", "DESKTOP PC",
 			"COMPUTER", "PREBUILT");
 
+	/** 외장 케이스·휴대용·여러 개 묶음·노트북 완제품 */
+	public static final List<String> SSD_EXCLUDES = List.of(
+			"ENCLOSURE", "EXTERNAL", "PORTABLE", "USB", "ADAPTER", "LOT", "PACK", "MACBOOK", "DESKTOP PC", "COMPUTER");
+
 	public static final List<String> RAM_EXCLUDES = List.of(
 			"SODIMM", "SO DIMM", "ECC", "RDIMM", "LRDIMM", "REGISTERED", "SERVER");
 
@@ -206,6 +253,7 @@ public final class Catalog {
 			case GPU -> GPU_CHIPSETS;
 			case RAM -> RAM_CHIPSETS;
 			case CPU -> CPU_CHIPSETS;
+			case SSD -> SSD_CHIPSETS;
 		};
 	}
 
@@ -213,7 +261,7 @@ public final class Catalog {
 		return switch (category) {
 			case GPU -> GPU_MAKERS;
 			case RAM -> RAM_MAKERS;
-			case CPU -> List.of(); // CPU는 칩 = 제품
+			case CPU, SSD -> List.of(); // 종목 = 제품(제조사·모델 단계 없음)
 		};
 	}
 
@@ -222,6 +270,7 @@ public final class Catalog {
 			case GPU -> GPU_EXCLUDES;
 			case RAM -> RAM_EXCLUDES;
 			case CPU -> CPU_EXCLUDES;
+			case SSD -> SSD_EXCLUDES;
 		};
 	}
 }

@@ -124,6 +124,48 @@ public record ChipsetDef(
 				Map.of("brand", brand.name(), "series", series));
 	}
 
+	/** SSD 용량(TB). 제목에 다른 용량이 같이 있으면(여러 용량을 한 글에 파는 경우) 뺀다 */
+	private static final List<Integer> SSD_TB = List.of(1, 2, 4, 8);
+
+	/**
+	 * SSD = 모델 + 용량(용량마다 값이 달라 한 종목으로 묶지 않는다). 예: ssd("990-pro-2tb", "Samsung 990 PRO", SAMSUNG,
+	 * "NVME4", List.of("990", "PRO"), Set.of(), 2). 제목의 "2TB"·"2000GB"를 같은 용량으로 본다.
+	 */
+	public static ChipsetDef ssd(String key, String model, SsdBrand brand, String iface,
+			List<String> modelTokens, Set<String> notNext, int tb) {
+		Predicate<Title> matcher = t -> {
+			if (brand.tokens.stream().noneMatch(f -> t.tokens().contains(f))) {
+				return false;
+			}
+			int at = t.indexOf(modelTokens);
+			if (at < 0 || notNext.contains(t.tokenAt(at + modelTokens.size()))) {
+				return false;
+			}
+			return hasTb(t, tb) && SSD_TB.stream().filter(o -> o != tb).noneMatch(o -> hasTb(t, o));
+		};
+		String display = "%s %dTB".formatted(model, tb);
+		return new ChipsetDef(key, Category.SSD, display, display, matcher,
+				Map.of("brand", brand.name(), "capacity", tb + "TB", "iface", iface));
+	}
+
+	private static boolean hasTb(Title t, int tb) {
+		return t.contains(List.of(String.valueOf(tb), "TB")) || t.contains(List.of(tb * 1000 + "", "GB"));
+	}
+
+	public enum SsdBrand {
+		SAMSUNG(List.of("SAMSUNG")),
+		WD(List.of("WD", "WESTERN")),
+		CRUCIAL(List.of("CRUCIAL")),
+		KINGSTON(List.of("KINGSTON")),
+		SKHYNIX(List.of("HYNIX"));
+
+		final List<String> tokens;
+
+		SsdBrand(List<String> tokens) {
+			this.tokens = tokens;
+		}
+	}
+
 	public enum CpuBrand {
 		AMD(List.of("RYZEN")),
 		INTEL(List.of("CORE", "INTEL"));
