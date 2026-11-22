@@ -11,7 +11,7 @@
   "updatedAt": "As of {time} · hourly",
   "listingsShort": "{n} listings",
   "listings": "{n} listings",
-  "tooFew": "Too few",
+  "tooFew": "No data",
   "boardNote": "Price = 25th percentile of new, Buy It Now listings on eBay US. Shipping and tax not included.",
   "vendorNvidia": "NVIDIA",
   "vendorAmd": "AMD",
@@ -113,5 +113,17 @@
   "guideAgain": "Show guide again",
   "appVersion": "Version",
   "categoryVga": "GPU",
-  "categoryRam": "RAM"
+  "categoryRam": "RAM",
+  "filter": "Filter",
+  "filterTitle": "{category} filter",
+  "filterReset": "Reset",
+  "filterApply": "Show {count} items",
+  "filter_series": "Series",
+  "filter_ddr": "Generation",
+  "filter_pack": "Pack",
+  "pack_1": "Single",
+  "pack_2": "2-stick kit",
+  "filterAll": "All",
+  "filterEmpty": "No items match",
+  "filterHintMulti": "Pick any. None picked means all"
 }

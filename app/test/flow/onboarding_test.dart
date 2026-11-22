@@ -9,6 +9,7 @@ import 'package:partstock/core/push/push_service.dart';
 import 'package:partstock/core/router/app_router.dart';
 import 'package:partstock/features/alerts/presentation/alerts_cubit.dart';
 import 'package:partstock/features/alerts/presentation/alerts_state.dart';
+import 'package:partstock/features/board/data/board_filter_repository.dart';
 import 'package:partstock/features/board/presentation/board_cubit.dart';
 import 'package:partstock/features/market/data/market_models.dart';
 import 'package:partstock/features/market/data/market_repository.dart';
@@ -54,7 +55,7 @@ Future<CountingPush> setUp({required bool guideSeen}) async {
     ..registerSingleton(AlertsCubit(push, alertsRepo))
     ..registerSingleton(WatchlistCubit(WatchlistRepository(prefs)))
     ..registerSingleton(SettingsCubit(SettingsRepository(prefs)))
-    ..registerFactory(() => BoardCubit(market));
+    ..registerFactory(() => BoardCubit(market, BoardFilterRepository(prefs)));
   return push;
 }
 

@@ -20,6 +20,8 @@ import 'package:partstock/core/time/clock.dart' as _i739;
 import 'package:partstock/features/alerts/data/alerts_repository.dart' as _i208;
 import 'package:partstock/features/alerts/presentation/alerts_cubit.dart'
     as _i412;
+import 'package:partstock/features/board/data/board_filter_repository.dart'
+    as _i45;
 import 'package:partstock/features/board/presentation/board_cubit.dart'
     as _i772;
 import 'package:partstock/features/market/data/market_repository.dart' as _i261;
@@ -53,6 +55,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i739.Clock>(() => appModule.clock);
     gh.lazySingleton<_i893.PushService>(() => _i893.FirebasePushService());
     gh.factory<String>(() => appModule.apiUrl, instanceName: 'apiUrl');
+    gh.lazySingleton<_i45.BoardFilterRepository>(
+      () => _i45.BoardFilterRepository(gh<_i460.SharedPreferences>()),
+    );
     gh.lazySingleton<_i115.SettingsRepository>(
       () => _i115.SettingsRepository(gh<_i460.SharedPreferences>()),
     );
@@ -86,14 +91,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i947.SettingsCubit>(
       () => _i947.SettingsCubit(gh<_i115.SettingsRepository>()),
     );
-    gh.factory<_i772.BoardCubit>(
-      () => _i772.BoardCubit(gh<_i261.MarketRepository>()),
-    );
     gh.factory<_i269.WatchPricesCubit>(
       () => _i269.WatchPricesCubit(gh<_i261.MarketRepository>()),
     );
     gh.lazySingleton<_i768.WatchlistCubit>(
       () => _i768.WatchlistCubit(gh<_i348.WatchlistRepository>()),
+    );
+    gh.factory<_i772.BoardCubit>(
+      () => _i772.BoardCubit(
+        gh<_i261.MarketRepository>(),
+        gh<_i45.BoardFilterRepository>(),
+      ),
     );
     return this;
   }

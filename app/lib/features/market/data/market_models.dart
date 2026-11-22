@@ -87,6 +87,9 @@ abstract class BoardItem with _$BoardItem {
 
     /// NVIDIA | AMD | DESKTOP (화면 글자는 앱이 번역)
     required String vendor,
+
+    /// 필터용 분류. GPU {series: RTX50}, RAM {ddr: DDR5, pack: 1|2}. 옛 응답(저장본)에는 없어서 빈 값
+    @Default({}) Map<String, String> facets,
     Price? price,
     Change? change,
     required List<SparkPoint> spark,
@@ -97,6 +100,7 @@ abstract class BoardItem with _$BoardItem {
     key: m['key'] as String,
     name: m['name'] as String,
     vendor: m['vendor'] as String,
+    facets: (m['facets'] as Map<String, dynamic>? ?? const {}).cast<String, String>(),
     price: m['price'] == null ? null : Price.fromMap(m['price'] as Map<String, dynamic>),
     change: m['change'] == null ? null : Change.fromMap(m['change'] as Map<String, dynamic>),
     spark: _list(m['spark']).map(SparkPoint.fromMap).toList(),

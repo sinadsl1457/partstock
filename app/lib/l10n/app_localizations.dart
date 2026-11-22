@@ -161,7 +161,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooFew.
   ///
   /// In ko, this message translates to:
-  /// **'글 부족'**
+  /// **'데이터 없음'**
   String get tooFew;
 
   /// No description provided for @boardNote.
@@ -775,6 +775,78 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'RAM'**
   String get categoryRam;
+
+  /// No description provided for @filter.
+  ///
+  /// In ko, this message translates to:
+  /// **'필터'**
+  String get filter;
+
+  /// No description provided for @filterTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'{category} 필터'**
+  String filterTitle(String category);
+
+  /// No description provided for @filterReset.
+  ///
+  /// In ko, this message translates to:
+  /// **'초기화'**
+  String get filterReset;
+
+  /// No description provided for @filterApply.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}개 종목 보기'**
+  String filterApply(int count);
+
+  /// No description provided for @filter_series.
+  ///
+  /// In ko, this message translates to:
+  /// **'시리즈'**
+  String get filter_series;
+
+  /// No description provided for @filter_ddr.
+  ///
+  /// In ko, this message translates to:
+  /// **'세대'**
+  String get filter_ddr;
+
+  /// No description provided for @filter_pack.
+  ///
+  /// In ko, this message translates to:
+  /// **'구성'**
+  String get filter_pack;
+
+  /// No description provided for @pack_1.
+  ///
+  /// In ko, this message translates to:
+  /// **'1개'**
+  String get pack_1;
+
+  /// No description provided for @pack_2.
+  ///
+  /// In ko, this message translates to:
+  /// **'2개 묶음'**
+  String get pack_2;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체'**
+  String get filterAll;
+
+  /// No description provided for @filterEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'조건에 맞는 종목이 없어요'**
+  String get filterEmpty;
+
+  /// No description provided for @filterHintMulti.
+  ///
+  /// In ko, this message translates to:
+  /// **'여러 개 고를 수 있어요. 아무것도 안 고르면 전체'**
+  String get filterHintMulti;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

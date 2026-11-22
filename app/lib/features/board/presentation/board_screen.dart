@@ -10,7 +10,9 @@ import '../../../core/presentation/format.dart';
 import '../../../core/presentation/theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../market/data/market_models.dart';
+import '../data/board_filter.dart';
 import 'board_cubit.dart';
+import 'filter_sheet.dart';
 import 'board_state.dart';
 
 class BoardScreen extends StatelessWidget {
@@ -70,10 +72,15 @@ class BoardScreen extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: UnderlineTabs<Category>(
-                    items: [(Category.gpu, t.gpu), (Category.ram, t.ram)],
-                    selected: s.category,
-                    onSelect: cubit.select,
+                  child: Stack(
+                    children: [
+                      UnderlineTabs<Category>(
+                        items: [(Category.gpu, t.gpu), (Category.ram, t.ram)],
+                        selected: s.category,
+                        onSelect: cubit.select,
+                      ),
+                      Positioned(right: 0, top: 0, bottom: 2, child: _FilterButton(state: s)),
+                    ],
                   ),
                 ),
                 Padding(
@@ -118,22 +125,61 @@ class BoardScreen extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
     final t = AppLocalizations.of(context);
+    final items = board.items.where((i) => matchesFilter(i, s.filter)).toList();
     return RefreshIndicator(
       onRefresh: cubit.refresh,
       color: AppColors.accent,
       backgroundColor: AppColors.surface,
       child: ListView.builder(
         padding: const EdgeInsets.fromLTRB(10, 4, 10, 12),
-        itemCount: board.items.length + 1,
+        itemCount: items.length + 1,
         itemBuilder: (context, i) {
-          if (i == board.items.length) {
+          if (i == items.length) {
             return Padding(
               padding: const EdgeInsets.fromLTRB(12, 14, 12, 12),
               child: Text(t.boardNote, style: const TextStyle(fontSize: 11, color: AppColors.muted, height: 1.6)),
             );
           }
-          return BoardRow(item: board.items[i], fx: board.fx);
+          return BoardRow(item: items[i], fx: board.fx);
         },
+      ),
+    );
+  }
+}
+
+/// 탭 오른쪽 "필터" 버튼. 처음 값과 다르게 고른 묶음 수를 녹색 숫자로
+class _FilterButton extends StatelessWidget {
+  const _FilterButton({required this.state});
+
+  final BoardState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
+    final changed = changedCount(state.category, state.filter);
+    final label = state.category == Category.gpu ? t.gpu : t.ram;
+    return TextButton.icon(
+      style: TextButton.styleFrom(
+        foregroundColor: changed > 0 ? AppColors.accent : AppColors.sub,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+      ),
+      onPressed: state.board == null
+          ? null
+          : () async {
+              final cubit = context.read<BoardCubit>();
+              final picked = await showFilterSheet(
+                context,
+                category: state.category,
+                categoryLabel: label,
+                current: state.filter,
+                items: state.board!.items,
+              );
+              if (picked != null) await cubit.setFilter(picked);
+            },
+      icon: const Icon(Icons.tune_rounded, size: 18),
+      label: Text(
+        changed > 0 ? '${t.filter} $changed' : t.filter,
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
       ),
     );
   }

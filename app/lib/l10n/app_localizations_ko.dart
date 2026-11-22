@@ -49,7 +49,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get tooFew => '글 부족';
+  String get tooFew => '데이터 없음';
 
   @override
   String get boardNote => '대표가 = 미국 eBay 새 상품·즉시 구매 글의 하위 25%. 원화는 기준 환율 환산, 배송비·관세 제외.';
@@ -380,4 +380,44 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get categoryRam => 'RAM';
+
+  @override
+  String get filter => '필터';
+
+  @override
+  String filterTitle(String category) {
+    return '$category 필터';
+  }
+
+  @override
+  String get filterReset => '초기화';
+
+  @override
+  String filterApply(int count) {
+    return '$count개 종목 보기';
+  }
+
+  @override
+  String get filter_series => '시리즈';
+
+  @override
+  String get filter_ddr => '세대';
+
+  @override
+  String get filter_pack => '구성';
+
+  @override
+  String get pack_1 => '1개';
+
+  @override
+  String get pack_2 => '2개 묶음';
+
+  @override
+  String get filterAll => '전체';
+
+  @override
+  String get filterEmpty => '조건에 맞는 종목이 없어요';
+
+  @override
+  String get filterHintMulti => '여러 개 고를 수 있어요. 아무것도 안 고르면 전체';
 }

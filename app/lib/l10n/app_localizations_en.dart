@@ -49,7 +49,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get tooFew => 'Too few';
+  String get tooFew => 'No data';
 
   @override
   String get boardNote =>
@@ -384,4 +384,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get categoryRam => 'RAM';
+
+  @override
+  String get filter => 'Filter';
+
+  @override
+  String filterTitle(String category) {
+    return '$category filter';
+  }
+
+  @override
+  String get filterReset => 'Reset';
+
+  @override
+  String filterApply(int count) {
+    return 'Show $count items';
+  }
+
+  @override
+  String get filter_series => 'Series';
+
+  @override
+  String get filter_ddr => 'Generation';
+
+  @override
+  String get filter_pack => 'Pack';
+
+  @override
+  String get pack_1 => 'Single';
+
+  @override
+  String get pack_2 => '2-stick kit';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterEmpty => 'No items match';
+
+  @override
+  String get filterHintMulti => 'Pick any. None picked means all';
 }

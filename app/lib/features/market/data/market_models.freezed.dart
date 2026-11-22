@@ -1360,7 +1360,8 @@ as int,
 mixin _$BoardItem {
 
  String get key; String get name;/// NVIDIA | AMD | DESKTOP (화면 글자는 앱이 번역)
- String get vendor; Price? get price; Change? get change; List<SparkPoint> get spark; Links get links;
+ String get vendor;/// 필터용 분류. GPU {series: RTX50}, RAM {ddr: DDR5, pack: 1|2}. 옛 응답(저장본)에는 없어서 빈 값
+ Map<String, String> get facets; Price? get price; Change? get change; List<SparkPoint> get spark; Links get links;
 /// Create a copy of BoardItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1372,20 +1373,20 @@ $BoardItemCopyWith<BoardItem> get copyWith => _$BoardItemCopyWithImpl<BoardItem>
 @override
 bool operator ==(Object other) {
   final _this = this as BoardItem;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BoardItem&&(identical(other.key, _this.key) || other.key == _this.key)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.vendor, _this.vendor) || other.vendor == _this.vendor)&&(identical(other.price, _this.price) || other.price == _this.price)&&(identical(other.change, _this.change) || other.change == _this.change)&&const DeepCollectionEquality().equals(other.spark, _this.spark)&&(identical(other.links, _this.links) || other.links == _this.links));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BoardItem&&(identical(other.key, _this.key) || other.key == _this.key)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.vendor, _this.vendor) || other.vendor == _this.vendor)&&const DeepCollectionEquality().equals(other.facets, _this.facets)&&(identical(other.price, _this.price) || other.price == _this.price)&&(identical(other.change, _this.change) || other.change == _this.change)&&const DeepCollectionEquality().equals(other.spark, _this.spark)&&(identical(other.links, _this.links) || other.links == _this.links));
 }
 
 
 @override
 int get hashCode {
   final _this = this as BoardItem;
-  return Object.hash(runtimeType,_this.key,_this.name,_this.vendor,_this.price,_this.change,const DeepCollectionEquality().hash(_this.spark),_this.links);
+  return Object.hash(runtimeType,_this.key,_this.name,_this.vendor,const DeepCollectionEquality().hash(_this.facets),_this.price,_this.change,const DeepCollectionEquality().hash(_this.spark),_this.links);
 }
 
 @override
 String toString() {
   final _this = this as BoardItem;
-  return 'BoardItem(key: ${_this.key}, name: ${_this.name}, vendor: ${_this.vendor}, price: ${_this.price}, change: ${_this.change}, spark: ${_this.spark}, links: ${_this.links})';
+  return 'BoardItem(key: ${_this.key}, name: ${_this.name}, vendor: ${_this.vendor}, facets: ${_this.facets}, price: ${_this.price}, change: ${_this.change}, spark: ${_this.spark}, links: ${_this.links})';
 }
 
 
@@ -1396,7 +1397,7 @@ abstract mixin class $BoardItemCopyWith<$Res>  {
   factory $BoardItemCopyWith(BoardItem value, $Res Function(BoardItem) _then) = _$BoardItemCopyWithImpl;
 @useResult
 $Res call({
- String key, String name, String vendor, Price? price, Change? change, List<SparkPoint> spark, Links links
+ String key, String name, String vendor, Map<String, String> facets, Price? price, Change? change, List<SparkPoint> spark, Links links
 });
 
 
@@ -1413,12 +1414,13 @@ class _$BoardItemCopyWithImpl<$Res>
 
 /// Create a copy of BoardItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? key = null,Object? name = null,Object? vendor = null,Object? price = freezed,Object? change = freezed,Object? spark = null,Object? links = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? key = null,Object? name = null,Object? vendor = null,Object? facets = null,Object? price = freezed,Object? change = freezed,Object? spark = null,Object? links = null,}) {
   return _then(BoardItem(
 key: null == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,vendor: null == vendor ? _self.vendor : vendor // ignore: cast_nullable_to_non_nullable
-as String,price: freezed == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
+as String,facets: null == facets ? _self.facets : facets // ignore: cast_nullable_to_non_nullable
+as Map<String, String>,price: freezed == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
 as Price?,change: freezed == change ? _self.change : change // ignore: cast_nullable_to_non_nullable
 as Change?,spark: null == spark ? _self.spark : spark // ignore: cast_nullable_to_non_nullable
 as List<SparkPoint>,links: null == links ? _self.links : links // ignore: cast_nullable_to_non_nullable
@@ -1540,10 +1542,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String key,  String name,  String vendor,  Price? price,  Change? change,  List<SparkPoint> spark,  Links links)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String key,  String name,  String vendor,  Map<String, String> facets,  Price? price,  Change? change,  List<SparkPoint> spark,  Links links)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BoardItem() when $default != null:
-return $default(_that.key,_that.name,_that.vendor,_that.price,_that.change,_that.spark,_that.links);case _:
+return $default(_that.key,_that.name,_that.vendor,_that.facets,_that.price,_that.change,_that.spark,_that.links);case _:
   return orElse();
 
 }
@@ -1561,10 +1563,10 @@ return $default(_that.key,_that.name,_that.vendor,_that.price,_that.change,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String key,  String name,  String vendor,  Price? price,  Change? change,  List<SparkPoint> spark,  Links links)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String key,  String name,  String vendor,  Map<String, String> facets,  Price? price,  Change? change,  List<SparkPoint> spark,  Links links)  $default,) {final _that = this;
 switch (_that) {
 case _BoardItem():
-return $default(_that.key,_that.name,_that.vendor,_that.price,_that.change,_that.spark,_that.links);case _:
+return $default(_that.key,_that.name,_that.vendor,_that.facets,_that.price,_that.change,_that.spark,_that.links);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1581,10 +1583,10 @@ return $default(_that.key,_that.name,_that.vendor,_that.price,_that.change,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String key,  String name,  String vendor,  Price? price,  Change? change,  List<SparkPoint> spark,  Links links)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String key,  String name,  String vendor,  Map<String, String> facets,  Price? price,  Change? change,  List<SparkPoint> spark,  Links links)?  $default,) {final _that = this;
 switch (_that) {
 case _BoardItem() when $default != null:
-return $default(_that.key,_that.name,_that.vendor,_that.price,_that.change,_that.spark,_that.links);case _:
+return $default(_that.key,_that.name,_that.vendor,_that.facets,_that.price,_that.change,_that.spark,_that.links);case _:
   return null;
 
 }
@@ -1596,13 +1598,22 @@ return $default(_that.key,_that.name,_that.vendor,_that.price,_that.change,_that
 
 
 class _BoardItem implements BoardItem {
-  const _BoardItem({required this.key, required this.name, required this.vendor, this.price, this.change, required  List<SparkPoint> spark, required this.links}): _spark = spark;
+  const _BoardItem({required this.key, required this.name, required this.vendor,  Map<String, String> facets = const {}, this.price, this.change, required  List<SparkPoint> spark, required this.links}): _facets = facets,_spark = spark;
   
 
 @override final  String key;
 @override final  String name;
 /// NVIDIA | AMD | DESKTOP (화면 글자는 앱이 번역)
 @override final  String vendor;
+/// 필터용 분류. GPU {series: RTX50}, RAM {ddr: DDR5, pack: 1|2}. 옛 응답(저장본)에는 없어서 빈 값
+ final  Map<String, String> _facets;
+/// 필터용 분류. GPU {series: RTX50}, RAM {ddr: DDR5, pack: 1|2}. 옛 응답(저장본)에는 없어서 빈 값
+@override@JsonKey() Map<String, String> get facets {
+  if (_facets is EqualUnmodifiableMapView) return _facets;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_facets);
+}
+
 @override final  Price? price;
 @override final  Change? change;
  final  List<SparkPoint> _spark;
@@ -1624,18 +1635,18 @@ _$BoardItemCopyWith<_BoardItem> get copyWith => __$BoardItemCopyWithImpl<_BoardI
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BoardItem&&(identical(other.key, key) || other.key == key)&&(identical(other.name, name) || other.name == name)&&(identical(other.vendor, vendor) || other.vendor == vendor)&&(identical(other.price, price) || other.price == price)&&(identical(other.change, change) || other.change == change)&&const DeepCollectionEquality().equals(other.spark, _spark)&&(identical(other.links, links) || other.links == links));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BoardItem&&(identical(other.key, key) || other.key == key)&&(identical(other.name, name) || other.name == name)&&(identical(other.vendor, vendor) || other.vendor == vendor)&&const DeepCollectionEquality().equals(other.facets, _facets)&&(identical(other.price, price) || other.price == price)&&(identical(other.change, change) || other.change == change)&&const DeepCollectionEquality().equals(other.spark, _spark)&&(identical(other.links, links) || other.links == links));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,key,name,vendor,price,change,const DeepCollectionEquality().hash(_spark),links);
+    return Object.hash(runtimeType,key,name,vendor,const DeepCollectionEquality().hash(_facets),price,change,const DeepCollectionEquality().hash(_spark),links);
 }
 
 @override
 String toString() {
-    return 'BoardItem(key: $key, name: $name, vendor: $vendor, price: $price, change: $change, spark: $spark, links: $links)';
+    return 'BoardItem(key: $key, name: $name, vendor: $vendor, facets: $facets, price: $price, change: $change, spark: $spark, links: $links)';
 }
 
 
@@ -1646,7 +1657,7 @@ abstract mixin class _$BoardItemCopyWith<$Res> implements $BoardItemCopyWith<$Re
   factory _$BoardItemCopyWith(_BoardItem value, $Res Function(_BoardItem) _then) = __$BoardItemCopyWithImpl;
 @override @useResult
 $Res call({
- String key, String name, String vendor, Price? price, Change? change, List<SparkPoint> spark, Links links
+ String key, String name, String vendor, Map<String, String> facets, Price? price, Change? change, List<SparkPoint> spark, Links links
 });
 
 
@@ -1663,12 +1674,13 @@ class __$BoardItemCopyWithImpl<$Res>
 
 /// Create a copy of BoardItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? key = null,Object? name = null,Object? vendor = null,Object? price = freezed,Object? change = freezed,Object? spark = null,Object? links = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? key = null,Object? name = null,Object? vendor = null,Object? facets = null,Object? price = freezed,Object? change = freezed,Object? spark = null,Object? links = null,}) {
   return _then(_BoardItem(
 key: null == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,vendor: null == vendor ? _self.vendor : vendor // ignore: cast_nullable_to_non_nullable
-as String,price: freezed == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
+as String,facets: null == facets ? _self._facets : facets // ignore: cast_nullable_to_non_nullable
+as Map<String, String>,price: freezed == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
 as Price?,change: freezed == change ? _self.change : change // ignore: cast_nullable_to_non_nullable
 as Change?,spark: null == spark ? _self._spark : spark // ignore: cast_nullable_to_non_nullable
 as List<SparkPoint>,links: null == links ? _self.links : links // ignore: cast_nullable_to_non_nullable

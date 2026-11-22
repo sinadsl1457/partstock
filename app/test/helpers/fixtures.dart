@@ -7,7 +7,7 @@ import 'package:partstock/features/market/data/market_models.dart';
 Map<String, dynamic> _json(String name) =>
     jsonDecode(File('test/fixtures/$name.json').readAsStringSync()) as Map<String, dynamic>;
 
-Board boardFixture() => Board.fromMap(_json('board_gpu'));
+Board boardFixture([String name = 'board_gpu']) => Board.fromMap(_json(name));
 TickerDetail tickerFixture() => TickerDetail.fromMap(_json('ticker_rtx5070ti'));
 ChartData chartFixture([ChartRange range = ChartRange.d1]) =>
     ChartData.fromMap({..._json('chart_1d'), 'range': range.code});

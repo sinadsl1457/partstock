@@ -9,6 +9,7 @@ import 'package:partstock/core/push/push_service.dart';
 import 'package:partstock/core/router/app_router.dart';
 import 'package:partstock/features/alerts/data/alert_models.dart';
 import 'package:partstock/features/alerts/presentation/alerts_cubit.dart';
+import 'package:partstock/features/board/data/board_filter_repository.dart';
 import 'package:partstock/features/board/presentation/board_cubit.dart';
 import 'package:partstock/features/market/data/market_models.dart';
 import 'package:partstock/features/market/data/market_repository.dart';
@@ -48,7 +49,7 @@ Future<MockMarketRepo> setUpDi() async {
     ..registerSingleton(alerts)
     ..registerSingleton(WatchlistCubit(WatchlistRepository(prefs)))
     ..registerSingleton(SettingsCubit(SettingsRepository(prefs)))
-    ..registerFactory(() => BoardCubit(repo))
+    ..registerFactory(() => BoardCubit(repo, BoardFilterRepository(prefs)))
     ..registerFactory(() => WatchPricesCubit(repo))
     ..registerFactoryParam<TickerCubit, String, void>((key, _) => TickerCubit(repo, key));
   return repo;

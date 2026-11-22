@@ -11,6 +11,9 @@ abstract class BoardState with _$BoardState {
   const factory BoardState({
     @Default(Category.gpu) Category category,
     Board? board,
+
+    /// 지금 분류의 필터(저장소에서 읽음)
+    @Default({}) Map<String, Set<String>> filter,
     @Default(false) bool loading,
 
     /// 지금 보이는 board가 저장해 둔 것(새로 받기 전·실패)
