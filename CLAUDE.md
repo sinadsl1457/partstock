@@ -16,7 +16,7 @@ eBay 판매 가격으로 그래픽카드·램 시세를 증권 시세판처럼 �
 ## 구조
 ```
 server/   Spring Boot 4.2, Java 25, Gradle(Kotlin DSL), PostgreSQL 18
-web/      Next.js (2단계)
+web/      Next.js 16 + Tailwind + Lightweight Charts
 app/      Flutter (3단계)
 docs/     AI_LOG.md
 ```
@@ -41,6 +41,23 @@ docs/     AI_LOG.md
   - 램 종목은 세대 + 2개 묶음 구성(2×16GB 등). 1개·4개 묶음, 노트북용(SODIMM), 서버용(ECC)은 뺀다.
   - 제목 판정 규칙을 고치면 `ListingClassifierTest`에 실제 제목 사례를 추가한다.
 - 다나와 연결: 모델 이름 검색 링크. 인기 모델은 다나와 상품 번호(pcode)를 사람이 손으로 적어 상품 페이지로 보낸다.
+
+## 시세 API (server/api)
+- `GET /api/board?category=GPU|RAM`, `GET /api/ticker?key=<칩셋/제조사/모델>&period=day|week|month|year`. 종목 키에 `/`가 들어가 경로 대신 파라미터.
+- 가격은 USD 센트 정수만 준다. 원화는 화면이 `fx.usdKrw`(그날 또는 그 전 가장 가까운 고시)를 곱한다.
+- 화면 글자는 주지 않는다(vendor도 `NVIDIA|AMD|DESKTOP` 코드). 번역은 웹·앱이 한다.
+- eBay·다나와 링크는 서버에서 만든다(웹·앱이 같은 주소를 쓰게).
+- 봉 = 그 기간 하루 대표가(p25)의 처음·최고·최저·마지막(`date_trunc`, 주는 월요일 시작). 일은 봉 대신 최근 30일 점.
+
+## 웹 (web/)
+- Next.js 16(App Router, `cacheComponents` 켜짐) + Tailwind + Lightweight Charts(TradingView, 로고는 라이선스 표시라 끄지 않음).
+- 코드를 쓰기 전에 `web/node_modules/next/dist/docs/`의 해당 문서를 본다(AGENTS.md).
+- 주소: `/[lang]/[category]` 시세판, `/[lang]/t/[...key]` 상세. 언어 없는 주소는 `proxy.ts`가 브라우저 언어로 보낸다.
+- 주소(params)·`usePathname`을 읽는 부분은 `<Suspense>` 안에. 서버 → 클라이언트 컴포넌트로 함수를 넘기지 않는다(글자를 만들어 넘김).
+- API 호출은 `lib/api.ts`에서만(`use cache` + `cacheLife('hours')`, 시세는 하루 한 번 바뀜). 상세는 네 기간을 한 번에 받아 기간 버튼이 기다리지 않게.
+- 차트는 점이 2개 미만이면 그리지 않고 "쌓이는 중" 안내. 원화 차트는 지금 환율 하나로 바꿔 그린다(환율 변동이 섞이지 않게).
+- 바로가기 기본값은 브라우저 localStorage(실패해도 eBay 기본). 상승·하락 색은 언어별(한국 빨강↑파랑↓, 영어 초록↑빨강↓).
+- 커밋 전: `npm run lint`, `npx tsc --noEmit`, `npm run build`. 화면을 바꾸면 브라우저 콘솔·개발 서버 로그 에러까지 확인.
 
 ## 화면 (2·3단계)
 - 영어·한국어. 영어는 달러, 한국어는 원화(공식 환율 환산) 크게 + 달러 작게.

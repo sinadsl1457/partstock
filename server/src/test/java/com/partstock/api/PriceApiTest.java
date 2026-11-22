@@ -164,7 +164,7 @@ class PriceApiTest {
 
 		mvc.perform(get("/api/board").param("category", "ram"))
 				.andExpect(jsonPath("$.items[0].key").value("ddr5-32gb"))
-				.andExpect(jsonPath("$.items[0].vendor").value("데스크톱"))
+				.andExpect(jsonPath("$.items[0].vendor").value("DESKTOP"))
 				.andExpect(jsonPath("$.items[0].links.danawa").value(
 						"https://search.danawa.com/dsearch.php?query=DDR5%2032GB%2016Gx2"));
 	}

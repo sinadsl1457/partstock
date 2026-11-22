@@ -157,7 +157,7 @@ public class PriceService {
 
 	private static String vendor(ChipsetDef c) {
 		if (c.category() == Category.RAM) {
-			return "데스크톱";
+			return "DESKTOP"; // 화면 글자는 웹·앱이 언어에 맞게 바꾼다
 		}
 		return c.key().startsWith("rx-") ? "AMD" : "NVIDIA";
 	}
