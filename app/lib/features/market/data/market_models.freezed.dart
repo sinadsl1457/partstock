@@ -282,7 +282,9 @@ as double,
 /// @nodoc
 mixin _$Price {
 
- int get p25Cents; int get medianCents; int get p75Cents; int get listingCount;
+/// 대표가: 판매 글 20개 이상이면 하위 10%, 적으면 하위 25%(서버 PriceStats)
+ int get priceCents;/// 대표가가 하위 몇 %인지(10 또는 25)
+ int get pricePct; int get p25Cents; int get medianCents; int get p75Cents; int get listingCount;
 /// Create a copy of Price
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -294,20 +296,20 @@ $PriceCopyWith<Price> get copyWith => _$PriceCopyWithImpl<Price>(this as Price, 
 @override
 bool operator ==(Object other) {
   final _this = this as Price;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Price&&(identical(other.p25Cents, _this.p25Cents) || other.p25Cents == _this.p25Cents)&&(identical(other.medianCents, _this.medianCents) || other.medianCents == _this.medianCents)&&(identical(other.p75Cents, _this.p75Cents) || other.p75Cents == _this.p75Cents)&&(identical(other.listingCount, _this.listingCount) || other.listingCount == _this.listingCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Price&&(identical(other.priceCents, _this.priceCents) || other.priceCents == _this.priceCents)&&(identical(other.pricePct, _this.pricePct) || other.pricePct == _this.pricePct)&&(identical(other.p25Cents, _this.p25Cents) || other.p25Cents == _this.p25Cents)&&(identical(other.medianCents, _this.medianCents) || other.medianCents == _this.medianCents)&&(identical(other.p75Cents, _this.p75Cents) || other.p75Cents == _this.p75Cents)&&(identical(other.listingCount, _this.listingCount) || other.listingCount == _this.listingCount));
 }
 
 
 @override
 int get hashCode {
   final _this = this as Price;
-  return Object.hash(runtimeType,_this.p25Cents,_this.medianCents,_this.p75Cents,_this.listingCount);
+  return Object.hash(runtimeType,_this.priceCents,_this.pricePct,_this.p25Cents,_this.medianCents,_this.p75Cents,_this.listingCount);
 }
 
 @override
 String toString() {
   final _this = this as Price;
-  return 'Price(p25Cents: ${_this.p25Cents}, medianCents: ${_this.medianCents}, p75Cents: ${_this.p75Cents}, listingCount: ${_this.listingCount})';
+  return 'Price(priceCents: ${_this.priceCents}, pricePct: ${_this.pricePct}, p25Cents: ${_this.p25Cents}, medianCents: ${_this.medianCents}, p75Cents: ${_this.p75Cents}, listingCount: ${_this.listingCount})';
 }
 
 
@@ -318,7 +320,7 @@ abstract mixin class $PriceCopyWith<$Res>  {
   factory $PriceCopyWith(Price value, $Res Function(Price) _then) = _$PriceCopyWithImpl;
 @useResult
 $Res call({
- int p25Cents, int medianCents, int p75Cents, int listingCount
+ int priceCents, int pricePct, int p25Cents, int medianCents, int p75Cents, int listingCount
 });
 
 
@@ -335,9 +337,11 @@ class _$PriceCopyWithImpl<$Res>
 
 /// Create a copy of Price
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? p25Cents = null,Object? medianCents = null,Object? p75Cents = null,Object? listingCount = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? priceCents = null,Object? pricePct = null,Object? p25Cents = null,Object? medianCents = null,Object? p75Cents = null,Object? listingCount = null,}) {
   return _then(Price(
-p25Cents: null == p25Cents ? _self.p25Cents : p25Cents // ignore: cast_nullable_to_non_nullable
+priceCents: null == priceCents ? _self.priceCents : priceCents // ignore: cast_nullable_to_non_nullable
+as int,pricePct: null == pricePct ? _self.pricePct : pricePct // ignore: cast_nullable_to_non_nullable
+as int,p25Cents: null == p25Cents ? _self.p25Cents : p25Cents // ignore: cast_nullable_to_non_nullable
 as int,medianCents: null == medianCents ? _self.medianCents : medianCents // ignore: cast_nullable_to_non_nullable
 as int,p75Cents: null == p75Cents ? _self.p75Cents : p75Cents // ignore: cast_nullable_to_non_nullable
 as int,listingCount: null == listingCount ? _self.listingCount : listingCount // ignore: cast_nullable_to_non_nullable
@@ -426,10 +430,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int p25Cents,  int medianCents,  int p75Cents,  int listingCount)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int priceCents,  int pricePct,  int p25Cents,  int medianCents,  int p75Cents,  int listingCount)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Price() when $default != null:
-return $default(_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCount);case _:
+return $default(_that.priceCents,_that.pricePct,_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCount);case _:
   return orElse();
 
 }
@@ -447,10 +451,10 @@ return $default(_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCou
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int p25Cents,  int medianCents,  int p75Cents,  int listingCount)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int priceCents,  int pricePct,  int p25Cents,  int medianCents,  int p75Cents,  int listingCount)  $default,) {final _that = this;
 switch (_that) {
 case _Price():
-return $default(_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCount);case _:
+return $default(_that.priceCents,_that.pricePct,_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCount);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -467,10 +471,10 @@ return $default(_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCou
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int p25Cents,  int medianCents,  int p75Cents,  int listingCount)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int priceCents,  int pricePct,  int p25Cents,  int medianCents,  int p75Cents,  int listingCount)?  $default,) {final _that = this;
 switch (_that) {
 case _Price() when $default != null:
-return $default(_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCount);case _:
+return $default(_that.priceCents,_that.pricePct,_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCount);case _:
   return null;
 
 }
@@ -482,9 +486,13 @@ return $default(_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCou
 
 
 class _Price implements Price {
-  const _Price({required this.p25Cents, required this.medianCents, required this.p75Cents, required this.listingCount});
+  const _Price({required this.priceCents, required this.pricePct, required this.p25Cents, required this.medianCents, required this.p75Cents, required this.listingCount});
   
 
+/// 대표가: 판매 글 20개 이상이면 하위 10%, 적으면 하위 25%(서버 PriceStats)
+@override final  int priceCents;
+/// 대표가가 하위 몇 %인지(10 또는 25)
+@override final  int pricePct;
 @override final  int p25Cents;
 @override final  int medianCents;
 @override final  int p75Cents;
@@ -500,18 +508,18 @@ _$PriceCopyWith<_Price> get copyWith => __$PriceCopyWithImpl<_Price>(this, _$ide
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Price&&(identical(other.p25Cents, p25Cents) || other.p25Cents == p25Cents)&&(identical(other.medianCents, medianCents) || other.medianCents == medianCents)&&(identical(other.p75Cents, p75Cents) || other.p75Cents == p75Cents)&&(identical(other.listingCount, listingCount) || other.listingCount == listingCount));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Price&&(identical(other.priceCents, priceCents) || other.priceCents == priceCents)&&(identical(other.pricePct, pricePct) || other.pricePct == pricePct)&&(identical(other.p25Cents, p25Cents) || other.p25Cents == p25Cents)&&(identical(other.medianCents, medianCents) || other.medianCents == medianCents)&&(identical(other.p75Cents, p75Cents) || other.p75Cents == p75Cents)&&(identical(other.listingCount, listingCount) || other.listingCount == listingCount));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,p25Cents,medianCents,p75Cents,listingCount);
+    return Object.hash(runtimeType,priceCents,pricePct,p25Cents,medianCents,p75Cents,listingCount);
 }
 
 @override
 String toString() {
-    return 'Price(p25Cents: $p25Cents, medianCents: $medianCents, p75Cents: $p75Cents, listingCount: $listingCount)';
+    return 'Price(priceCents: $priceCents, pricePct: $pricePct, p25Cents: $p25Cents, medianCents: $medianCents, p75Cents: $p75Cents, listingCount: $listingCount)';
 }
 
 
@@ -522,7 +530,7 @@ abstract mixin class _$PriceCopyWith<$Res> implements $PriceCopyWith<$Res> {
   factory _$PriceCopyWith(_Price value, $Res Function(_Price) _then) = __$PriceCopyWithImpl;
 @override @useResult
 $Res call({
- int p25Cents, int medianCents, int p75Cents, int listingCount
+ int priceCents, int pricePct, int p25Cents, int medianCents, int p75Cents, int listingCount
 });
 
 
@@ -539,9 +547,11 @@ class __$PriceCopyWithImpl<$Res>
 
 /// Create a copy of Price
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? p25Cents = null,Object? medianCents = null,Object? p75Cents = null,Object? listingCount = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? priceCents = null,Object? pricePct = null,Object? p25Cents = null,Object? medianCents = null,Object? p75Cents = null,Object? listingCount = null,}) {
   return _then(_Price(
-p25Cents: null == p25Cents ? _self.p25Cents : p25Cents // ignore: cast_nullable_to_non_nullable
+priceCents: null == priceCents ? _self.priceCents : priceCents // ignore: cast_nullable_to_non_nullable
+as int,pricePct: null == pricePct ? _self.pricePct : pricePct // ignore: cast_nullable_to_non_nullable
+as int,p25Cents: null == p25Cents ? _self.p25Cents : p25Cents // ignore: cast_nullable_to_non_nullable
 as int,medianCents: null == medianCents ? _self.medianCents : medianCents // ignore: cast_nullable_to_non_nullable
 as int,p75Cents: null == p75Cents ? _self.p75Cents : p75Cents // ignore: cast_nullable_to_non_nullable
 as int,listingCount: null == listingCount ? _self.listingCount : listingCount // ignore: cast_nullable_to_non_nullable
@@ -555,7 +565,7 @@ as int,
 /// @nodoc
 mixin _$Change {
 
- DateTime get prevAt; int get prevP25Cents; double get pct;
+ DateTime get prevAt; int get prevPriceCents; double get pct;
 /// Create a copy of Change
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -567,20 +577,20 @@ $ChangeCopyWith<Change> get copyWith => _$ChangeCopyWithImpl<Change>(this as Cha
 @override
 bool operator ==(Object other) {
   final _this = this as Change;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Change&&(identical(other.prevAt, _this.prevAt) || other.prevAt == _this.prevAt)&&(identical(other.prevP25Cents, _this.prevP25Cents) || other.prevP25Cents == _this.prevP25Cents)&&(identical(other.pct, _this.pct) || other.pct == _this.pct));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Change&&(identical(other.prevAt, _this.prevAt) || other.prevAt == _this.prevAt)&&(identical(other.prevPriceCents, _this.prevPriceCents) || other.prevPriceCents == _this.prevPriceCents)&&(identical(other.pct, _this.pct) || other.pct == _this.pct));
 }
 
 
 @override
 int get hashCode {
   final _this = this as Change;
-  return Object.hash(runtimeType,_this.prevAt,_this.prevP25Cents,_this.pct);
+  return Object.hash(runtimeType,_this.prevAt,_this.prevPriceCents,_this.pct);
 }
 
 @override
 String toString() {
   final _this = this as Change;
-  return 'Change(prevAt: ${_this.prevAt}, prevP25Cents: ${_this.prevP25Cents}, pct: ${_this.pct})';
+  return 'Change(prevAt: ${_this.prevAt}, prevPriceCents: ${_this.prevPriceCents}, pct: ${_this.pct})';
 }
 
 
@@ -591,7 +601,7 @@ abstract mixin class $ChangeCopyWith<$Res>  {
   factory $ChangeCopyWith(Change value, $Res Function(Change) _then) = _$ChangeCopyWithImpl;
 @useResult
 $Res call({
- DateTime prevAt, int prevP25Cents, double pct
+ DateTime prevAt, int prevPriceCents, double pct
 });
 
 
@@ -608,10 +618,10 @@ class _$ChangeCopyWithImpl<$Res>
 
 /// Create a copy of Change
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? prevAt = null,Object? prevP25Cents = null,Object? pct = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? prevAt = null,Object? prevPriceCents = null,Object? pct = null,}) {
   return _then(Change(
 prevAt: null == prevAt ? _self.prevAt : prevAt // ignore: cast_nullable_to_non_nullable
-as DateTime,prevP25Cents: null == prevP25Cents ? _self.prevP25Cents : prevP25Cents // ignore: cast_nullable_to_non_nullable
+as DateTime,prevPriceCents: null == prevPriceCents ? _self.prevPriceCents : prevPriceCents // ignore: cast_nullable_to_non_nullable
 as int,pct: null == pct ? _self.pct : pct // ignore: cast_nullable_to_non_nullable
 as double,
   ));
@@ -698,10 +708,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime prevAt,  int prevP25Cents,  double pct)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime prevAt,  int prevPriceCents,  double pct)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Change() when $default != null:
-return $default(_that.prevAt,_that.prevP25Cents,_that.pct);case _:
+return $default(_that.prevAt,_that.prevPriceCents,_that.pct);case _:
   return orElse();
 
 }
@@ -719,10 +729,10 @@ return $default(_that.prevAt,_that.prevP25Cents,_that.pct);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime prevAt,  int prevP25Cents,  double pct)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime prevAt,  int prevPriceCents,  double pct)  $default,) {final _that = this;
 switch (_that) {
 case _Change():
-return $default(_that.prevAt,_that.prevP25Cents,_that.pct);case _:
+return $default(_that.prevAt,_that.prevPriceCents,_that.pct);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -739,10 +749,10 @@ return $default(_that.prevAt,_that.prevP25Cents,_that.pct);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime prevAt,  int prevP25Cents,  double pct)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime prevAt,  int prevPriceCents,  double pct)?  $default,) {final _that = this;
 switch (_that) {
 case _Change() when $default != null:
-return $default(_that.prevAt,_that.prevP25Cents,_that.pct);case _:
+return $default(_that.prevAt,_that.prevPriceCents,_that.pct);case _:
   return null;
 
 }
@@ -754,11 +764,11 @@ return $default(_that.prevAt,_that.prevP25Cents,_that.pct);case _:
 
 
 class _Change implements Change {
-  const _Change({required this.prevAt, required this.prevP25Cents, required this.pct});
+  const _Change({required this.prevAt, required this.prevPriceCents, required this.pct});
   
 
 @override final  DateTime prevAt;
-@override final  int prevP25Cents;
+@override final  int prevPriceCents;
 @override final  double pct;
 
 /// Create a copy of Change
@@ -771,18 +781,18 @@ _$ChangeCopyWith<_Change> get copyWith => __$ChangeCopyWithImpl<_Change>(this, _
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Change&&(identical(other.prevAt, prevAt) || other.prevAt == prevAt)&&(identical(other.prevP25Cents, prevP25Cents) || other.prevP25Cents == prevP25Cents)&&(identical(other.pct, pct) || other.pct == pct));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Change&&(identical(other.prevAt, prevAt) || other.prevAt == prevAt)&&(identical(other.prevPriceCents, prevPriceCents) || other.prevPriceCents == prevPriceCents)&&(identical(other.pct, pct) || other.pct == pct));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,prevAt,prevP25Cents,pct);
+    return Object.hash(runtimeType,prevAt,prevPriceCents,pct);
 }
 
 @override
 String toString() {
-    return 'Change(prevAt: $prevAt, prevP25Cents: $prevP25Cents, pct: $pct)';
+    return 'Change(prevAt: $prevAt, prevPriceCents: $prevPriceCents, pct: $pct)';
 }
 
 
@@ -793,7 +803,7 @@ abstract mixin class _$ChangeCopyWith<$Res> implements $ChangeCopyWith<$Res> {
   factory _$ChangeCopyWith(_Change value, $Res Function(_Change) _then) = __$ChangeCopyWithImpl;
 @override @useResult
 $Res call({
- DateTime prevAt, int prevP25Cents, double pct
+ DateTime prevAt, int prevPriceCents, double pct
 });
 
 
@@ -810,10 +820,10 @@ class __$ChangeCopyWithImpl<$Res>
 
 /// Create a copy of Change
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? prevAt = null,Object? prevP25Cents = null,Object? pct = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? prevAt = null,Object? prevPriceCents = null,Object? pct = null,}) {
   return _then(_Change(
 prevAt: null == prevAt ? _self.prevAt : prevAt // ignore: cast_nullable_to_non_nullable
-as DateTime,prevP25Cents: null == prevP25Cents ? _self.prevP25Cents : prevP25Cents // ignore: cast_nullable_to_non_nullable
+as DateTime,prevPriceCents: null == prevPriceCents ? _self.prevPriceCents : prevPriceCents // ignore: cast_nullable_to_non_nullable
 as int,pct: null == pct ? _self.pct : pct // ignore: cast_nullable_to_non_nullable
 as double,
   ));
@@ -1092,7 +1102,7 @@ as String,
 /// @nodoc
 mixin _$SparkPoint {
 
- DateTime get t; int get p25Cents;
+ DateTime get t; int get priceCents;
 /// Create a copy of SparkPoint
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1104,20 +1114,20 @@ $SparkPointCopyWith<SparkPoint> get copyWith => _$SparkPointCopyWithImpl<SparkPo
 @override
 bool operator ==(Object other) {
   final _this = this as SparkPoint;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SparkPoint&&(identical(other.t, _this.t) || other.t == _this.t)&&(identical(other.p25Cents, _this.p25Cents) || other.p25Cents == _this.p25Cents));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SparkPoint&&(identical(other.t, _this.t) || other.t == _this.t)&&(identical(other.priceCents, _this.priceCents) || other.priceCents == _this.priceCents));
 }
 
 
 @override
 int get hashCode {
   final _this = this as SparkPoint;
-  return Object.hash(runtimeType,_this.t,_this.p25Cents);
+  return Object.hash(runtimeType,_this.t,_this.priceCents);
 }
 
 @override
 String toString() {
   final _this = this as SparkPoint;
-  return 'SparkPoint(t: ${_this.t}, p25Cents: ${_this.p25Cents})';
+  return 'SparkPoint(t: ${_this.t}, priceCents: ${_this.priceCents})';
 }
 
 
@@ -1128,7 +1138,7 @@ abstract mixin class $SparkPointCopyWith<$Res>  {
   factory $SparkPointCopyWith(SparkPoint value, $Res Function(SparkPoint) _then) = _$SparkPointCopyWithImpl;
 @useResult
 $Res call({
- DateTime t, int p25Cents
+ DateTime t, int priceCents
 });
 
 
@@ -1145,10 +1155,10 @@ class _$SparkPointCopyWithImpl<$Res>
 
 /// Create a copy of SparkPoint
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? t = null,Object? p25Cents = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? t = null,Object? priceCents = null,}) {
   return _then(SparkPoint(
 t: null == t ? _self.t : t // ignore: cast_nullable_to_non_nullable
-as DateTime,p25Cents: null == p25Cents ? _self.p25Cents : p25Cents // ignore: cast_nullable_to_non_nullable
+as DateTime,priceCents: null == priceCents ? _self.priceCents : priceCents // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -1234,10 +1244,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime t,  int p25Cents)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime t,  int priceCents)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SparkPoint() when $default != null:
-return $default(_that.t,_that.p25Cents);case _:
+return $default(_that.t,_that.priceCents);case _:
   return orElse();
 
 }
@@ -1255,10 +1265,10 @@ return $default(_that.t,_that.p25Cents);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime t,  int p25Cents)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime t,  int priceCents)  $default,) {final _that = this;
 switch (_that) {
 case _SparkPoint():
-return $default(_that.t,_that.p25Cents);case _:
+return $default(_that.t,_that.priceCents);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1275,10 +1285,10 @@ return $default(_that.t,_that.p25Cents);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime t,  int p25Cents)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime t,  int priceCents)?  $default,) {final _that = this;
 switch (_that) {
 case _SparkPoint() when $default != null:
-return $default(_that.t,_that.p25Cents);case _:
+return $default(_that.t,_that.priceCents);case _:
   return null;
 
 }
@@ -1290,11 +1300,11 @@ return $default(_that.t,_that.p25Cents);case _:
 
 
 class _SparkPoint implements SparkPoint {
-  const _SparkPoint({required this.t, required this.p25Cents});
+  const _SparkPoint({required this.t, required this.priceCents});
   
 
 @override final  DateTime t;
-@override final  int p25Cents;
+@override final  int priceCents;
 
 /// Create a copy of SparkPoint
 /// with the given fields replaced by the non-null parameter values.
@@ -1306,18 +1316,18 @@ _$SparkPointCopyWith<_SparkPoint> get copyWith => __$SparkPointCopyWithImpl<_Spa
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SparkPoint&&(identical(other.t, t) || other.t == t)&&(identical(other.p25Cents, p25Cents) || other.p25Cents == p25Cents));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SparkPoint&&(identical(other.t, t) || other.t == t)&&(identical(other.priceCents, priceCents) || other.priceCents == priceCents));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,t,p25Cents);
+    return Object.hash(runtimeType,t,priceCents);
 }
 
 @override
 String toString() {
-    return 'SparkPoint(t: $t, p25Cents: $p25Cents)';
+    return 'SparkPoint(t: $t, priceCents: $priceCents)';
 }
 
 
@@ -1328,7 +1338,7 @@ abstract mixin class _$SparkPointCopyWith<$Res> implements $SparkPointCopyWith<$
   factory _$SparkPointCopyWith(_SparkPoint value, $Res Function(_SparkPoint) _then) = __$SparkPointCopyWithImpl;
 @override @useResult
 $Res call({
- DateTime t, int p25Cents
+ DateTime t, int priceCents
 });
 
 
@@ -1345,10 +1355,10 @@ class __$SparkPointCopyWithImpl<$Res>
 
 /// Create a copy of SparkPoint
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? t = null,Object? p25Cents = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? t = null,Object? priceCents = null,}) {
   return _then(_SparkPoint(
 t: null == t ? _self.t : t // ignore: cast_nullable_to_non_nullable
-as DateTime,p25Cents: null == p25Cents ? _self.p25Cents : p25Cents // ignore: cast_nullable_to_non_nullable
+as DateTime,priceCents: null == priceCents ? _self.priceCents : priceCents // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }

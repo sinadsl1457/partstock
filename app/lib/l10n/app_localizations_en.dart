@@ -53,7 +53,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get boardNote =>
-      'Price = 25th percentile of new, Buy It Now listings on eBay US. Shipping and tax not included.';
+      'Price = 10th percentile of new, Buy It Now listings on eBay US (25th if fewer than 20 listings). Shipping and tax not included.';
 
   @override
   String get vendorNvidia => 'NVIDIA';
@@ -70,8 +70,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String priceHint(String median) {
-    return '25th pct. · median $median';
+  String priceHint(int pct, String median) {
+    return '${pct}th pct. · median $median';
   }
 
   @override
@@ -217,8 +217,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get alertNote =>
-      'Checked right after each hourly update using the 25th-percentile price. Fires once, then turns off.';
+  String get alertNote => 'Checked against the price right after each hourly update. Fires once, then turns off.';
 
   @override
   String get alertSave => 'Turn on alert';
@@ -356,7 +355,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get basisPriceLabel => 'Price';
 
   @override
-  String get basisPrice => '25th percentile of new, Buy It Now listings on eBay US';
+  String get basisPrice => '10th percentile of new, Buy It Now listings on eBay US (25th if fewer than 20 listings)';
 
   @override
   String get basisFxLabel => 'Currency';

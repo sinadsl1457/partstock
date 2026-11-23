@@ -40,6 +40,11 @@ abstract class Fx with _$Fx {
 @freezed
 abstract class Price with _$Price {
   const factory Price({
+    /// 대표가: 판매 글 20개 이상이면 하위 10%, 적으면 하위 25%(서버 PriceStats)
+    required int priceCents,
+
+    /// 대표가가 하위 몇 %인지(10 또는 25)
+    required int pricePct,
     required int p25Cents,
     required int medianCents,
     required int p75Cents,
@@ -47,6 +52,9 @@ abstract class Price with _$Price {
   }) = _Price;
 
   factory Price.fromMap(Map<String, dynamic> m) => Price(
+    // 저장해 둔 옛 응답에는 priceCents가 없다(그때 대표가가 p25)
+    priceCents: _int(m['priceCents'] ?? m['p25Cents']),
+    pricePct: _int(m['pricePct'] ?? 25),
     p25Cents: _int(m['p25Cents']),
     medianCents: _int(m['medianCents']),
     p75Cents: _int(m['p75Cents']),
@@ -57,11 +65,11 @@ abstract class Price with _$Price {
 /// 24시간 변동(24시간 전 또는 그 전 가장 가까운 시세 대비)
 @freezed
 abstract class Change with _$Change {
-  const factory Change({required DateTime prevAt, required int prevP25Cents, required double pct}) = _Change;
+  const factory Change({required DateTime prevAt, required int prevPriceCents, required double pct}) = _Change;
 
   factory Change.fromMap(Map<String, dynamic> m) => Change(
     prevAt: DateTime.parse(m['prevAt'] as String),
-    prevP25Cents: _int(m['prevP25Cents']),
+    prevPriceCents: _int(m['prevPriceCents'] ?? m['prevP25Cents']),
     pct: (m['pct'] as num).toDouble(),
   );
 }
@@ -75,10 +83,10 @@ abstract class Links with _$Links {
 
 @freezed
 abstract class SparkPoint with _$SparkPoint {
-  const factory SparkPoint({required DateTime t, required int p25Cents}) = _SparkPoint;
+  const factory SparkPoint({required DateTime t, required int priceCents}) = _SparkPoint;
 
   factory SparkPoint.fromMap(Map<String, dynamic> m) =>
-      SparkPoint(t: DateTime.parse(m['t'] as String), p25Cents: _int(m['p25Cents']));
+      SparkPoint(t: DateTime.parse(m['t'] as String), priceCents: _int(m['priceCents'] ?? m['p25Cents']));
 }
 
 @freezed

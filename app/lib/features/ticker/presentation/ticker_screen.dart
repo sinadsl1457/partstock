@@ -143,11 +143,11 @@ class _BodyState extends State<_Body> {
                     textBaseline: TextBaseline.alphabetic,
                     children: [
                       Text(
-                        mainPrice(context, p.p25Cents, d.fx).big,
+                        mainPrice(context, p.priceCents, d.fx).big,
                         style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w700, letterSpacing: -0.6),
                       ),
                       const SizedBox(width: 10),
-                      if (mainPrice(context, p.p25Cents, d.fx).small case final small?)
+                      if (mainPrice(context, p.priceCents, d.fx).small case final small?)
                         Text(small, style: const TextStyle(fontSize: 14, color: AppColors.muted)),
                     ],
                   ),
@@ -158,7 +158,7 @@ class _BodyState extends State<_Body> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          [t.priceHint(usd(p.medianCents)), t.listingsShort(p.listingCount)].join(' · '),
+                          [t.priceHint(p.pricePct, usd(p.medianCents)), t.listingsShort(p.listingCount)].join(' · '),
                           style: const TextStyle(fontSize: 12, color: AppColors.muted),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -427,7 +427,7 @@ class _ChildRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    mainPrice(context, p.p25Cents, fx).big,
+                    mainPrice(context, p.priceCents, fx).big,
                     style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                   ),
                   Text(
@@ -510,7 +510,7 @@ Future<void> _openAlert(BuildContext context) async {
     return;
   }
   final d = context.read<TickerCubit>().state.detail!;
-  await showAlertSheet(context, tickerKey: d.ticker.key, nowCents: d.price!.p25Cents, fx: d.fx);
+  await showAlertSheet(context, tickerKey: d.ticker.key, nowCents: d.price!.priceCents, fx: d.fx);
 }
 
 /// 이 종목에 걸어 둔 대기 중 알림(현재가 아래 작은 줄)

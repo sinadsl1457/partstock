@@ -52,7 +52,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tooFew => '데이터 없음';
 
   @override
-  String get boardNote => '대표가 = 미국 eBay 새 상품·즉시 구매 글의 하위 25%. 원화는 기준 환율 환산, 배송비·관세 제외.';
+  String get boardNote => '대표가 = 미국 eBay 새 상품·즉시 구매 글 가격의 하위 10%(글이 20개 미만이면 하위 25%). 원화는 기준 환율 환산, 배송비·관세 제외.';
 
   @override
   String get vendorNvidia => 'NVIDIA';
@@ -69,8 +69,8 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String priceHint(String median) {
-    return '하위 25% · 중앙값 $median';
+  String priceHint(int pct, String median) {
+    return '하위 $pct% · 중앙값 $median';
   }
 
   @override
@@ -216,7 +216,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get alertNote => '매시간 수집 직후 대표가(하위 25%)로 확인해서 푸시로 알려 드립니다. 한 번 울리면 꺼집니다.';
+  String get alertNote => '매시간 수집 직후 대표가로 확인해서 푸시로 알려 드립니다. 한 번 울리면 꺼집니다.';
 
   @override
   String get alertSave => '알림 켜기';
@@ -352,7 +352,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get basisPriceLabel => '대표가';
 
   @override
-  String get basisPrice => '미국 eBay 새 상품·즉시 구매 글 가격의 하위 25%';
+  String get basisPrice => '미국 eBay 새 상품·즉시 구매 글 가격의 하위 10%(글이 20개 미만이면 하위 25%)';
 
   @override
   String get basisFxLabel => '원화 환산';

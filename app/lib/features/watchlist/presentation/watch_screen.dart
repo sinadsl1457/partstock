@@ -126,7 +126,7 @@ class WatchScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        mainPrice(context, p.p25Cents, d!.fx).big,
+                        mainPrice(context, p.priceCents, d!.fx).big,
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                       ),
                       Text(
@@ -161,7 +161,7 @@ class WatchScreen extends StatelessWidget {
                     ),
                     if (p != null)
                       Text(
-                        '${((a.targetCents - p.p25Cents) / p.p25Cents * 100).abs().toStringAsFixed(1)}%',
+                        '${((a.targetCents - p.priceCents) / p.priceCents * 100).abs().toStringAsFixed(1)}%',
                         style: const TextStyle(fontSize: 12, color: AppColors.muted),
                       ),
                   ],

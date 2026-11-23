@@ -165,7 +165,7 @@ void main() {
     // 기본: 지금보다 5% 낮은 가격, 이하
     final call = verify(() => alertsRepo.create('token-1', 'rtx-5070-ti', AlertDirection.below, captureAny()));
     call.called(1);
-    final p25 = tickerFixture().price!.p25Cents;
+    final p25 = tickerFixture().price!.priceCents;
     expect((call.captured.single as int) / p25, closeTo(0.95, 0.001));
     expect(find.text('알림을 켰습니다'), findsOneWidget);
     expect(find.byIcon(Icons.notifications_active_outlined), findsOneWidget); // 현재가 아래 알림 표시

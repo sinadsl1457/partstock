@@ -35,7 +35,7 @@ void main() {
     expect(board.items.first.key, 'rtx-5090');
     final ti = board.items.firstWhere((i) => i.key == 'rtx-5070-ti');
     expect(ti.vendor, 'NVIDIA');
-    expect(ti.price!.p25Cents, greaterThan(0));
+    expect(ti.price!.priceCents, greaterThan(0));
     expect(ti.spark, isNotEmpty);
     expect(ti.links.ebay, startsWith('https://www.ebay.com/sch/'));
     expect(board.fx!.usdKrw, greaterThan(1000));

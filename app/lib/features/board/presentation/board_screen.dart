@@ -215,7 +215,7 @@ class BoardRow extends StatelessWidget {
     final t = AppLocalizations.of(context);
     final p = item.price;
     final ch = item.change;
-    final spark = item.spark.map((e) => e.p25Cents).toList();
+    final spark = item.spark.map((e) => e.priceCents).toList();
     final trend = spark.length >= 2 ? (spark.last - spark.first).toDouble() : null;
     return InkWell(
       borderRadius: BorderRadius.circular(12),
@@ -255,7 +255,7 @@ class BoardRow extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          mainPrice(context, p.p25Cents, fx).big,
+                          mainPrice(context, p.priceCents, fx).big,
                           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                         ),
                         const SizedBox(height: 3),

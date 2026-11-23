@@ -167,7 +167,7 @@ abstract class AppLocalizations {
   /// No description provided for @boardNote.
   ///
   /// In ko, this message translates to:
-  /// **'대표가 = 미국 eBay 새 상품·즉시 구매 글의 하위 25%. 원화는 기준 환율 환산, 배송비·관세 제외.'**
+  /// **'대표가 = 미국 eBay 새 상품·즉시 구매 글 가격의 하위 10%(글이 20개 미만이면 하위 25%). 원화는 기준 환율 환산, 배송비·관세 제외.'**
   String get boardNote;
 
   /// No description provided for @vendorNvidia.
@@ -197,8 +197,8 @@ abstract class AppLocalizations {
   /// No description provided for @priceHint.
   ///
   /// In ko, this message translates to:
-  /// **'하위 25% · 중앙값 {median}'**
-  String priceHint(String median);
+  /// **'하위 {pct}% · 중앙값 {median}'**
+  String priceHint(int pct, String median);
 
   /// No description provided for @rangeChange.
   ///
@@ -467,7 +467,7 @@ abstract class AppLocalizations {
   /// No description provided for @alertNote.
   ///
   /// In ko, this message translates to:
-  /// **'매시간 수집 직후 대표가(하위 25%)로 확인해서 푸시로 알려 드립니다. 한 번 울리면 꺼집니다.'**
+  /// **'매시간 수집 직후 대표가로 확인해서 푸시로 알려 드립니다. 한 번 울리면 꺼집니다.'**
   String get alertNote;
 
   /// No description provided for @alertSave.
@@ -719,7 +719,7 @@ abstract class AppLocalizations {
   /// No description provided for @basisPrice.
   ///
   /// In ko, this message translates to:
-  /// **'미국 eBay 새 상품·즉시 구매 글 가격의 하위 25%'**
+  /// **'미국 eBay 새 상품·즉시 구매 글 가격의 하위 10%(글이 20개 미만이면 하위 25%)'**
   String get basisPrice;
 
   /// No description provided for @basisFxLabel.
