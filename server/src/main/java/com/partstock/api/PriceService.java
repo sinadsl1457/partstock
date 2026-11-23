@@ -228,7 +228,10 @@ public class PriceService {
 	private static Links links(ChipsetDef chipset, String danawaPcode, MakerDef maker, String series) {
 		String base = chipset.category() == Category.RAM ? ramQuery(chipset) : chipset.displayName();
 		String q = (maker == null ? "" : maker.displayName() + " ") + base + (series == null ? "" : " " + series);
-		String ebayQ = maker == null && series == null ? chipset.ebayQuery() : q;
+		// 제조사·모델 링크는 칩셋 이름을 따옴표로 묶는다. 안 묶으면 eBay가 글이 적을 때 일부 단어만 맞는 글로 채워서
+		// GIGABYTE를 눌렀는데 MSI·PNY·5060 Ti·라이저 케이블이 싼 순서 맨 위에 나왔다(11/23, 74개 중 57개가 다른 글)
+		String ebayQ = maker == null && series == null ? chipset.ebayQuery()
+				: (maker == null ? "" : maker.displayName() + " ") + "\"" + base + "\"" + (series == null ? "" : " " + series);
 		return Links.of(ebayQ, chipset.category().ebayCategoryId, q, danawaPcode);
 	}
 

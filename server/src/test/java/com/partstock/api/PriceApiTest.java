@@ -198,7 +198,8 @@ class PriceApiTest {
 				.andExpect(jsonPath("$.makers", hasSize(0)))
 				.andExpect(jsonPath("$.links.danawa").value("https://prod.danawa.com/info/?pcode=12345"))
 				.andExpect(jsonPath("$.links.ebay", startsWith(
-						"https://www.ebay.com/sch/i.html?_nkw=MSI%20RTX%205070%20Ti%20Gaming%20Trio")));
+						// 칩셋 이름을 따옴표로 묶는다: 안 묶으면 eBay가 글이 적을 때 일부 단어만 맞는 다른 제조사·모델로 채운다
+						"https://www.ebay.com/sch/i.html?_nkw=MSI%20%22RTX%205070%20Ti%22%20Gaming%20Trio")));
 	}
 
 	@Test
