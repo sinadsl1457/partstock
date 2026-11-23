@@ -6,7 +6,7 @@ export function Sparkline({
   width = 64,
   height = 24,
 }: {
-  points: { p25Cents: number }[];
+  points: { priceCents?: number; p25Cents?: number }[];
   up: string;
   down: string;
   width?: number;
@@ -15,7 +15,7 @@ export function Sparkline({
   if (points.length < 2) {
     return <span style={{ width }} className="inline-block" />;
   }
-  const vals = points.map((p) => p.p25Cents);
+  const vals = points.map((p) => p.priceCents ?? p.p25Cents ?? 0);
   const min = Math.min(...vals);
   const max = Math.max(...vals);
   const span = max - min || 1;

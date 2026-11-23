@@ -71,7 +71,7 @@ export async function TickerPanel({ params }: { params: Promise<{ lang: string; 
                   </span>
                 </div>
                 <div className="num text-[13px] text-sub">
-                  {t.price}({t.priceHint}) · {t.median} {usd(d.price.medianCents)} · {t.listings(d.price.listingCount)}
+                  {t.price}({t.pricePct(d.price.pricePct ?? 25)}) · {t.median} {usd(d.price.medianCents)} · {t.listings(d.price.listingCount)}
                   {d.updatedAt && ` · ${time(d.updatedAt, lang)}`}
                 </div>
                 {/* 원화 값을 한국 실구매가로 오해하지 않게 */}

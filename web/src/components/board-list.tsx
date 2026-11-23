@@ -25,7 +25,7 @@ export type ListRow = {
   small: string | null;
   changeText: string;
   changeColor: string;
-  spark: { p25Cents: number }[];
+  spark: { priceCents: number }[];
 };
 
 /** 서버에서 언어에 맞춰 만든 글자(클라이언트로 함수는 못 넘겨서 {count} 자리만 남긴 글자) */

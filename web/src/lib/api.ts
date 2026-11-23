@@ -11,8 +11,8 @@ export type Range = "1d" | "1w" | "1m" | "3m" | "1y" | "all";
 export const ranges: Range[] = ["1d", "1w", "1m", "3m", "1y", "all"];
 
 export type Fx = { day: string; usdKrw: number };
-export type Price = { p25Cents: number; medianCents: number; p75Cents: number; listingCount: number };
-export type Change = { prevAt: string; prevP25Cents: number; pct: number };
+export type Price = { priceCents: number; pricePct?: number; p25Cents: number; medianCents: number; p75Cents: number; listingCount: number };
+export type Change = { prevAt: string; prevPriceCents: number; pct: number };
 export type Links = { ebay: string; danawa: string };
 
 export type BoardItem = {
@@ -23,7 +23,7 @@ export type BoardItem = {
   facets: Record<string, string>;
   price: Price | null;
   change: Change | null;
-  spark: { t: string; p25Cents: number }[];
+  spark: { t: string; priceCents: number }[];
   links: Links;
 };
 export type Board = { category: Category; day: string | null; updatedAt: string | null; fx: Fx | null; items: BoardItem[] };

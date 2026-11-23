@@ -15,8 +15,10 @@ export function krw(cents: number, fx: Fx): string {
 
 /** 큰 글자(대표가)와 작은 글자. 한국어는 원화 크게 + 달러 작게, 영어는 달러만. */
 export function mainPrice(p: Price, fx: Fx | null, locale: Locale): { big: string; small: string | null } {
-  if (locale === "ko" && fx) return { big: krw(p.p25Cents, fx), small: usd(p.p25Cents) };
-  return { big: usd(p.p25Cents), small: null };
+  // 대표가(priceCents). 서버가 먼저 배포되기 전 잠깐은 옛 응답이라 p25Cents로 대신한다
+  const cents = p.priceCents ?? p.p25Cents;
+  if (locale === "ko" && fx) return { big: krw(cents, fx), small: usd(cents) };
+  return { big: usd(cents), small: null };
 }
 
 export function pct(v: number): string {
