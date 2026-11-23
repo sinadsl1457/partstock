@@ -181,7 +181,7 @@ public class PriceService {
 
 	private static Price price(QuoteRow q) {
 		return q == null || q.priceCents() == null ? null
-				: new Price(q.priceCents(), com.partstock.price.PriceStats.pricePct(q.listingCount()), q.p25Cents(), q.medianCents(), q.p75Cents(), q.listingCount());
+				: new Price(q.priceCents(), com.partstock.price.PriceStats.pricePct(q.listingCount()), q.medianCents(), q.p75Cents(), q.listingCount());
 	}
 
 	private static Change change(QuoteRow q) {

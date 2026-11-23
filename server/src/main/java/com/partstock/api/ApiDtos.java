@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * API 응답 모양. 가격은 모두 USD 센트 정수(웹·앱이 원화로 바꿀 때 fx.usdKrw를 곱한다).
  * 대표가 = priceCents(글 20개 이상이면 하위 10%, 적으면 하위 25%; PriceStats). 시세가 없으면 price가 null.
- * p25Cents·prevP25Cents(Change)·p25Cents(SparkPoint)는 대표가가 p25이던 때의 앱·웹을 위해 남긴 이름이다. 시각은 UTC(ISO-8601).
+ * p25Cents(Price·SparkPoint)·prevP25Cents(Change)는 옛 앱·웹이 대표가로 읽는 이름이라 값도 대표가를 준다. 시각은 UTC(ISO-8601).
  */
 public final class ApiDtos {
 
@@ -19,7 +19,13 @@ public final class ApiDtos {
 	public record Fx(LocalDate day, BigDecimal usdKrw) {}
 
 	/** pricePct = 대표가가 하위 몇 %인지(10 또는 25) */
-	public record Price(long priceCents, int pricePct, long p25Cents, long medianCents, long p75Cents, int listingCount) {}
+	public record Price(long priceCents, int pricePct, long medianCents, long p75Cents, int listingCount) {
+		/** 옛 앱(0.1.0, Play 심사본)은 이 이름을 대표가로 읽는다. 진짜 p25를 주면 옛 앱만 예전 기준 값이 나온다 */
+		@JsonProperty("p25Cents")
+		public long p25Cents() {
+			return priceCents;
+		}
+	}
 
 	/** 24시간 변동: 24시간 전(또는 그 전 가장 가까운) 시세와 비교. 비교할 시세가 없으면 null. */
 	public record Change(OffsetDateTime prevAt, long prevPriceCents, double pct) {
