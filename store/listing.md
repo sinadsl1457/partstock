@@ -56,7 +56,7 @@
 ■ 가격은 이렇게 계산합니다
 · 미국 eBay 새 상품·즉시 구매 글만 셉니다.
 · 같은 판매자가 같은 가격에 여러 번 올린 글은 한 번만 세고, 터무니없는 가격은 뺍니다.
-· 대표가는 하위 25% 가격입니다. 안 팔리는 비싼 글에 시세가 끌려가지 않게 하려는 것입니다.
+· 대표가는 싼 쪽 10% 가격입니다(글이 20개 미만이면 25%). 비싸게 걸어 두고 안 팔리는 글에 시세가 끌려가지 않게 하려는 것입니다.
 · 원화는 유럽중앙은행 기준 환율로 바꾼 값이며 배송비·관세는 들어 있지 않습니다.
 · 판매 글이 적은 종목은 값을 지어내지 않고 "데이터 없음"으로 표시합니다.
 
@@ -96,7 +96,7 @@ Prices are US-based, so what you pay locally may differ, but the trend is what m
 ■ How prices are calculated
 · Only new, Buy It Now listings on eBay US.
 · Repeat listings from the same seller at the same price count once; extreme outliers are removed.
-· The price shown is the 25th percentile, so overpriced listings that never sell don't drag it up.
+· The price shown is the 10th percentile (25th with fewer than 20 listings), so overpriced listings that never sell don't drag it up.
 · Shipping and taxes are not included.
 · Items with too few listings show "No data" instead of a made-up number.
 
