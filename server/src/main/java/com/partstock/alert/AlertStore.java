@@ -95,13 +95,13 @@ public class AlertStore {
 	/** 그날 대표가가 조건에 닿은 대기 중 알림. */
 	public List<DueRow> due(LocalDate day) {
 		return jdbc.sql("""
-				select a.id, a.token, a.ticker_key, a.direction, a.target_cents, d.locale, p.p25_cents as now_cents
+				select a.id, a.token, a.ticker_key, a.direction, a.target_cents, d.locale, p.price_cents as now_cents
 				from price_alert a
 				join device d on d.token = a.token
 				join daily_price p on p.ticker_key = a.ticker_key and p.day = :day
 				where a.fired_at is null
-				  and ((a.direction = 'BELOW' and p.p25_cents <= a.target_cents)
-				    or (a.direction = 'ABOVE' and p.p25_cents >= a.target_cents))
+				  and ((a.direction = 'BELOW' and p.price_cents <= a.target_cents)
+				    or (a.direction = 'ABOVE' and p.price_cents >= a.target_cents))
 				order by a.id
 				""")
 				.param("day", day)

@@ -56,12 +56,12 @@ public class PriceQuery {
 			Instant prevAt) {
 		return jdbc.sql("""
 				select t.key, t.level, t.display_name, t.maker_key, t.series_key, t.danawa_pcode,
-				       p.p25_cents, p.median_cents, p.p75_cents, p.listing_count,
-				       prev.p25_cents as prev_p25_cents, prev.ts as prev_at
+				       p.price_cents, p.p25_cents, p.median_cents, p.p75_cents, p.listing_count,
+				       prev.price_cents as prev_price_cents, prev.ts as prev_at
 				from ticker t
 				left join daily_price p on p.ticker_key = t.key and p.day = :day
 				left join lateral (
-				    select s.p25_cents, s.ts from price_snapshot s
+				    select s.price_cents, s.ts from price_snapshot s
 				    where s.ticker_key = t.key and s.ts <= :prevAt order by s.ts desc limit 1
 				) prev on true
 				where (cast(:level as varchar) is null or t.level = :level)
@@ -85,7 +85,7 @@ public class PriceQuery {
 			return List.of();
 		}
 		return jdbc.sql("""
-				select ticker_key, ts, p25_cents from price_snapshot
+				select ticker_key, ts, price_cents from price_snapshot
 				where ticker_key in (:keys) and ts > :from and ts <= :to
 				order by ticker_key, ts
 				""")
@@ -97,16 +97,16 @@ public class PriceQuery {
 	}
 
 	/**
-	 * 차트 봉. 봉 하나 = bucket 동안 매시간 대표가(p25)의 처음·최고·최저·마지막, 마지막 중앙값.
+	 * 차트 봉. 봉 하나 = bucket 동안 매시간 대표가(price_cents)의 처음·최고·최저·마지막, 마지막 중앙값.
 	 * bucket은 PostgreSQL interval 글자('1 hour', '4 hours', '1 day', '7 days'). 주 봉은 월요일 0시(UTC) 시작.
 	 */
 	public List<BarRow> bars(String key, String bucket, Instant from, Instant to) {
 		return jdbc.sql("""
 				select date_bin(cast(:bucket as interval), ts, timestamptz '2000-01-03 00:00:00+00') as t,
-				       (array_agg(p25_cents order by ts))[1] as open_cents,
-				       max(p25_cents) as high_cents,
-				       min(p25_cents) as low_cents,
-				       (array_agg(p25_cents order by ts desc))[1] as close_cents,
+				       (array_agg(price_cents order by ts))[1] as open_cents,
+				       max(price_cents) as high_cents,
+				       min(price_cents) as low_cents,
+				       (array_agg(price_cents order by ts desc))[1] as close_cents,
 				       (array_agg(median_cents order by ts desc))[1] as median_cents,
 				       count(*) as samples
 				from price_snapshot
@@ -140,10 +140,10 @@ public class PriceQuery {
 			String seriesKey, String displayName, String danawaPcode) {}
 
 	public record QuoteRow(String key, String level, String displayName, String makerKey, String seriesKey,
-			String danawaPcode, Long p25Cents, Long medianCents, Long p75Cents, Integer listingCount,
-			Long prevP25Cents, OffsetDateTime prevAt) {}
+			String danawaPcode, Long priceCents, Long p25Cents, Long medianCents, Long p75Cents, Integer listingCount,
+			Long prevPriceCents, OffsetDateTime prevAt) {}
 
-	public record SnapRow(String tickerKey, OffsetDateTime ts, long p25Cents) {}
+	public record SnapRow(String tickerKey, OffsetDateTime ts, long priceCents) {}
 
 	public record BarRow(OffsetDateTime t, long openCents, long highCents, long lowCents, long closeCents,
 			long medianCents, int samples) {}

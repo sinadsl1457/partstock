@@ -86,7 +86,7 @@ public class PriceService {
 				.orElse(List.of())
 				.stream()
 				.collect(Collectors.groupingBy(PriceQuery.SnapRow::tickerKey,
-						Collectors.mapping(r -> new SparkPoint(r.ts(), r.p25Cents()), Collectors.toList())));
+						Collectors.mapping(r -> new SparkPoint(r.ts(), r.priceCents()), Collectors.toList())));
 
 		List<BoardItem> items = defs.stream()
 				.map(c -> {
@@ -158,7 +158,7 @@ public class PriceService {
 		return rows.stream()
 				.filter(r -> level.equals(r.level()))
 				// 시세가 있는 것 먼저, 그 안에서 판매 글 많은 순
-				.sorted(Comparator.comparing((QuoteRow r) -> r.p25Cents() == null)
+				.sorted(Comparator.comparing((QuoteRow r) -> r.priceCents() == null)
 						.thenComparing(r -> -(r.listingCount() == null ? 0 : r.listingCount())))
 				.map(r -> {
 					MakerDef m = makerDef(chipset, r.makerKey()).orElse(null);
@@ -180,15 +180,15 @@ public class PriceService {
 	}
 
 	private static Price price(QuoteRow q) {
-		return q == null || q.p25Cents() == null ? null
-				: new Price(q.p25Cents(), q.medianCents(), q.p75Cents(), q.listingCount());
+		return q == null || q.priceCents() == null ? null
+				: new Price(q.priceCents(), com.partstock.price.PriceStats.pricePct(q.listingCount()), q.p25Cents(), q.medianCents(), q.p75Cents(), q.listingCount());
 	}
 
 	private static Change change(QuoteRow q) {
-		if (q == null || q.p25Cents() == null || q.prevP25Cents() == null || q.prevP25Cents() == 0) {
+		if (q == null || q.priceCents() == null || q.prevPriceCents() == null || q.prevPriceCents() == 0) {
 			return null;
 		}
-		return new Change(q.prevAt(), q.prevP25Cents(), pct(q.prevP25Cents(), q.p25Cents()));
+		return new Change(q.prevAt(), q.prevPriceCents(), pct(q.prevPriceCents(), q.priceCents()));
 	}
 
 	private static double pct(long from, long to) {

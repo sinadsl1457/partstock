@@ -69,4 +69,24 @@ class PriceStatsTest {
 		assertThat(stats.medianCents()).isEqualTo(50_000);
 		assertThat(stats.listingCount()).isEqualTo(3);
 	}
+
+	@Test
+	void 글이_20개_이상이면_대표가는_하위_10퍼센트() {
+		// 9700X처럼 비싸게 걸어 두고 안 팔리는 글이 위에 많으면 하위 25%도 실제 거래가보다 높다
+		var prices = java.util.stream.LongStream.rangeClosed(1, 20).map(i -> i * 100).boxed().toList();
+		var stats = PriceStats.of(prices, 5).orElseThrow();
+
+		// 100..2000의 10% 지점 = 100 + 0.1 * 19 * 100 = 290
+		assertThat(stats.priceCents()).isEqualTo(290);
+		assertThat(stats.p25Cents()).isEqualTo(575);
+	}
+
+	@Test
+	void 글이_20개_미만이면_대표가는_하위_25퍼센트() {
+		// 글이 적으면 하위 10%가 제일 싼 글 한두 개가 되어 버린다(4090: 글 11개 중 싼 2개가 시세가 됨)
+		var prices = java.util.stream.LongStream.rangeClosed(1, 19).map(i -> i * 100).boxed().toList();
+		var stats = PriceStats.of(prices, 5).orElseThrow();
+
+		assertThat(stats.priceCents()).isEqualTo(stats.p25Cents());
+	}
 }

@@ -63,7 +63,7 @@ class PriceApiTest {
 
 	/** 수집 한 번과 같게: 그 시각 스냅샷 + 그날 시세(가장 최근 값) */
 	void put(String key, Instant ts, long p25) {
-		PriceStats s = new PriceStats(p25 + 1000, p25, p25 + 2000, p25 - 500, p25 + 5000, 10, 12);
+		PriceStats s = new PriceStats(p25, p25 + 1000, p25, p25 + 2000, p25 - 500, p25 + 5000, 10, 12);
 		snapshots.upsert(key, ts, s);
 		prices.upsert(key, LocalDate.ofInstant(ts, ZoneOffset.UTC), s);
 	}
@@ -94,7 +94,8 @@ class PriceApiTest {
 				.andExpect(jsonPath("$.items[2].change.pct").value(5.0))
 				.andExpect(jsonPath("$.items[2].spark", hasSize(3)))
 				.andExpect(jsonPath("$.items[2].links.ebay").value("https://www.ebay.com/sch/i.html?_nkw=RTX%205070%20Ti&_sacat=27386"
-						+ "&LH_BIN=1&LH_ItemCondition=1000&LH_LocatedIn=1&_salic=1&_fcid=1"))
+						+ "&LH_BIN=1&LH_ItemCondition=1000&LH_LocatedIn=1&_salic=1&_fcid=1&_sop=15"))
+				.andExpect(jsonPath("$.items[2].price.priceCents").isNumber())
 				.andExpect(jsonPath("$.items[2].links.danawa").value("https://search.danawa.com/dsearch.php?query=RTX%205070%20Ti"))
 				// 시세가 없는 칩셋도 목록에는 나온다
 				.andExpect(jsonPath("$.items[1].key").value("rtx-5080"))

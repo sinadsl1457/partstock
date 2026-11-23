@@ -84,7 +84,7 @@ class AlertTest {
 	}
 
 	void price(String key, long p25) {
-		PriceStats s = new PriceStats(p25 + 1000, p25, p25 + 2000, p25 - 500, p25 + 5000, 10, 12);
+		PriceStats s = new PriceStats(p25, p25 + 1000, p25, p25 + 2000, p25 - 500, p25 + 5000, 10, 12);
 		snapshots.upsert(key, NOW, s);
 		prices.upsert(key, DAY, s);
 	}

@@ -17,16 +17,17 @@ public class SnapshotStore {
 
 	public void upsert(String tickerKey, Instant ts, PriceStats s) {
 		jdbc.sql("""
-				insert into price_snapshot (ticker_key, ts, median_cents, p25_cents, p75_cents, min_cents, max_cents,
+				insert into price_snapshot (ticker_key, ts, price_cents, median_cents, p25_cents, p75_cents, min_cents, max_cents,
 				                            listing_count, raw_count)
-				values (:ticker, :ts, :median, :p25, :p75, :min, :max, :count, :raw)
+				values (:ticker, :ts, :price, :median, :p25, :p75, :min, :max, :count, :raw)
 				on conflict (ticker_key, ts) do update set
-				    median_cents = excluded.median_cents, p25_cents = excluded.p25_cents,
+				    price_cents = excluded.price_cents, median_cents = excluded.median_cents, p25_cents = excluded.p25_cents,
 				    p75_cents = excluded.p75_cents, min_cents = excluded.min_cents, max_cents = excluded.max_cents,
 				    listing_count = excluded.listing_count, raw_count = excluded.raw_count
 				""")
 				.param("ticker", tickerKey)
 				.param("ts", ts.atOffset(ZoneOffset.UTC))
+				.param("price", s.priceCents())
 				.param("median", s.medianCents())
 				.param("p25", s.p25Cents())
 				.param("p75", s.p75Cents())

@@ -9,6 +9,7 @@ import java.util.Optional;
  * 가격은 센트 단위 정수: 소수 반올림 오차 없이 더하고 비교하려고.
  */
 public record PriceStats(
+		long priceCents,
 		long medianCents,
 		long p25Cents,
 		long p75Cents,
@@ -22,6 +23,18 @@ public record PriceStats(
 	 * "상자만 팝니다"(아주 쌈)·"PC 통째로"(아주 비쌈)처럼 제목 걸러내기를 빠져나온 글을 여기서 한 번 더 뺀다.
 	 */
 	static final double FENCE = 1.5;
+
+	/**
+	 * 대표가: 글이 이만큼 이상이면 하위 10%, 적으면 하위 25%.
+	 * 흔한 부품은 비싸게 걸어 두고 안 팔리는 글이 위에 쌓여 하위 25%도 실제 거래가보다 높다(9700X: eBay·다나와보다 4만원 비쌌음).
+	 * 글이 적을 때 하위 10%는 제일 싼 글 한두 개가 되어 버려서(4090 글 11개 → 절반 값) 25%로 둔다.
+	 */
+	static final int LOW_PRICE_MIN_LISTINGS = 20;
+
+	/** 이 글 수로 낸 대표가가 하위 몇 %인지(화면 설명용) */
+	public static int pricePct(int listingCount) {
+		return listingCount >= LOW_PRICE_MIN_LISTINGS ? 10 : 25;
+	}
 
 	/** 판매 글이 minCount개 미만이면 그날 시세는 비워 둔다(몇 개로 낸 중앙값은 믿기 어렵다). */
 	public static Optional<PriceStats> of(List<Long> prices, int minCount) {
@@ -41,7 +54,9 @@ public record PriceStats(
 		if (kept.size() < minCount) {
 			return Optional.empty();
 		}
+		double price = quantile(kept, pricePct(kept.size()) / 100.0);
 		return Optional.of(new PriceStats(
+				Math.round(price),
 				Math.round(quantile(kept, 0.5)),
 				Math.round(quantile(kept, 0.25)),
 				Math.round(quantile(kept, 0.75)),
