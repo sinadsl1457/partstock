@@ -6,7 +6,7 @@
   "boardTitle": "시세",
   "gpu": "VGA",
   "ram": "RAM",
-  "colName": "종목",
+  "colName": "종목 · 미국 eBay 기준",
   "colPrice": "대표가 · 24H",
   "updatedAt": "{time} 기준 · 매시간",
   "@updatedAt": {
@@ -185,11 +185,11 @@
   "guideStart": "시작하기",
   "guideLater": "나중에",
   "guidePrev": "이전",
-  "guide1Title": "PC 부품 시세를\n한눈에",
-  "guide1Body": "미국 eBay 새 상품 가격을 매시간 모아, 칩셋마다 지금 살 수 있는 가격(대표가)을 원화로 보여 드려요.",
-  "guide1Badge": "eBay 새 상품 하위 25% · 원화 환산",
-  "guide2Title": "누르면 차트,\n내려가면 모델별",
-  "guide2Body": "1일부터 전체까지 선·봉으로 흐름을 보고, 제조사·모델로 내려가 비교하세요. 마음에 들면 eBay나 다나와로 바로 가요.",
+  "guide1Title": "내 부품, 지금\n얼마쯤일까?",
+  "guide1Body": "가진 그래픽카드가 지금 어느 정도 값인지, 사려는 부품이 오르는 중인지 내리는 중인지 한눈에 보여 드려요.",
+  "guide1Badge": "VGA·RAM·CPU·SSD 101개 종목 · 매시간 갱신",
+  "guide2Title": "가격보다\n흐름을 보세요",
+  "guide2Body": "미국 eBay 새 상품 시세라 한국 실구매가와는 차이가 있어요. 대신 1일부터 전체까지 차트로 오르내림을 보고, 제조사·모델별로 비교할 수 있어요.",
   "guide3Title": "원하는 가격이 되면\n알려 드려요",
   "guide3Body": "종목 화면의 종 버튼으로 목표가를 걸어 두세요. 매시간 확인해서 닿으면 푸시로 알려 드려요.",
   "guide3Demo": "RTX 5070 Ti 목표가 도달",
@@ -262,5 +262,6 @@
   "ssd": "SSD",
   "filter_capacity": "용량",
   "filter_iface": "규격",
-  "privacy": "개인정보 처리방침"
+  "privacy": "개인정보 처리방침",
+  "marketNote": "미국 eBay 새 상품 기준 · 한국 실구매가와 다를 수 있어요(부가세·배송비 제외)"
 }

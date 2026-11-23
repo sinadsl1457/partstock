@@ -1,6 +1,7 @@
 // 칩 모양 로고와 글자 로고. 런치 애니메이션이 단계별로 그리도록 진행도(0~1)를 받는다.
 import 'package:flutter/material.dart';
 
+import 'format.dart';
 import 'theme.dart';
 
 /// frame·pins·core: 각 부분이 그려진 정도(0~1). 정지 로고는 모두 1.
@@ -243,4 +244,26 @@ class Tag extends StatelessWidget {
       style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.6, color: AppColors.sub),
     ),
   );
+}
+
+/// 등락 색 띠 "▲ 0.40%"(값이 없으면 —). 시세 목록 줄에서 쓴다
+class ChangePill extends StatelessWidget {
+  const ChangePill({super.key, required this.pct});
+  final double? pct;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = pct;
+    if (p == null) return const Text('—', style: TextStyle(fontSize: 12, color: AppColors.muted));
+    final c = changeColor(context, p);
+    final arrow = p == 0 ? '' : (p > 0 ? '▲ ' : '▼ ');
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(color: c.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(5)),
+      child: Text(
+        '$arrow${p.abs().toStringAsFixed(2)}%',
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: c),
+      ),
+    );
+  }
 }

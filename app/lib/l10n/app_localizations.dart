@@ -131,7 +131,7 @@ abstract class AppLocalizations {
   /// No description provided for @colName.
   ///
   /// In ko, this message translates to:
-  /// **'종목'**
+  /// **'종목 · 미국 eBay 기준'**
   String get colName;
 
   /// No description provided for @colPrice.
@@ -599,31 +599,31 @@ abstract class AppLocalizations {
   /// No description provided for @guide1Title.
   ///
   /// In ko, this message translates to:
-  /// **'PC 부품 시세를\n한눈에'**
+  /// **'내 부품, 지금\n얼마쯤일까?'**
   String get guide1Title;
 
   /// No description provided for @guide1Body.
   ///
   /// In ko, this message translates to:
-  /// **'미국 eBay 새 상품 가격을 매시간 모아, 칩셋마다 지금 살 수 있는 가격(대표가)을 원화로 보여 드려요.'**
+  /// **'가진 그래픽카드가 지금 어느 정도 값인지, 사려는 부품이 오르는 중인지 내리는 중인지 한눈에 보여 드려요.'**
   String get guide1Body;
 
   /// No description provided for @guide1Badge.
   ///
   /// In ko, this message translates to:
-  /// **'eBay 새 상품 하위 25% · 원화 환산'**
+  /// **'VGA·RAM·CPU·SSD 101개 종목 · 매시간 갱신'**
   String get guide1Badge;
 
   /// No description provided for @guide2Title.
   ///
   /// In ko, this message translates to:
-  /// **'누르면 차트,\n내려가면 모델별'**
+  /// **'가격보다\n흐름을 보세요'**
   String get guide2Title;
 
   /// No description provided for @guide2Body.
   ///
   /// In ko, this message translates to:
-  /// **'1일부터 전체까지 선·봉으로 흐름을 보고, 제조사·모델로 내려가 비교하세요. 마음에 들면 eBay나 다나와로 바로 가요.'**
+  /// **'미국 eBay 새 상품 시세라 한국 실구매가와는 차이가 있어요. 대신 1일부터 전체까지 차트로 오르내림을 보고, 제조사·모델별로 비교할 수 있어요.'**
   String get guide2Body;
 
   /// No description provided for @guide3Title.
@@ -895,6 +895,12 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'개인정보 처리방침'**
   String get privacy;
+
+  /// No description provided for @marketNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'미국 eBay 새 상품 기준 · 한국 실구매가와 다를 수 있어요(부가세·배송비 제외)'**
+  String get marketNote;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

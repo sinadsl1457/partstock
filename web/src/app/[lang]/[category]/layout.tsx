@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { BoardList, type ListRow } from "@/components/board-list";
 import { getBoard, type Category } from "@/lib/api";
-import { mainPrice, pct, rate, time } from "@/lib/format";
+import { mainPrice, rate, time } from "@/lib/format";
 import { dict, locales, upDownColors } from "@/lib/i18n";
 import { categories, checkParams, type Cat } from "@/lib/route";
 
@@ -79,7 +79,7 @@ async function Aside({ params }: { params: LayoutProps<"/[lang]/[category]">["pa
       facets: it.facets ?? {},
       big: m?.big ?? null,
       small: m?.small ?? null,
-      changeText: ch ? pct(ch.pct) : `${t.change24h} —`,
+      changeText: ch ? (ch.pct > 0 ? "▲ " : ch.pct < 0 ? "▼ " : "") + Math.abs(ch.pct).toFixed(2) + "%" : `${t.change24h} —`,
       changeColor: !ch || ch.pct === 0 ? "#8e978f" : ch.pct > 0 ? colors.up : colors.down,
       spark: it.spark,
     };
@@ -104,7 +104,7 @@ async function Aside({ params }: { params: LayoutProps<"/[lang]/[category]">["pa
             pack: t.pack,
             brand: t.brand,
             coreGen: t.coreGen,
-            priceHeader: `${t.price}(${t.priceHint}) · ${t.change24h}`,
+            priceHeader: `${t.usBasis} · ${t.price}(${t.priceHint}) · ${t.change24h}`,
           }}
         />
       </Suspense>

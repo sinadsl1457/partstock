@@ -167,9 +167,13 @@ export function BoardList({
                   {r.big ? (
                     <>
                       <div className="text-[15px] font-bold text-ink">{r.big}</div>
-                      <div className="text-xs" style={{ color: r.changeColor }}>
+                      {/* 값보다 흐름이 핵심이라 등락을 색 띠로(11/23 사용자 결정) */}
+                      <span
+                        className="mt-0.5 inline-block rounded-[5px] px-1.5 py-px text-xs font-bold"
+                        style={{ color: r.changeColor, background: r.changeColor + "24" }}
+                      >
                         {r.changeText}
-                      </div>
+                      </span>
                     </>
                   ) : (
                     <span className="rounded-md border border-line-hi px-2 py-1 text-xs text-muted">{tooFew}</span>

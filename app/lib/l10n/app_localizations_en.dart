@@ -28,7 +28,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ram => 'RAM';
 
   @override
-  String get colName => 'Item';
+  String get colName => 'Item · eBay US';
 
   @override
   String get colPrice => 'Price · 24H';
@@ -292,21 +292,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get guidePrev => 'Back';
 
   @override
-  String get guide1Title => 'PC part prices\nat a glance';
+  String get guide1Title => 'What\'s your part\nworth right now?';
 
   @override
   String get guide1Body =>
-      'We collect new eBay US listings every hour and show what you can actually buy each chip for.';
+      'See roughly what your graphics card is worth today, and whether the part you want is getting cheaper or pricier.';
 
   @override
-  String get guide1Badge => '25th pct. of new eBay listings';
+  String get guide1Badge => '101 GPUs, RAM, CPUs & SSDs · updated hourly';
 
   @override
-  String get guide2Title => 'Tap for charts,\ndrill into models';
+  String get guide2Title => 'Watch the trend,\nnot just the price';
 
   @override
   String get guide2Body =>
-      'See 1D to all-time in lines or candles, compare brands and models, then jump to eBay or Danawa.';
+      'Prices come from new eBay US listings, so what you pay locally may differ. Charts from 1 day to all time show where prices are heading, by brand and model.';
 
   @override
   String get guide3Title => 'We\'ll tell you when\nthe price is right';
@@ -450,4 +450,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacy => 'Privacy policy';
+
+  @override
+  String get marketNote => 'Based on new eBay US listings · local prices may differ (tax and shipping not included)';
 }

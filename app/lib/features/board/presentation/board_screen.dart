@@ -258,14 +258,9 @@ class BoardRow extends StatelessWidget {
                           mainPrice(context, p.p25Cents, fx).big,
                           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                         ),
-                        Text(
-                          ch == null ? '—' : pct(ch.pct),
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: changeColor(context, ch?.pct),
-                          ),
-                        ),
+                        const SizedBox(height: 3),
+                        // 이 앱은 값보다 흐름이 핵심이라 등락을 색 띠로 눈에 띄게(11/23 사용자 결정)
+                        ChangePill(pct: ch?.pct),
                       ],
                     ),
             ),

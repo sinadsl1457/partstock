@@ -165,6 +165,17 @@ class _BodyState extends State<_Body> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 8),
+                  // 원화 값을 한국 실구매가로 오해하지 않게(미국 eBay 기준, 부가세·배송비·국내 마진 없음)
+                  Row(
+                    children: [
+                      const Icon(Icons.info_outline_rounded, size: 13, color: AppColors.faint),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Text(t.marketNote, style: const TextStyle(fontSize: 11, color: AppColors.faint)),
+                      ),
+                    ],
+                  ),
                   _WaitingAlerts(tickerKey: d.ticker.key, fx: d.fx),
                 ],
               ],

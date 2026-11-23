@@ -28,7 +28,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get ram => 'RAM';
 
   @override
-  String get colName => '종목';
+  String get colName => '종목 · 미국 eBay 기준';
 
   @override
   String get colPrice => '대표가 · 24H';
@@ -290,19 +290,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get guidePrev => '이전';
 
   @override
-  String get guide1Title => 'PC 부품 시세를\n한눈에';
+  String get guide1Title => '내 부품, 지금\n얼마쯤일까?';
 
   @override
-  String get guide1Body => '미국 eBay 새 상품 가격을 매시간 모아, 칩셋마다 지금 살 수 있는 가격(대표가)을 원화로 보여 드려요.';
+  String get guide1Body => '가진 그래픽카드가 지금 어느 정도 값인지, 사려는 부품이 오르는 중인지 내리는 중인지 한눈에 보여 드려요.';
 
   @override
-  String get guide1Badge => 'eBay 새 상품 하위 25% · 원화 환산';
+  String get guide1Badge => 'VGA·RAM·CPU·SSD 101개 종목 · 매시간 갱신';
 
   @override
-  String get guide2Title => '누르면 차트,\n내려가면 모델별';
+  String get guide2Title => '가격보다\n흐름을 보세요';
 
   @override
-  String get guide2Body => '1일부터 전체까지 선·봉으로 흐름을 보고, 제조사·모델로 내려가 비교하세요. 마음에 들면 eBay나 다나와로 바로 가요.';
+  String get guide2Body => '미국 eBay 새 상품 시세라 한국 실구매가와는 차이가 있어요. 대신 1일부터 전체까지 차트로 오르내림을 보고, 제조사·모델별로 비교할 수 있어요.';
 
   @override
   String get guide3Title => '원하는 가격이 되면\n알려 드려요';
@@ -446,4 +446,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get privacy => '개인정보 처리방침';
+
+  @override
+  String get marketNote => '미국 eBay 새 상품 기준 · 한국 실구매가와 다를 수 있어요(부가세·배송비 제외)';
 }

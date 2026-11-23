@@ -6,7 +6,7 @@
   "boardTitle": "Prices",
   "gpu": "GPU",
   "ram": "RAM",
-  "colName": "Item",
+  "colName": "Item · eBay US",
   "colPrice": "Price · 24H",
   "updatedAt": "As of {time} · hourly",
   "listingsShort": "{n} listings",
@@ -84,11 +84,11 @@
   "guideStart": "Get started",
   "guideLater": "Later",
   "guidePrev": "Back",
-  "guide1Title": "PC part prices\nat a glance",
-  "guide1Body": "We collect new eBay US listings every hour and show what you can actually buy each chip for.",
-  "guide1Badge": "25th pct. of new eBay listings",
-  "guide2Title": "Tap for charts,\ndrill into models",
-  "guide2Body": "See 1D to all-time in lines or candles, compare brands and models, then jump to eBay or Danawa.",
+  "guide1Title": "What's your part\nworth right now?",
+  "guide1Body": "See roughly what your graphics card is worth today, and whether the part you want is getting cheaper or pricier.",
+  "guide1Badge": "101 GPUs, RAM, CPUs & SSDs · updated hourly",
+  "guide2Title": "Watch the trend,\nnot just the price",
+  "guide2Body": "Prices come from new eBay US listings, so what you pay locally may differ. Charts from 1 day to all time show where prices are heading, by brand and model.",
   "guide3Title": "We'll tell you when\nthe price is right",
   "guide3Body": "Set a target with the bell on any item. We check every hour and push you when it hits.",
   "guide3Demo": "RTX 5070 Ti hit your target",
@@ -133,5 +133,6 @@
   "ssd": "SSD",
   "filter_capacity": "Capacity",
   "filter_iface": "Interface",
-  "privacy": "Privacy policy"
+  "privacy": "Privacy policy",
+  "marketNote": "Based on new eBay US listings · local prices may differ (tax and shipping not included)"
 }

@@ -26,9 +26,10 @@
 ### 한국어
 
 ```
-PC 부품 값, 요즘 얼마인지 한눈에 보세요.
+내 그래픽카드는 지금 얼마쯤일까? 사려는 부품 값은 오르는 중일까, 내리는 중일까?
 
-파츠스톡은 그래픽카드·램·CPU·SSD 시세를 주식 앱처럼 보여 줍니다. 미국 eBay에 올라온 새 상품 판매가를 매시간 모아 정리하고, 원화로 바꿔 보여 줍니다.
+파츠스톡은 그래픽카드·램·CPU·SSD 시세를 주식 앱처럼 차트로 보여 줍니다. 미국 eBay에 올라온 새 상품 판매가를 매시간 모아 종목별 시세로 정리합니다.
+미국 기준 가격이라 한국 실구매가와는 차이가 있지만, 값이 오르고 내리는 흐름을 보기에 충분합니다.
 
 ■ 101개 종목
 · VGA: RTX 50·40 시리즈, RX 9000·7000 시리즈
@@ -65,9 +66,10 @@ PC 부품 값, 요즘 얼마인지 한눈에 보세요.
 ### English
 
 ```
-See what PC parts cost right now, at a glance.
+What is your graphics card worth today? Is the part you want getting cheaper or pricier?
 
-partstock shows GPU, RAM, CPU and SSD prices like a stock app. It collects new eBay US listings every hour and turns them into one clear price per item.
+partstock charts GPU, RAM, CPU and SSD prices like a stock app. It collects new eBay US listings every hour and turns them into one price per item.
+Prices are US-based, so what you pay locally may differ, but the trend is what matters.
 
 ■ 101 items
 · GPU: RTX 50 & 40 series, RX 9000 & 7000 series

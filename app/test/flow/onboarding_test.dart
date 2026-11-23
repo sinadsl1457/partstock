@@ -86,7 +86,7 @@ void main() {
     expect(find.text('VGA · RAM · CPU · SSD 시세'), findsOneWidget); // 런치 화면
     await passLaunch(tester);
 
-    expect(find.text('PC 부품 시세를\n한눈에'), findsOneWidget);
+    expect(find.text('내 부품, 지금\n얼마쯤일까?'), findsOneWidget);
     expect(push.permissionAsks, 0); // 설명 전에는 묻지 않는다
     await tester.tap(find.text('다음'));
     await tester.pumpAndSettle();
