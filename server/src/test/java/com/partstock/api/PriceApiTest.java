@@ -93,7 +93,8 @@ class PriceApiTest {
 				.andExpect(jsonPath("$.items[2].change.prevAt").value("2026-11-17T11:00:00Z"))
 				.andExpect(jsonPath("$.items[2].change.pct").value(5.0))
 				.andExpect(jsonPath("$.items[2].spark", hasSize(3)))
-				.andExpect(jsonPath("$.items[2].links.ebay", startsWith("https://www.ebay.com/sch/i.html?_nkw=RTX%205070%20Ti&_sacat=27386")))
+				.andExpect(jsonPath("$.items[2].links.ebay").value("https://www.ebay.com/sch/i.html?_nkw=RTX%205070%20Ti&_sacat=27386"
+						+ "&LH_BIN=1&LH_ItemCondition=1000&LH_LocatedIn=1&_salic=1&_fcid=1"))
 				.andExpect(jsonPath("$.items[2].links.danawa").value("https://search.danawa.com/dsearch.php?query=RTX%205070%20Ti"))
 				// 시세가 없는 칩셋도 목록에는 나온다
 				.andExpect(jsonPath("$.items[1].key").value("rtx-5080"))
