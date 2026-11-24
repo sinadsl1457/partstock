@@ -1,9 +1,10 @@
-// 여러 화면이 같이 쓰는 작은 부품: 실패 안내, 미니 추이 그래프, 링크 열기.
+// 여러 화면이 같이 쓰는 작은 부품: 실패 안내, 미니 추이 그래프, 링크 열기, 글 수.
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../network/app_failure.dart';
+import 'theme.dart';
 
 String failureText(BuildContext context, AppFailure f) {
   final t = AppLocalizations.of(context);
@@ -87,3 +88,21 @@ class _SparkPainter extends CustomPainter {
 
 /// eBay·다나와 링크를 바깥 앱(브라우저 또는 그 앱)으로
 Future<void> openLink(String url) => launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+
+/// "글 9 · 표본 적음": 글이 적으면 대표가를 믿기 어렵다고 노란 글자로 붙인다(11/25, Ryzen 5 7600 글 9개로 다나와보다 9만원 비쌈)
+InlineSpan listingsSpan(
+  AppLocalizations t,
+  int count,
+  bool few, {
+  TextStyle style = const TextStyle(fontSize: 11, color: AppColors.muted),
+}) => TextSpan(
+  style: style,
+  children: [
+    TextSpan(text: t.listingsShort(count)),
+    if (few)
+      TextSpan(
+        text: ' · ${t.fewListings}',
+        style: const TextStyle(color: AppColors.warn),
+      ),
+  ],
+);

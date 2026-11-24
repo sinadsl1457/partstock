@@ -11,6 +11,7 @@
   "updatedAt": "As of {time} · hourly",
   "listingsShort": "{n} listings",
   "listings": "{n} listings",
+  "fewListings": "few listings",
   "tooFew": "No data",
   "boardNote": "Price = 10th percentile of new, Buy It Now listings on eBay US (25th if fewer than 20 listings). Shipping and tax not included.",
   "vendorNvidia": "NVIDIA",

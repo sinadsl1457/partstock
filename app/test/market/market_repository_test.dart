@@ -43,6 +43,21 @@ void main() {
     expect(r.cachedBoard(Category.ram), isNull);
   });
 
+  test('글이 20개보다 적으면 표본 적음(서버 값 우선, 옛 응답은 글 수로)', () {
+    Map<String, dynamic> price(int n, [bool? few]) => {
+      'priceCents': 1,
+      'p25Cents': 1,
+      'medianCents': 1,
+      'p75Cents': 1,
+      'listingCount': n,
+      'fewListings': ?few,
+    };
+
+    expect(Price.fromMap(price(9)).fewListings, isTrue);
+    expect(Price.fromMap(price(20)).fewListings, isFalse);
+    expect(Price.fromMap(price(9, false)).fewListings, isFalse);
+  });
+
   test('급등락을 읽는다(분류·순서 그대로)', () async {
     // movers.json은 서버 응답 모양(ApiDtos.Movers)대로 만든 예시. 배포 뒤 실제 응답으로 바꾼다
     final r = repo((req) async {

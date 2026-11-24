@@ -164,8 +164,18 @@ class _BodyState extends State<_Body> {
                       _ChangeBadge(pct: ch?.pct, label: '24H'),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: Text(
-                          [t.priceHint(p.pricePct, usd(p.medianCents)), t.listingsShort(p.listingCount)].join(' · '),
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(text: '${t.priceHint(p.pricePct, usd(p.medianCents))} · '),
+                              listingsSpan(
+                                t,
+                                p.listingCount,
+                                p.fewListings,
+                                style: const TextStyle(fontSize: 12, color: AppColors.muted),
+                              ),
+                            ],
+                          ),
                           style: const TextStyle(fontSize: 12, color: AppColors.muted),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -422,8 +432,7 @@ class _ChildRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(child.name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
-                  if (p != null)
-                    Text(t.listingsShort(p.listingCount), style: const TextStyle(fontSize: 11, color: AppColors.muted)),
+                  if (p != null) Text.rich(listingsSpan(t, p.listingCount, p.fewListings)),
                 ],
               ),
             ),

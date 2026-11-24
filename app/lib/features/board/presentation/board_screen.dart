@@ -261,9 +261,12 @@ class BoardRow extends StatelessWidget {
                       Tag(vendorLabel(t, item.vendor)),
                       if (p != null) ...[
                         const SizedBox(width: 6),
-                        Text(
-                          t.listingsShort(p.listingCount),
-                          style: const TextStyle(fontSize: 11, color: AppColors.muted),
+                        Flexible(
+                          child: Text.rich(
+                            listingsSpan(t, p.listingCount, p.fewListings),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ],

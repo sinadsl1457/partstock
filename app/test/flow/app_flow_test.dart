@@ -82,6 +82,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('RTX 5070 Ti'), findsOneWidget);
+    // 글이 적은 종목(RTX 5050 글 15개)만 표본 적음
+    expect(find.text('글 68'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('RTX 5050'), 300, scrollable: find.byType(Scrollable).last);
+    expect(find.text('글 15 · 표본 적음'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('RTX 5070 Ti'), -300, scrollable: find.byType(Scrollable).last);
     await tester.tap(find.text('RTX 5070 Ti'));
     await tester.pumpAndSettle();
 

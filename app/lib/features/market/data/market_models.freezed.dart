@@ -284,7 +284,8 @@ mixin _$Price {
 
 /// 대표가: 판매 글 20개 이상이면 하위 10%, 적으면 하위 25%(서버 PriceStats)
  int get priceCents;/// 대표가가 하위 몇 %인지(10 또는 25)
- int get pricePct; int get p25Cents; int get medianCents; int get p75Cents; int get listingCount;
+ int get pricePct; int get p25Cents; int get medianCents; int get p75Cents; int get listingCount;/// 글이 적어(20개 미만) 대표가를 믿기 어려움 → 화면에 "표본 적음"
+ bool get fewListings;
 /// Create a copy of Price
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -296,20 +297,20 @@ $PriceCopyWith<Price> get copyWith => _$PriceCopyWithImpl<Price>(this as Price, 
 @override
 bool operator ==(Object other) {
   final _this = this as Price;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Price&&(identical(other.priceCents, _this.priceCents) || other.priceCents == _this.priceCents)&&(identical(other.pricePct, _this.pricePct) || other.pricePct == _this.pricePct)&&(identical(other.p25Cents, _this.p25Cents) || other.p25Cents == _this.p25Cents)&&(identical(other.medianCents, _this.medianCents) || other.medianCents == _this.medianCents)&&(identical(other.p75Cents, _this.p75Cents) || other.p75Cents == _this.p75Cents)&&(identical(other.listingCount, _this.listingCount) || other.listingCount == _this.listingCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Price&&(identical(other.priceCents, _this.priceCents) || other.priceCents == _this.priceCents)&&(identical(other.pricePct, _this.pricePct) || other.pricePct == _this.pricePct)&&(identical(other.p25Cents, _this.p25Cents) || other.p25Cents == _this.p25Cents)&&(identical(other.medianCents, _this.medianCents) || other.medianCents == _this.medianCents)&&(identical(other.p75Cents, _this.p75Cents) || other.p75Cents == _this.p75Cents)&&(identical(other.listingCount, _this.listingCount) || other.listingCount == _this.listingCount)&&(identical(other.fewListings, _this.fewListings) || other.fewListings == _this.fewListings));
 }
 
 
 @override
 int get hashCode {
   final _this = this as Price;
-  return Object.hash(runtimeType,_this.priceCents,_this.pricePct,_this.p25Cents,_this.medianCents,_this.p75Cents,_this.listingCount);
+  return Object.hash(runtimeType,_this.priceCents,_this.pricePct,_this.p25Cents,_this.medianCents,_this.p75Cents,_this.listingCount,_this.fewListings);
 }
 
 @override
 String toString() {
   final _this = this as Price;
-  return 'Price(priceCents: ${_this.priceCents}, pricePct: ${_this.pricePct}, p25Cents: ${_this.p25Cents}, medianCents: ${_this.medianCents}, p75Cents: ${_this.p75Cents}, listingCount: ${_this.listingCount})';
+  return 'Price(priceCents: ${_this.priceCents}, pricePct: ${_this.pricePct}, p25Cents: ${_this.p25Cents}, medianCents: ${_this.medianCents}, p75Cents: ${_this.p75Cents}, listingCount: ${_this.listingCount}, fewListings: ${_this.fewListings})';
 }
 
 
@@ -320,7 +321,7 @@ abstract mixin class $PriceCopyWith<$Res>  {
   factory $PriceCopyWith(Price value, $Res Function(Price) _then) = _$PriceCopyWithImpl;
 @useResult
 $Res call({
- int priceCents, int pricePct, int p25Cents, int medianCents, int p75Cents, int listingCount
+ int priceCents, int pricePct, int p25Cents, int medianCents, int p75Cents, int listingCount, bool fewListings
 });
 
 
@@ -337,7 +338,7 @@ class _$PriceCopyWithImpl<$Res>
 
 /// Create a copy of Price
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? priceCents = null,Object? pricePct = null,Object? p25Cents = null,Object? medianCents = null,Object? p75Cents = null,Object? listingCount = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? priceCents = null,Object? pricePct = null,Object? p25Cents = null,Object? medianCents = null,Object? p75Cents = null,Object? listingCount = null,Object? fewListings = null,}) {
   return _then(Price(
 priceCents: null == priceCents ? _self.priceCents : priceCents // ignore: cast_nullable_to_non_nullable
 as int,pricePct: null == pricePct ? _self.pricePct : pricePct // ignore: cast_nullable_to_non_nullable
@@ -345,7 +346,8 @@ as int,p25Cents: null == p25Cents ? _self.p25Cents : p25Cents // ignore: cast_nu
 as int,medianCents: null == medianCents ? _self.medianCents : medianCents // ignore: cast_nullable_to_non_nullable
 as int,p75Cents: null == p75Cents ? _self.p75Cents : p75Cents // ignore: cast_nullable_to_non_nullable
 as int,listingCount: null == listingCount ? _self.listingCount : listingCount // ignore: cast_nullable_to_non_nullable
-as int,
+as int,fewListings: null == fewListings ? _self.fewListings : fewListings // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -430,10 +432,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int priceCents,  int pricePct,  int p25Cents,  int medianCents,  int p75Cents,  int listingCount)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int priceCents,  int pricePct,  int p25Cents,  int medianCents,  int p75Cents,  int listingCount,  bool fewListings)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Price() when $default != null:
-return $default(_that.priceCents,_that.pricePct,_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCount);case _:
+return $default(_that.priceCents,_that.pricePct,_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCount,_that.fewListings);case _:
   return orElse();
 
 }
@@ -451,10 +453,10 @@ return $default(_that.priceCents,_that.pricePct,_that.p25Cents,_that.medianCents
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int priceCents,  int pricePct,  int p25Cents,  int medianCents,  int p75Cents,  int listingCount)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int priceCents,  int pricePct,  int p25Cents,  int medianCents,  int p75Cents,  int listingCount,  bool fewListings)  $default,) {final _that = this;
 switch (_that) {
 case _Price():
-return $default(_that.priceCents,_that.pricePct,_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCount);case _:
+return $default(_that.priceCents,_that.pricePct,_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCount,_that.fewListings);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -471,10 +473,10 @@ return $default(_that.priceCents,_that.pricePct,_that.p25Cents,_that.medianCents
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int priceCents,  int pricePct,  int p25Cents,  int medianCents,  int p75Cents,  int listingCount)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int priceCents,  int pricePct,  int p25Cents,  int medianCents,  int p75Cents,  int listingCount,  bool fewListings)?  $default,) {final _that = this;
 switch (_that) {
 case _Price() when $default != null:
-return $default(_that.priceCents,_that.pricePct,_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCount);case _:
+return $default(_that.priceCents,_that.pricePct,_that.p25Cents,_that.medianCents,_that.p75Cents,_that.listingCount,_that.fewListings);case _:
   return null;
 
 }
@@ -486,7 +488,7 @@ return $default(_that.priceCents,_that.pricePct,_that.p25Cents,_that.medianCents
 
 
 class _Price implements Price {
-  const _Price({required this.priceCents, required this.pricePct, required this.p25Cents, required this.medianCents, required this.p75Cents, required this.listingCount});
+  const _Price({required this.priceCents, required this.pricePct, required this.p25Cents, required this.medianCents, required this.p75Cents, required this.listingCount, this.fewListings = false});
   
 
 /// 대표가: 판매 글 20개 이상이면 하위 10%, 적으면 하위 25%(서버 PriceStats)
@@ -497,6 +499,8 @@ class _Price implements Price {
 @override final  int medianCents;
 @override final  int p75Cents;
 @override final  int listingCount;
+/// 글이 적어(20개 미만) 대표가를 믿기 어려움 → 화면에 "표본 적음"
+@override@JsonKey() final  bool fewListings;
 
 /// Create a copy of Price
 /// with the given fields replaced by the non-null parameter values.
@@ -508,18 +512,18 @@ _$PriceCopyWith<_Price> get copyWith => __$PriceCopyWithImpl<_Price>(this, _$ide
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Price&&(identical(other.priceCents, priceCents) || other.priceCents == priceCents)&&(identical(other.pricePct, pricePct) || other.pricePct == pricePct)&&(identical(other.p25Cents, p25Cents) || other.p25Cents == p25Cents)&&(identical(other.medianCents, medianCents) || other.medianCents == medianCents)&&(identical(other.p75Cents, p75Cents) || other.p75Cents == p75Cents)&&(identical(other.listingCount, listingCount) || other.listingCount == listingCount));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Price&&(identical(other.priceCents, priceCents) || other.priceCents == priceCents)&&(identical(other.pricePct, pricePct) || other.pricePct == pricePct)&&(identical(other.p25Cents, p25Cents) || other.p25Cents == p25Cents)&&(identical(other.medianCents, medianCents) || other.medianCents == medianCents)&&(identical(other.p75Cents, p75Cents) || other.p75Cents == p75Cents)&&(identical(other.listingCount, listingCount) || other.listingCount == listingCount)&&(identical(other.fewListings, fewListings) || other.fewListings == fewListings));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,priceCents,pricePct,p25Cents,medianCents,p75Cents,listingCount);
+    return Object.hash(runtimeType,priceCents,pricePct,p25Cents,medianCents,p75Cents,listingCount,fewListings);
 }
 
 @override
 String toString() {
-    return 'Price(priceCents: $priceCents, pricePct: $pricePct, p25Cents: $p25Cents, medianCents: $medianCents, p75Cents: $p75Cents, listingCount: $listingCount)';
+    return 'Price(priceCents: $priceCents, pricePct: $pricePct, p25Cents: $p25Cents, medianCents: $medianCents, p75Cents: $p75Cents, listingCount: $listingCount, fewListings: $fewListings)';
 }
 
 
@@ -530,7 +534,7 @@ abstract mixin class _$PriceCopyWith<$Res> implements $PriceCopyWith<$Res> {
   factory _$PriceCopyWith(_Price value, $Res Function(_Price) _then) = __$PriceCopyWithImpl;
 @override @useResult
 $Res call({
- int priceCents, int pricePct, int p25Cents, int medianCents, int p75Cents, int listingCount
+ int priceCents, int pricePct, int p25Cents, int medianCents, int p75Cents, int listingCount, bool fewListings
 });
 
 
@@ -547,7 +551,7 @@ class __$PriceCopyWithImpl<$Res>
 
 /// Create a copy of Price
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? priceCents = null,Object? pricePct = null,Object? p25Cents = null,Object? medianCents = null,Object? p75Cents = null,Object? listingCount = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? priceCents = null,Object? pricePct = null,Object? p25Cents = null,Object? medianCents = null,Object? p75Cents = null,Object? listingCount = null,Object? fewListings = null,}) {
   return _then(_Price(
 priceCents: null == priceCents ? _self.priceCents : priceCents // ignore: cast_nullable_to_non_nullable
 as int,pricePct: null == pricePct ? _self.pricePct : pricePct // ignore: cast_nullable_to_non_nullable
@@ -555,7 +559,8 @@ as int,p25Cents: null == p25Cents ? _self.p25Cents : p25Cents // ignore: cast_nu
 as int,medianCents: null == medianCents ? _self.medianCents : medianCents // ignore: cast_nullable_to_non_nullable
 as int,p75Cents: null == p75Cents ? _self.p75Cents : p75Cents // ignore: cast_nullable_to_non_nullable
 as int,listingCount: null == listingCount ? _self.listingCount : listingCount // ignore: cast_nullable_to_non_nullable
-as int,
+as int,fewListings: null == fewListings ? _self.fewListings : fewListings // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

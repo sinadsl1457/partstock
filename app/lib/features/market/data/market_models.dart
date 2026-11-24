@@ -51,6 +51,9 @@ abstract class Price with _$Price {
     required int medianCents,
     required int p75Cents,
     required int listingCount,
+
+    /// 글이 적어(20개 미만) 대표가를 믿기 어려움 → 화면에 "표본 적음"
+    @Default(false) bool fewListings,
   }) = _Price;
 
   factory Price.fromMap(Map<String, dynamic> m) => Price(
@@ -61,6 +64,8 @@ abstract class Price with _$Price {
     medianCents: _int(m['medianCents']),
     p75Cents: _int(m['p75Cents']),
     listingCount: _int(m['listingCount']),
+    // 저장해 둔 옛 응답에는 칸이 없다 → 서버와 같은 기준(20개)으로
+    fewListings: m['fewListings'] as bool? ?? _int(m['listingCount']) < 20,
   );
 }
 

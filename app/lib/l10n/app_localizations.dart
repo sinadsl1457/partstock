@@ -158,6 +158,12 @@ abstract class AppLocalizations {
   /// **'판매 글 {n}개'**
   String listings(int n);
 
+  /// No description provided for @fewListings.
+  ///
+  /// In ko, this message translates to:
+  /// **'표본 적음'**
+  String get fewListings;
+
   /// No description provided for @tooFew.
   ///
   /// In ko, this message translates to:

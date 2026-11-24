@@ -49,6 +49,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get fewListings => 'few listings';
+
+  @override
   String get tooFew => 'No data';
 
   @override

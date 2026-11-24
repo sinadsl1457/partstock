@@ -49,6 +49,9 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get fewListings => '표본 적음';
+
+  @override
   String get tooFew => '데이터 없음';
 
   @override
