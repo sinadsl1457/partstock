@@ -83,6 +83,7 @@ export async function TickerPanel({
                   {d.updatedAt && ` · ${time(d.updatedAt, lang)}`}
                 </div>
                 {/* 원화 값을 한국 실구매가로 오해하지 않게 */}
+                {d.usedMarket && <p className="max-w-[560px] text-[13px] leading-relaxed text-warn">{t.usedMarketNote}</p>}
                 <p className="max-w-[560px] text-xs leading-relaxed text-faint">ⓘ {t.marketNote}</p>
               </>
             ) : (

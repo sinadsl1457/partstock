@@ -50,6 +50,8 @@ export type TickerDetail = {
   makers: Child[];
   models: Child[];
   links: Links;
+  /** 단종돼 새 상품 글이 중고보다 적어 시세판에서 뺀 칩셋 */
+  usedMarket?: boolean;
 };
 
 export type Bar = {
