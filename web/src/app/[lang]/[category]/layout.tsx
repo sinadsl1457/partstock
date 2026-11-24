@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 import { BoardList, type ListRow } from "@/components/board-list";
 import { TopBar } from "@/components/top-bar";
-import { getBoard, type Category } from "@/lib/api";
+import { few, getBoard, type Category } from "@/lib/api";
 import { mainPrice } from "@/lib/format";
 import { dict, locales, upDownColors } from "@/lib/i18n";
 import { categories, checkParams } from "@/lib/route";
@@ -48,6 +48,7 @@ async function Aside({ params }: { params: LayoutProps<"/[lang]/[category]">["pa
       key: it.key,
       name: it.name,
       vendor: t.vendor[it.vendor] ?? it.vendor,
+      few: few(it.price) ? t.fewListings : null,
       facets: it.facets ?? {},
       big: m?.big ?? null,
       small: m?.small ?? null,

@@ -14,6 +14,8 @@
   --color-muted: #8e978f;
   --color-faint: #5d655f;
   --color-accent: #7ee04b;
+  /* 앱 AppColors.warn과 같은 값: 표본 적음처럼 값을 조심해서 볼 때 */
+  --color-warn: #f5b74b;
   --color-on-accent: #0a0c0b;
 }
 

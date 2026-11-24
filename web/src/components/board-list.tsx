@@ -20,6 +20,8 @@ export type ListRow = {
   key: string;
   name: string;
   vendor: string;
+  /** 글이 적으면 "표본 적음"(언어에 맞춘 글자), 아니면 null */
+  few: string | null;
   facets: Record<string, string>;
   big: string | null;
   small: string | null;
@@ -160,7 +162,10 @@ export function BoardList({
                 <div className="min-w-0 flex-1">
                   {/* SSD는 용량이 이름 끝에 있어 잘리면 안 된다 → 두 줄까지 */}
                   <div className="line-clamp-2 text-[15px] leading-snug font-semibold text-ink">{r.name}</div>
-                  <div className="text-xs text-muted">{r.vendor}</div>
+                  <div className="text-xs text-muted">
+                    {r.vendor}
+                    {r.few && <span className="text-warn"> · {r.few}</span>}
+                  </div>
                 </div>
                 <Sparkline points={r.spark} up={colors.up} down={colors.down} />
                 <div className="num w-[92px] text-right">

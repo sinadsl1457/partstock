@@ -11,7 +11,10 @@ export type Range = "1d" | "1w" | "1m" | "3m" | "1y" | "all";
 export const ranges: Range[] = ["1d", "1w", "1m", "3m", "1y", "all"];
 
 export type Fx = { day: string; usdKrw: number };
-export type Price = { priceCents: number; pricePct?: number; p25Cents: number; medianCents: number; p75Cents: number; listingCount: number };
+/** 글이 적어 대표가를 믿기 어려움. 서버 값(fewListings)이 없으면 같은 기준(20개)으로 */
+export const few = (p: Price | null | undefined) => !!p && (p.fewListings ?? p.listingCount < 20);
+
+export type Price = { priceCents: number; pricePct?: number; p25Cents: number; medianCents: number; p75Cents: number; listingCount: number; fewListings?: boolean };
 export type Change = { prevAt: string; prevPriceCents: number; pct: number };
 export type Links = { ebay: string; danawa: string };
 

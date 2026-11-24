@@ -6,7 +6,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChartPanel } from "@/components/chart-panel";
 import { JumpButtons } from "@/components/jump";
-import { getBoard, getChart, getTicker, ranges, type Category, type Chart, type Child, type Fx, type Range } from "@/lib/api";
+import { few, getBoard, getChart, getTicker, ranges, type Category, type Chart, type Child, type Fx, type Range } from "@/lib/api";
 import { mainPrice, pct, time, usd } from "@/lib/format";
 import { dict, upDownColors, type Locale } from "@/lib/i18n";
 import { checkParams } from "@/lib/route";
@@ -79,6 +79,7 @@ export async function TickerPanel({
                 </div>
                 <div className="num text-[13px] text-sub">
                   {t.price}({t.pricePct(d.price.pricePct ?? 25)}) · {t.median} {usd(d.price.medianCents)} · {t.listings(d.price.listingCount)}
+                  {few(d.price) && <span className="text-warn"> · {t.fewListings}</span>}
                   {d.updatedAt && ` · ${time(d.updatedAt, lang)}`}
                 </div>
                 {/* 원화 값을 한국 실구매가로 오해하지 않게 */}
@@ -157,7 +158,12 @@ function ChildList({
               >
                 <div className="min-w-0">
                   <div className="truncate text-[15px] font-semibold text-ink">{c.name}</div>
-                  {c.price && <div className="num text-xs text-muted">{t.listings(c.price.listingCount)}</div>}
+                  {c.price && (
+                    <div className="num text-xs text-muted">
+                      {t.listings(c.price.listingCount)}
+                      {few(c.price) && <span className="text-warn"> · {t.fewListings}</span>}
+                    </div>
+                  )}
                 </div>
                 {m ? (
                   <div className="num text-right">
