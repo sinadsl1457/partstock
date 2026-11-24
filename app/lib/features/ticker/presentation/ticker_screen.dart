@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/presentation/brand.dart';
 import '../../../core/presentation/common.dart';
 import '../../../core/presentation/format.dart';
+import '../../../core/presentation/refresh_on_resume.dart';
 import '../../../core/presentation/theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../alerts/data/alert_models.dart';
@@ -26,39 +27,45 @@ class TickerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
-    return BlocBuilder<TickerCubit, TickerState>(
-      builder: (context, s) {
-        final cubit = context.read<TickerCubit>();
-        final d = s.detail;
-        final category = d == null
-            ? null
-            : switch (d.ticker.category) {
-                'RAM' => t.categoryRam,
-                'CPU' => t.cpu,
-                'SSD' => t.ssd,
-                _ => t.categoryVga,
-              };
-        return Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: d == null
-                ? null
-                : Column(
-                    children: [
-                      Text(d.ticker.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-                      Text(category!, style: const TextStyle(fontSize: 10, letterSpacing: 0.8, color: AppColors.muted)),
-                    ],
-                  ),
-            actions: [_StarButton(tickerKey: s.key)],
-          ),
-          body: d == null
-              ? (s.failure != null
-                    ? FailureView(failure: s.failure!, onRetry: cubit.load)
-                    : const Center(child: CircularProgressIndicator()))
-              : _Body(state: s, detail: d),
-          bottomNavigationBar: d == null ? null : _JumpBar(detail: d),
-        );
-      },
+    return RefreshOnResume(
+      onResume: context.read<TickerCubit>().load,
+      child: BlocBuilder<TickerCubit, TickerState>(
+        builder: (context, s) {
+          final cubit = context.read<TickerCubit>();
+          final d = s.detail;
+          final category = d == null
+              ? null
+              : switch (d.ticker.category) {
+                  'RAM' => t.categoryRam,
+                  'CPU' => t.cpu,
+                  'SSD' => t.ssd,
+                  _ => t.categoryVga,
+                };
+          return Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              title: d == null
+                  ? null
+                  : Column(
+                      children: [
+                        Text(d.ticker.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                        Text(
+                          category!,
+                          style: const TextStyle(fontSize: 10, letterSpacing: 0.8, color: AppColors.muted),
+                        ),
+                      ],
+                    ),
+              actions: [_StarButton(tickerKey: s.key)],
+            ),
+            body: d == null
+                ? (s.failure != null
+                      ? FailureView(failure: s.failure!, onRetry: cubit.load)
+                      : const Center(child: CircularProgressIndicator()))
+                : _Body(state: s, detail: d),
+            bottomNavigationBar: d == null ? null : _JumpBar(detail: d),
+          );
+        },
+      ),
     );
   }
 }

@@ -20,7 +20,10 @@ class TickerCubit extends Cubit<TickerState> {
     try {
       final (detail, chart) = await (_repo.ticker(state.key), _repo.chart(state.key, state.range)).wait;
       if (isClosed) return;
-      emit(state.copyWith(detail: detail, charts: {...state.charts, chart.range: chart}, loading: false));
+      // 다시 받을 때(당겨서·앱으로 돌아와서) 다른 기간의 옛 차트는 버린다. 다음에 그 기간을 누르면 새로 받는다.
+      emit(state.copyWith(detail: detail, charts: {chart.range: chart}, loading: false));
+      // 받는 사이 다른 기간으로 바꿨으면 그 기간도 받는다(위에서 버렸을 수 있음)
+      if (state.range != chart.range) await selectRange(state.range);
     } on ParallelWaitError<(TickerDetail?, ChartData?), (AsyncError?, AsyncError?)> catch (e) {
       if (isClosed) return;
       emit(state.copyWith(loading: false, failure: _failure(e.errors.$1 ?? e.errors.$2)));

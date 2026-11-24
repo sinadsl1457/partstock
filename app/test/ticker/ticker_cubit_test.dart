@@ -55,6 +55,21 @@ void main() {
     expect(c.state.range, ChartRange.w1);
   });
 
+  test('다시 받으면 다른 기간의 옛 차트는 버리고, 그 기간을 누를 때 새로 받는다', () async {
+    when(() => repo.ticker(any())).thenAnswer((_) async => tickerFixture());
+    when(() => repo.chart(any(), any())).thenAnswer((i) async => chartFixture(i.positionalArguments[1] as ChartRange));
+    final c = TickerCubit(repo, 'rtx-5070-ti');
+    await c.load();
+    await c.selectRange(ChartRange.w1);
+    await c.selectRange(ChartRange.d1);
+
+    await c.load(); // 앱으로 돌아옴
+
+    expect(c.state.charts.keys, [ChartRange.d1]);
+    await c.selectRange(ChartRange.w1);
+    verify(() => repo.chart('rtx-5070-ti', ChartRange.w1)).called(2);
+  });
+
   test('1주를 받는 사이 1달로 바꿔도 각 기간 차트가 제자리에 들어간다', () async {
     final week = Completer<ChartData>();
     when(() => repo.ticker(any())).thenAnswer((_) async => tickerFixture());

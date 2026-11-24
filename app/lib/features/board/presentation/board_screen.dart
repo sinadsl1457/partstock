@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../../core/presentation/brand.dart';
 import '../../../core/presentation/common.dart';
 import '../../../core/presentation/format.dart';
+import '../../../core/presentation/refresh_on_resume.dart';
 import '../../../core/presentation/theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../market/data/market_models.dart';
@@ -21,98 +22,104 @@ class BoardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
-    return Scaffold(
-      body: SafeArea(
-        child: BlocBuilder<BoardCubit, BoardState>(
-          builder: (context, s) {
-            final cubit = context.read<BoardCubit>();
-            final updated = s.board?.updatedAt;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
-                  child: Row(
-                    children: [
-                      const ChipLogo(size: 28),
-                      const SizedBox(width: 10),
-                      const Wordmark(),
-                      const SizedBox(width: 12),
-                      // 좁은 폰에서는 업데이트 표시가 줄어들며 말줄임(로고는 그대로)
-                      if (updated != null)
-                        Flexible(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: AppColors.lineHi),
-                                borderRadius: BorderRadius.circular(999),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const GlowDot(),
-                                  const SizedBox(width: 6),
-                                  Flexible(
-                                    child: Text(
-                                      t.updatedPill(DateFormat.Hm().format(updated.toLocal())),
-                                      style: const TextStyle(fontSize: 12, color: AppColors.sub),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
+    return RefreshOnResume(
+      onResume: context.read<BoardCubit>().refresh,
+      child: Scaffold(
+        body: SafeArea(
+          child: BlocBuilder<BoardCubit, BoardState>(
+            builder: (context, s) {
+              final cubit = context.read<BoardCubit>();
+              final updated = s.board?.updatedAt;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
+                    child: Row(
+                      children: [
+                        const ChipLogo(size: 28),
+                        const SizedBox(width: 10),
+                        const Wordmark(),
+                        const SizedBox(width: 12),
+                        // 좁은 폰에서는 업데이트 표시가 줄어들며 말줄임(로고는 그대로)
+                        if (updated != null)
+                          Flexible(
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: AppColors.lineHi),
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const GlowDot(),
+                                    const SizedBox(width: 6),
+                                    Flexible(
+                                      child: Text(
+                                        t.updatedPill(DateFormat.Hm().format(updated.toLocal())),
+                                        style: const TextStyle(fontSize: 12, color: AppColors.sub),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Stack(
+                      children: [
+                        UnderlineTabs<Category>(
+                          items: [for (final c in Category.values) (c, categoryLabel(t, c))],
+                          selected: s.category,
+                          onSelect: cubit.select,
                         ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Stack(
-                    children: [
-                      UnderlineTabs<Category>(
-                        items: [for (final c in Category.values) (c, categoryLabel(t, c))],
-                        selected: s.category,
-                        onSelect: cubit.select,
-                      ),
-                      Positioned(right: 0, top: 0, bottom: 2, child: _FilterButton(state: s)),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 12, 22, 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(t.colName, style: const TextStyle(fontSize: 11, color: AppColors.muted, letterSpacing: 0.4)),
-                      Text(
-                        t.colPrice,
-                        style: const TextStyle(fontSize: 11, color: AppColors.muted, letterSpacing: 0.4),
-                      ),
-                    ],
-                  ),
-                ),
-                if (s.failure != null && s.board != null)
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(16, 6, 16, 2),
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: AppColors.warn.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      '${failureText(context, s.failure!)} · ${t.showingSaved}',
-                      style: const TextStyle(fontSize: 13, color: AppColors.warn),
+                        Positioned(right: 0, top: 0, bottom: 2, child: _FilterButton(state: s)),
+                      ],
                     ),
                   ),
-                Expanded(child: _body(context, s, cubit)),
-              ],
-            );
-          },
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(22, 12, 22, 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          t.colName,
+                          style: const TextStyle(fontSize: 11, color: AppColors.muted, letterSpacing: 0.4),
+                        ),
+                        Text(
+                          t.colPrice,
+                          style: const TextStyle(fontSize: 11, color: AppColors.muted, letterSpacing: 0.4),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (s.failure != null && s.board != null)
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(16, 6, 16, 2),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppColors.warn.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        '${failureText(context, s.failure!)} · ${t.showingSaved}',
+                        style: const TextStyle(fontSize: 13, color: AppColors.warn),
+                      ),
+                    ),
+                  Expanded(child: _body(context, s, cubit)),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

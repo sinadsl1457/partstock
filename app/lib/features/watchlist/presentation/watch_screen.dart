@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/presentation/brand.dart';
 import '../../../core/presentation/common.dart';
 import '../../../core/presentation/format.dart';
+import '../../../core/presentation/refresh_on_resume.dart';
 import '../../../core/presentation/theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../alerts/data/alert_models.dart';
@@ -22,81 +23,88 @@ class WatchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
-    return BlocListener<WatchlistCubit, List<String>>(
-      listener: (context, keys) => context.read<WatchPricesCubit>().load(keys),
-      child: Scaffold(
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
-                child: Text(t.watchTitle, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700)),
-              ),
-              Expanded(
-                child: Builder(
-                  builder: (context) {
-                    final keys = context.watch<WatchlistCubit>().state;
-                    final s = context.watch<WatchPricesCubit>().state;
-                    final alerts = context.watch<AlertsCubit>().state.alerts;
-                    if (keys.isEmpty && alerts.isEmpty) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(32),
-                          child: Text(
-                            t.watchEmpty,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: AppColors.muted, height: 1.6),
+    return RefreshOnResume(
+      onResume: () {
+        final keys = context.read<WatchlistCubit>().state;
+        if (keys.isNotEmpty) context.read<WatchPricesCubit>().load(keys);
+        context.read<AlertsCubit>().reload();
+      },
+      child: BlocListener<WatchlistCubit, List<String>>(
+        listener: (context, keys) => context.read<WatchPricesCubit>().load(keys),
+        child: Scaffold(
+          body: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
+                  child: Text(t.watchTitle, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700)),
+                ),
+                Expanded(
+                  child: Builder(
+                    builder: (context) {
+                      final keys = context.watch<WatchlistCubit>().state;
+                      final s = context.watch<WatchPricesCubit>().state;
+                      final alerts = context.watch<AlertsCubit>().state.alerts;
+                      if (keys.isEmpty && alerts.isEmpty) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Text(
+                              t.watchEmpty,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(color: AppColors.muted, height: 1.6),
+                            ),
                           ),
-                        ),
-                      );
-                    }
-                    if (keys.isNotEmpty && s.details.isEmpty && s.failure != null) {
-                      return FailureView(
-                        failure: s.failure!,
-                        onRetry: () => context.read<WatchPricesCubit>().load(keys),
-                      );
-                    }
-                    if (keys.isNotEmpty && s.details.isEmpty) return const Center(child: CircularProgressIndicator());
-                    final fx = s.details.values.isEmpty ? null : s.details.values.first.fx;
-                    return RefreshIndicator(
-                      color: AppColors.accent,
-                      backgroundColor: AppColors.surface,
-                      onRefresh: () async {
-                        await Future.wait([
-                          context.read<WatchPricesCubit>().load(keys),
-                          context.read<AlertsCubit>().reload(),
-                        ]);
-                      },
-                      child: ListView(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                        children: [
-                          for (final k in keys) ...[
-                            _card(context, k, s, alerts.where((a) => a.tickerKey == k && a.waiting).toList()),
-                            const SizedBox(height: 10),
-                          ],
-                          if (alerts.isNotEmpty) ...[
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(4, 12, 4, 8),
-                              child: Text(
-                                t.alertsSection,
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.8,
-                                  color: AppColors.muted,
+                        );
+                      }
+                      if (keys.isNotEmpty && s.details.isEmpty && s.failure != null) {
+                        return FailureView(
+                          failure: s.failure!,
+                          onRetry: () => context.read<WatchPricesCubit>().load(keys),
+                        );
+                      }
+                      if (keys.isNotEmpty && s.details.isEmpty) return const Center(child: CircularProgressIndicator());
+                      final fx = s.details.values.isEmpty ? null : s.details.values.first.fx;
+                      return RefreshIndicator(
+                        color: AppColors.accent,
+                        backgroundColor: AppColors.surface,
+                        onRefresh: () async {
+                          await Future.wait([
+                            context.read<WatchPricesCubit>().load(keys),
+                            context.read<AlertsCubit>().reload(),
+                          ]);
+                        },
+                        child: ListView(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                          children: [
+                            for (final k in keys) ...[
+                              _card(context, k, s, alerts.where((a) => a.tickerKey == k && a.waiting).toList()),
+                              const SizedBox(height: 10),
+                            ],
+                            if (alerts.isNotEmpty) ...[
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(4, 12, 4, 8),
+                                child: Text(
+                                  t.alertsSection,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.8,
+                                    color: AppColors.muted,
+                                  ),
                                 ),
                               ),
-                            ),
-                            for (final a in alerts) _alertRow(context, a, fx),
+                              for (final a in alerts) _alertRow(context, a, fx),
+                            ],
                           ],
-                        ],
-                      ),
-                    );
-                  },
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
