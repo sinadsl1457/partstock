@@ -42,17 +42,19 @@ public class CollectService {
 	private final DailyPriceStore prices;
 	private final SnapshotStore snapshots;
 	private final CollectionRunStore runs;
+	private final MarketCheckStore market;
 	private final Clock clock;
 	private final int minListings;
 
 	public CollectService(ListingSource source, TickerStore tickers, DailyPriceStore prices, SnapshotStore snapshots,
-			CollectionRunStore runs,
+			CollectionRunStore runs, MarketCheckStore market,
 			Clock clock, @Value("${partstock.collect.min-listings}") int minListings) {
 		this.source = source;
 		this.tickers = tickers;
 		this.prices = prices;
 		this.snapshots = snapshots;
 		this.runs = runs;
+		this.market = market;
 		this.clock = clock;
 		this.minListings = minListings;
 	}
@@ -81,6 +83,8 @@ public class CollectService {
 		int chipsetCount = 0;
 		// 같은 제조사·모델 종목을 글마다 다시 넣지 않게
 		Set<String> ensured = new HashSet<>();
+		// 새 상품 글 수 vs 중고 글 수는 하루 한 번(그날 첫 수집). 칩셋마다 eBay 요청 1번 → 하루 약 100번 더
+		boolean checkMarket = !market.checkedOn(day);
 
 		for (Category category : Category.values()) {
 			for (ChipsetDef chipset : Catalog.chipsets(category)) {
@@ -118,6 +122,10 @@ public class CollectService {
 					}
 				}
 
+				if (checkMarket) {
+					checkMarket(chipset, day, byTicker.get(chipset.key()).size());
+				}
+
 				for (var entry : byTicker.entrySet()) {
 					Optional<PriceStats> stats = PriceStats.of(entry.getValue(), minListings);
 					if (stats.isPresent()) {
@@ -139,5 +147,18 @@ public class CollectService {
 		log.info("수집 {} {}: 칩셋 {} / eBay 요청 {} / 글 {} / 사용 {} / 시세 {}", day, status, calls,
 				source.requestCount() - requestsBefore, seen, used, saved);
 		return result;
+	}
+
+	/** 중고 글도 새 상품과 똑같이(같은 판매자·같은 가격 한 번, 달러만, 제목 검사) 센다. 실패하면 그날은 건너뛴다 */
+	private void checkMarket(ChipsetDef chipset, LocalDate day, int newCount) {
+		try {
+			long usedCount = ListingSource.dedupe(source.searchUsed(chipset)).stream()
+					.filter(l -> "USD".equals(l.currency()))
+					.filter(l -> ListingClassifier.classify(chipset, l.title()).isPresent())
+					.count();
+			market.upsert(chipset.key(), day, newCount, (int) usedCount);
+		} catch (RuntimeException e) {
+			log.warn("중고 글 확인 실패 {}: {}", chipset.key(), e.toString());
+		}
 	}
 }

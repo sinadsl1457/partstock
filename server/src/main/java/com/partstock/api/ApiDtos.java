@@ -72,8 +72,9 @@ public final class ApiDtos {
 
 	public record Child(String key, String level, String name, Price price, Change change, Links links) {}
 
+	/** usedMarket: 새 상품 글이 중고보다 적어 시세판에서 뺀 칩셋(관심 종목 등으로 들어온 경우 화면에 알린다) */
 	public record TickerDetail(TickerInfo ticker, LocalDate day, OffsetDateTime updatedAt, Fx fx, Price price,
-			Change change, List<Child> makers, List<Child> models, Links links) {}
+			Change change, List<Child> makers, List<Child> models, Links links, boolean usedMarket) {}
 
 	/** 봉 하나. 선 차트는 closeCents를 잇는다. */
 	public record Bar(OffsetDateTime t, long openCents, long highCents, long lowCents, long closeCents,

@@ -11,6 +11,14 @@ public interface ListingSource {
 
 	List<Listing> search(ChipsetDef chipset);
 
+	/**
+	 * 같은 칩셋의 중고 즉시 구매 글(한 쪽만). 새 상품 글과 개수를 비교해 시장이 중고로 넘어갔는지 보는 데만 쓴다.
+	 * 출처가 지원하지 않으면 빈 목록(→ 숨기지 않음).
+	 */
+	default List<Listing> searchUsed(ChipsetDef chipset) {
+		return List.of();
+	}
+
 	/** 지금까지 보낸 요청 수(쪽 단위). 수집 한 번에 몇 번 불렀는지 기록하려고 */
 	default long requestCount() {
 		return 0;

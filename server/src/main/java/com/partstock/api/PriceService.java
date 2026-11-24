@@ -81,7 +81,9 @@ public class PriceService {
 
 	public Board board(Category category) {
 		Optional<Latest> latest = query.latest();
-		List<ChipsetDef> defs = Catalog.chipsets(category);
+		// 단종돼 새 상품 글이 중고보다 적은 칩셋은 뺀다(남은 새 글은 비싼 재고라 시세가 부풀어 있다)
+		java.util.Set<String> usedMarket = query.usedMarketKeys();
+		List<ChipsetDef> defs = Catalog.chipsets(category).stream().filter(c -> !usedMarket.contains(c.key())).toList();
 		Map<String, QuoteRow> quotes = latest
 				.map(l -> query.quotes("CHIPSET", category.name(), null, null, l.day(), prevAt(l)))
 				.orElse(List.of())
@@ -115,8 +117,9 @@ public class PriceService {
 		Map<String, ChipsetDef> defs = Arrays.stream(Category.values())
 				.flatMap(c -> Catalog.chipsets(c).stream())
 				.collect(Collectors.toMap(ChipsetDef::key, c -> c));
+		java.util.Set<String> usedMarket = query.usedMarketKeys();
 		List<Mover> all = query.quotes("CHIPSET", null, null, null, day, prevAt(latest.get())).stream()
-				.filter(q -> defs.containsKey(q.key()))
+				.filter(q -> defs.containsKey(q.key()) && !usedMarket.contains(q.key()))
 				.filter(q -> q.listingCount() != null && q.listingCount() >= MOVER_MIN_LISTINGS)
 				.map(q -> {
 					ChipsetDef c = defs.get(q.key());
@@ -152,7 +155,8 @@ public class PriceService {
 			models = children(under, "MODEL", r.chipset());
 		}
 		return new TickerDetail(r.info(), day, latest.map(Latest::ts).orElse(null), fx(day), price(self),
-				change(self), makers, models, links(r.chipset(), t.danawaPcode(), r.maker(), r.info().seriesName()));
+				change(self), makers, models, links(r.chipset(), t.danawaPcode(), r.maker(), r.info().seriesName()),
+				query.usedMarketKeys().contains(r.chipset().key()));
 	}
 
 	public Chart chart(String key, String rangeCode) {

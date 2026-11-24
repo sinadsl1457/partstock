@@ -30,6 +30,18 @@ public class PriceQuery {
 				.optional();
 	}
 
+	/** 가장 최근 확인에서 새 상품 글이 중고 글보다 적었던 칩셋(시장이 중고로 넘어감 → 시세판·급등락에서 뺀다) */
+	public java.util.Set<String> usedMarketKeys() {
+		return new java.util.HashSet<>(jdbc.sql("""
+				select ticker_key from (
+				  select distinct on (ticker_key) ticker_key, new_count, used_count
+				  from market_check order by ticker_key, day desc
+				) last where new_count < used_count
+				""")
+				.query(String.class)
+				.list());
+	}
+
 	/** 그날 또는 그 전 가장 가까운 환율(주말·휴일은 고시가 없어서). */
 	public Optional<FxRow> fxOnOrBefore(LocalDate day) {
 		return jdbc.sql("select day, usd_krw from fx_rate where day <= :day order by day desc limit 1")

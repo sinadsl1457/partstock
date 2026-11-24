@@ -27,6 +27,8 @@ public class EbayListingSource implements ListingSource {
 	static final int PAGE_SIZE = 200;
 	/** 새 상품(1000), 즉시 구매, 미국 판매자. 경매·중고·해외 배송 글은 가격 성격이 달라 뺀다. */
 	static final String FILTER = "buyingOptions:{FIXED_PRICE},conditionIds:{1000},itemLocationCountry:US";
+	/** 중고(3000). 새 상품과 같은 즉시 구매·미국 판매자 조건에서 상태만 바꾼다 */
+	static final String USED_FILTER = "buyingOptions:{FIXED_PRICE},conditionIds:{3000},itemLocationCountry:US";
 
 	private final RestClient http;
 	private final java.util.concurrent.atomic.AtomicLong requests = new java.util.concurrent.atomic.AtomicLong();
@@ -52,8 +54,18 @@ public class EbayListingSource implements ListingSource {
 
 	@Override
 	public List<Listing> search(ChipsetDef chipset) {
+		return search(chipset, FILTER, maxPages);
+	}
+
+	/** 한 쪽(200개)만: 새 상품 글보다 많은지만 보면 돼서 */
+	@Override
+	public List<Listing> searchUsed(ChipsetDef chipset) {
+		return search(chipset, USED_FILTER, 1);
+	}
+
+	private List<Listing> search(ChipsetDef chipset, String filter, int pages) {
 		List<Listing> out = new ArrayList<>();
-		for (int page = 0; page < maxPages; page++) {
+		for (int page = 0; page < pages; page++) {
 			int offset = page * PAGE_SIZE;
 			requests.incrementAndGet();
 			SearchResponse res = http.get()
@@ -64,7 +76,7 @@ public class EbayListingSource implements ListingSource {
 							.queryParam("filter", "{filter}")
 							.queryParam("limit", PAGE_SIZE)
 							.queryParam("offset", offset)
-							.build(Map.of("filter", FILTER)))
+							.build(Map.of("filter", filter)))
 					.header("Authorization", "Bearer " + token())
 					.header("X-EBAY-C-MARKETPLACE-ID", "EBAY_US")
 					.retrieve()

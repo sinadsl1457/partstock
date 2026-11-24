@@ -49,6 +49,7 @@ class PriceApiTest {
 		jdbc.sql("delete from daily_price").update();
 		jdbc.sql("delete from price_snapshot").update();
 		jdbc.sql("delete from fx_rate").update();
+		jdbc.sql("delete from market_check").update();
 		jdbc.sql("delete from ticker").update();
 		tickers.syncChipsets();
 		jdbc.sql("""
@@ -145,6 +146,35 @@ class PriceApiTest {
 				.andExpect(jsonPath("$.up[0].price.listingCount").value(135))
 				.andExpect(jsonPath("$.down[*].key", contains("ddr4-16gb", "rx-9070-xt")))
 				.andExpect(jsonPath("$.down[0].change.pct").value(-10.0));
+	}
+
+	void marketCheck(String key, String day, int newCount, int usedCount) {
+		jdbc.sql("insert into market_check (ticker_key, day, new_count, used_count) values (:k, cast(:d as date), :n, :u)")
+				.param("k", key).param("d", day).param("n", newCount).param("u", usedCount).update();
+	}
+
+	@Test
+	void 새_상품_글이_중고보다_적은_칩셋은_시세판과_급등락에서_빼고_종목_화면에는_알린다() throws Exception {
+		move("ryzen-5-7600", 23_640, 30_000, 25);
+		move("ryzen-5-7600x", 14_450, 16_000, 70);
+		// 11/25 실측: 7600 새 9개 / 중고 28개, 7600X 새 70개 / 중고 47개
+		marketCheck("ryzen-5-7600", "2026-11-18", 9, 28);
+		marketCheck("ryzen-5-7600x", "2026-11-18", 70, 47);
+		// 가장 최근 확인만 본다: 9900X는 어제 중고가 많았지만 오늘은 새 글이 더 많다
+		marketCheck("ryzen-9-9900x", "2026-11-17", 3, 20);
+		marketCheck("ryzen-9-9900x", "2026-11-18", 30, 20);
+
+		mvc.perform(get("/api/board").param("category", "CPU"))
+				.andExpect(jsonPath("$.items[?(@.key == 'ryzen-5-7600')]", hasSize(0)))
+				.andExpect(jsonPath("$.items[?(@.key == 'ryzen-5-7600x')]", hasSize(1)))
+				.andExpect(jsonPath("$.items[?(@.key == 'ryzen-9-9900x')]", hasSize(1)));
+		mvc.perform(get("/api/movers"))
+				.andExpect(jsonPath("$.up[*].key", contains("ryzen-5-7600x")));
+		mvc.perform(get("/api/ticker").param("key", "ryzen-5-7600"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.usedMarket").value(true));
+		mvc.perform(get("/api/ticker").param("key", "ryzen-5-7600x"))
+				.andExpect(jsonPath("$.usedMarket").value(false));
 	}
 
 	@Test

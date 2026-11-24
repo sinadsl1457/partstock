@@ -41,6 +41,30 @@ class CollectServiceTest {
 		jdbc.sql("delete from daily_price").update();
 		jdbc.sql("delete from price_snapshot").update();
 		jdbc.sql("delete from collection_run").update();
+		jdbc.sql("delete from market_check").update();
+		source.used.clear();
+		source.usedCalls = 0;
+	}
+
+	@Test
+	void 하루_한_번_새_상품_글과_중고_글을_같은_제목_검사로_센다() {
+		source.byChipset.put("ryzen-5-7600", List.of(
+				usd("AMD Ryzen 5 7600 6-Core Processor", 23_640),
+				usd("AMD Ryzen 5 7600 AM5 CPU", 29_900)));
+		source.used.put("ryzen-5-7600", List.of(
+				usd("AMD Ryzen 5 7600 Used Tested", 12_000),
+				usd("AMD Ryzen 5 7600 Pulled from PC", 12_500),
+				usd("AMD Ryzen 5 7600 Pulled from PC", 12_500), // 같은 제목·같은 가격 → 한 번
+				usd("AMD Ryzen 5 7600X Used", 11_000)));        // 7600X → 7600 중고로 안 센다
+
+		collect.collect(DAY);
+		collect.collect(DAY.atStartOfDay(java.time.ZoneOffset.UTC).toInstant().plusSeconds(3600));
+
+		var row = jdbc.sql("select new_count, used_count from market_check where ticker_key = 'ryzen-5-7600' and day = :d")
+				.param("d", DAY).query((rs, i) -> List.of(rs.getInt(1), rs.getInt(2))).single();
+		assertThat(row).containsExactly(2, 2);
+		// 그날 두 번째 수집에서는 중고를 다시 찾지 않는다(칩셋 수만큼 = 첫 수집 한 번)
+		assertThat(source.usedCalls).isEqualTo(jdbc.sql("select count(*) from market_check").query(Integer.class).single());
 	}
 
 	@Test
@@ -197,6 +221,14 @@ class CollectServiceTest {
 	static class FakeSource implements ListingSource {
 		final Map<String, List<Listing>> byChipset = new HashMap<>();
 		final List<String> failing = new ArrayList<>();
+		final Map<String, List<Listing>> used = new HashMap<>();
+		int usedCalls;
+
+		@Override
+		public List<Listing> searchUsed(ChipsetDef chipset) {
+			usedCalls++;
+			return used.getOrDefault(chipset.key(), List.of());
+		}
 
 		@Override
 		public List<Listing> search(ChipsetDef chipset) {

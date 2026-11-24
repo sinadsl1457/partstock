@@ -36,6 +36,7 @@ class TickerStartupTest {
 		jdbc.sql("delete from device").update();
 		jdbc.sql("delete from daily_price").update();
 		jdbc.sql("delete from price_snapshot").update();
+		jdbc.sql("delete from market_check").update();
 		jdbc.sql("delete from ticker").update();
 
 		context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], context, Duration.ZERO));
