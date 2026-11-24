@@ -11,7 +11,14 @@ import { mainPrice, pct, time, usd } from "@/lib/format";
 import { dict, upDownColors, type Locale } from "@/lib/i18n";
 import { checkParams } from "@/lib/route";
 
-export async function TickerPanel({ params }: { params: Promise<{ lang: string; category: string; key?: string[] }> }) {
+export async function TickerPanel({
+  params,
+  listFirst = false,
+}: {
+  params: Promise<{ lang: string; category: string; key?: string[] }>;
+  /** 급등락 화면: 종목을 정해 넘기지만 휴대폰에서도 목록(순위)이 먼저 */
+  listFirst?: boolean;
+}) {
   const p = await params;
   const { lang, category } = checkParams(p.lang, p.category);
   const t = dict(lang);
@@ -34,7 +41,7 @@ export async function TickerPanel({ params }: { params: Promise<{ lang: string; 
 
   return (
     // 휴대폰에서 종목을 고르고 들어오면 차트가 목록보다 위에
-    <section className={`flex min-w-0 flex-col gap-4 ${p.key ? "order-first lg:order-none" : ""}`}>
+    <section className={`flex min-w-0 flex-col gap-4 ${p.key && !listFirst ? "order-first lg:order-none" : ""}`}>
       <div className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-5 lg:p-6">
         <nav aria-label="breadcrumb" className="text-[13px] text-muted">
           {parts.map((_, i) => {

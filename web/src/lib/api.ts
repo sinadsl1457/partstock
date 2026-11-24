@@ -69,6 +69,11 @@ export type Chart = {
   points: number;
 };
 
+/** 급등·급락 한 줄(서버 ApiDtos.Mover). price·change는 늘 있다 */
+export type Mover = { key: string; name: string; category: Category; vendor: string; price: Price; change: Change };
+/** 4개 분류에서 판매 글 minListings개 이상, 24시간 변동 상위(up)·하위(down) 각 5개 */
+export type Movers = { day: string | null; updatedAt: string | null; fx: Fx | null; minListings: number; up: Mover[]; down: Mover[] };
+
 async function get<T>(path: string): Promise<T | null> {
   const res = await fetch(BASE + path);
   if (res.status === 404) return null;
@@ -94,4 +99,12 @@ export async function getChart(key: string, range: Range): Promise<Chart | null>
   "use cache";
   cacheLife(LIFE);
   return get<Chart>(`/api/chart?key=${encodeURIComponent(key)}&range=${range}`);
+}
+
+export async function getMovers(): Promise<Movers> {
+  "use cache";
+  cacheLife(LIFE);
+  const movers = await get<Movers>("/api/movers");
+  if (!movers) throw new Error("급등락 응답이 비었습니다");
+  return movers;
 }
