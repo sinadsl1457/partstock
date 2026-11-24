@@ -52,6 +52,7 @@ docs/     AI_LOG.md
 
 ## 시세 API (server/api)
 - `GET /api/board?category=GPU|RAM`(목록·24시간 변동·7일 추이, 종목마다 필터용 `facets`: GPU `series`=RTX50…, RAM `ddr`·`pack`=1|2), `GET /api/ticker?key=`(종목·제조사·모델), `GET /api/chart?key=&range=1d|1w|1m|3m|1y|all`. 종목 키에 `/`가 들어가 경로 대신 파라미터.
+- `GET /api/movers`: 급등·급락 TOP 5(11/24 사용자 결정: 시세 탭 옆 "급등락" 탭, 시안 B). 4개 분류 칩셋에서 24시간 변동(목록 24H와 같은 값)이 있고 **판매 글 20개 이상**인 것만(글이 적으면 싼 글 하나에 ±16%씩 튐), 0%는 뺀다. 판매 속도(팔린 개수)로 매기는 "인기 순위"는 측정해 보니 대형 판매자 글 한두 개에 좌우돼 접었다(AI_LOG 11/24).
 - 가격은 USD 센트 정수만 준다. 원화는 화면이 `fx.usdKrw`(그날 또는 그 전 가장 가까운 고시)를 곱한다.
 - 화면 글자는 주지 않는다(vendor도 `NVIDIA|AMD|DESKTOP` 코드). 번역은 웹·앱이 한다.
 - eBay·다나와 링크는 서버에서 만든다(웹·앱이 같은 주소를 쓰게).

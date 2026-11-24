@@ -51,6 +51,16 @@ public final class ApiDtos {
 	/** updatedAt = 가장 최근 수집 시각. */
 	public record Board(String category, LocalDate day, OffsetDateTime updatedAt, Fx fx, List<BoardItem> items) {}
 
+	/** 급등·급락 한 줄. category = GPU|RAM|CPU|SSD(화면 글자는 웹·앱이) */
+	public record Mover(String key, String name, String category, String vendor, Price price, Change change) {}
+
+	/**
+	 * 급등·급락 TOP: 4개 분류 칩셋에서 24시간 변동이 있는 종목 중 판매 글 minListings개 이상만.
+	 * up = 오른 것(많이 오른 순), down = 내린 것(많이 내린 순), 각각 최대 5개. 변동 0%는 넣지 않는다.
+	 */
+	public record Movers(LocalDate day, OffsetDateTime updatedAt, Fx fx, int minListings, List<Mover> up,
+			List<Mover> down) {}
+
 	public record TickerInfo(String key, String level, String category, String name, String chipsetName,
 			String makerName, String seriesName) {}
 

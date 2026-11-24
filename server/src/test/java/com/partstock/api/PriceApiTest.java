@@ -104,6 +104,58 @@ class PriceApiTest {
 				.andExpect(jsonPath("$.items[0].change").value(nullValue()));
 	}
 
+	/** 판매 글 수를 정해서 넣는다(급등·급락은 20개 이상만) */
+	void putListings(String key, Instant ts, long price, int listings) {
+		PriceStats s = new PriceStats(price, price, price, price, price, price, listings, listings);
+		snapshots.upsert(key, ts, s);
+		prices.upsert(key, LocalDate.ofInstant(ts, ZoneOffset.UTC), s);
+	}
+
+	/** 24시간 전보다 이전(25시간 전)에 from, 지금 to */
+	void move(String key, long from, long to, int listings) {
+		putListings(key, ago(25), from, listings);
+		putListings(key, NOW, to, listings);
+	}
+
+	@Test
+	void 급등락은_4개_분류를_합쳐_많이_오른_순_내린_순_5개씩() throws Exception {
+		move("rtx-5090", 100_000, 110_000, 135);         // +10%
+		move("ddr5-32gb", 10_000, 10_800, 400);          // +8% (RAM)
+		move("ryzen-7-9800x3d", 50_000, 53_000, 73);     // +6% (CPU)
+		move("rtx-5080", 100_000, 105_000, 150);         // +5%
+		move("rtx-5070", 100_000, 104_000, 40);          // +4%
+		move("rtx-5060", 100_000, 103_000, 60);          // +3% → 여섯째라 빠짐
+		move("rtx-5070-ti", 100_000, 120_000, 19);       // +20%지만 글 19개 → 빠짐
+		move("rtx-5050", 100_000, 100_000, 50);          // 0% → 빠짐
+		move("ddr4-16gb", 10_000, 9_000, 340);           // -10%
+		move("rx-9070-xt", 100_000, 95_000, 87);         // -5%
+		putListings("rtx-4090", NOW, 300_000, 30);       // 24시간 전 기록 없음 → 빠짐
+
+		mvc.perform(get("/api/movers"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.updatedAt").value("2026-11-18T12:00:00Z"))
+				.andExpect(jsonPath("$.fx.usdKrw").value(1328.45))
+				.andExpect(jsonPath("$.minListings").value(20))
+				.andExpect(jsonPath("$.up[*].key",
+						contains("rtx-5090", "ddr5-32gb", "ryzen-7-9800x3d", "rtx-5080", "rtx-5070")))
+				.andExpect(jsonPath("$.up[1].category").value("RAM"))
+				.andExpect(jsonPath("$.up[1].vendor").value("DESKTOP"))
+				.andExpect(jsonPath("$.up[0].change.pct").value(10.0))
+				.andExpect(jsonPath("$.up[0].price.priceCents").value(110_000))
+				.andExpect(jsonPath("$.up[0].price.listingCount").value(135))
+				.andExpect(jsonPath("$.down[*].key", contains("ddr4-16gb", "rx-9070-xt")))
+				.andExpect(jsonPath("$.down[0].change.pct").value(-10.0));
+	}
+
+	@Test
+	void 급등락은_수집_전이면_빈_목록() throws Exception {
+		mvc.perform(get("/api/movers"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.up", hasSize(0)))
+				.andExpect(jsonPath("$.down", hasSize(0)))
+				.andExpect(jsonPath("$.updatedAt").value(nullValue()));
+	}
+
 	@Test
 	void 환율은_그날_또는_그_전_가장_가까운_고시값() throws Exception {
 		put("rtx-5090", Instant.parse("2026-11-22T03:00:00Z"), 700_000); // 일요일: 고시 없음

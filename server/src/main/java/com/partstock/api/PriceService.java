@@ -7,6 +7,8 @@ import com.partstock.api.ApiDtos.Change;
 import com.partstock.api.ApiDtos.Chart;
 import com.partstock.api.ApiDtos.Child;
 import com.partstock.api.ApiDtos.Fx;
+import com.partstock.api.ApiDtos.Mover;
+import com.partstock.api.ApiDtos.Movers;
 import com.partstock.api.ApiDtos.Price;
 import com.partstock.api.ApiDtos.SparkPoint;
 import com.partstock.api.ApiDtos.TickerDetail;
@@ -21,6 +23,7 @@ import com.partstock.catalog.MakerDef;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +69,10 @@ public class PriceService {
 		}
 	}
 
+	/** 급등·급락에 넣는 최소 판매 글 수. 글이 적으면 싼 글 하나로 ±16%씩 튄다(11/24 실측: RX 7900 XTX 글 5개 +16%) */
+	static final int MOVER_MIN_LISTINGS = 20;
+	static final int MOVER_LIMIT = 5;
+
 	private final PriceQuery query;
 
 	public PriceService(PriceQuery query) {
@@ -97,6 +104,35 @@ public class PriceService {
 				.toList();
 		LocalDate day = latest.map(Latest::day).orElse(null);
 		return new Board(category.name(), day, latest.map(Latest::ts).orElse(null), fx(day), items);
+	}
+
+	public Movers movers() {
+		Optional<Latest> latest = query.latest();
+		LocalDate day = latest.map(Latest::day).orElse(null);
+		if (latest.isEmpty()) {
+			return new Movers(null, null, null, MOVER_MIN_LISTINGS, List.of(), List.of());
+		}
+		Map<String, ChipsetDef> defs = Arrays.stream(Category.values())
+				.flatMap(c -> Catalog.chipsets(c).stream())
+				.collect(Collectors.toMap(ChipsetDef::key, c -> c));
+		List<Mover> all = query.quotes("CHIPSET", null, null, null, day, prevAt(latest.get())).stream()
+				.filter(q -> defs.containsKey(q.key()))
+				.filter(q -> q.listingCount() != null && q.listingCount() >= MOVER_MIN_LISTINGS)
+				.map(q -> {
+					ChipsetDef c = defs.get(q.key());
+					return new Mover(c.key(), c.displayName(), c.category().name(), vendor(c), price(q), change(q));
+				})
+				.filter(m -> m.price() != null && m.change() != null && m.change().pct() != 0)
+				.toList();
+		// 변동이 같으면 판매 글이 많은 쪽(더 믿을 만한 값)을 위로
+		Comparator<Mover> byListings = Comparator.comparingInt((Mover m) -> -m.price().listingCount());
+		List<Mover> up = all.stream().filter(m -> m.change().pct() > 0)
+				.sorted(Comparator.comparingDouble((Mover m) -> -m.change().pct()).thenComparing(byListings))
+				.limit(MOVER_LIMIT).toList();
+		List<Mover> down = all.stream().filter(m -> m.change().pct() < 0)
+				.sorted(Comparator.comparingDouble((Mover m) -> m.change().pct()).thenComparing(byListings))
+				.limit(MOVER_LIMIT).toList();
+		return new Movers(day, latest.get().ts(), fx(day), MOVER_MIN_LISTINGS, up, down);
 	}
 
 	public TickerDetail ticker(String key) {
