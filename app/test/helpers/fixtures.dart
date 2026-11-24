@@ -8,6 +8,7 @@ Map<String, dynamic> _json(String name) =>
     jsonDecode(File('test/fixtures/$name.json').readAsStringSync()) as Map<String, dynamic>;
 
 Board boardFixture([String name = 'board_gpu']) => Board.fromMap(_json(name));
+Movers moversFixture() => Movers.fromMap(_json('movers'));
 TickerDetail tickerFixture() => TickerDetail.fromMap(_json('ticker_rtx5070ti'));
 ChartData chartFixture([ChartRange range = ChartRange.d1]) =>
     ChartData.fromMap({..._json('chart_1d'), 'range': range.code});

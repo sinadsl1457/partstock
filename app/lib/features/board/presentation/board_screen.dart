@@ -11,10 +11,15 @@ import '../../../core/presentation/refresh_on_resume.dart';
 import '../../../core/presentation/theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../market/data/market_models.dart';
+import '../../movers/presentation/movers_cubit.dart';
+import '../../movers/presentation/movers_view.dart';
 import '../data/board_filter.dart';
 import 'board_cubit.dart';
 import 'filter_sheet.dart';
 import 'board_state.dart';
+
+/// 분류 탭 줄에서 급등락 탭을 가리키는 값
+const _moversTab = 'movers';
 
 class BoardScreen extends StatelessWidget {
   const BoardScreen({super.key});
@@ -23,7 +28,13 @@ class BoardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
     return RefreshOnResume(
-      onResume: context.read<BoardCubit>().refresh,
+      onResume: () {
+        if (context.read<BoardCubit>().state.movers) {
+          context.read<MoversCubit>().refresh();
+        } else {
+          context.read<BoardCubit>().refresh();
+        }
+      },
       child: Scaffold(
         body: SafeArea(
           child: BlocBuilder<BoardCubit, BoardState>(
@@ -77,32 +88,40 @@ class BoardScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Stack(
                       children: [
-                        UnderlineTabs<Category>(
-                          items: [for (final c in Category.values) (c, categoryLabel(t, c))],
-                          selected: s.category,
-                          onSelect: cubit.select,
+                        UnderlineTabs<Object>(
+                          items: [for (final c in Category.values) (c, categoryLabel(t, c)), (_moversTab, t.tabMovers)],
+                          selected: s.movers ? _moversTab : s.category,
+                          onSelect: (v) {
+                            if (v is Category) {
+                              cubit.select(v);
+                            } else {
+                              cubit.showMovers();
+                              context.read<MoversCubit>().open();
+                            }
+                          },
                         ),
-                        Positioned(right: 0, top: 0, bottom: 2, child: _FilterButton(state: s)),
+                        if (!s.movers) Positioned(right: 0, top: 0, bottom: 2, child: _FilterButton(state: s)),
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(22, 12, 22, 4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          t.colName,
-                          style: const TextStyle(fontSize: 11, color: AppColors.muted, letterSpacing: 0.4),
-                        ),
-                        Text(
-                          t.colPrice,
-                          style: const TextStyle(fontSize: 11, color: AppColors.muted, letterSpacing: 0.4),
-                        ),
-                      ],
+                  if (!s.movers)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(22, 12, 22, 4),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            t.colName,
+                            style: const TextStyle(fontSize: 11, color: AppColors.muted, letterSpacing: 0.4),
+                          ),
+                          Text(
+                            t.colPrice,
+                            style: const TextStyle(fontSize: 11, color: AppColors.muted, letterSpacing: 0.4),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  if (s.failure != null && s.board != null)
+                  if (!s.movers && s.failure != null && s.board != null)
                     Container(
                       margin: const EdgeInsets.fromLTRB(16, 6, 16, 2),
                       padding: const EdgeInsets.all(10),
@@ -115,7 +134,7 @@ class BoardScreen extends StatelessWidget {
                         style: const TextStyle(fontSize: 13, color: AppColors.warn),
                       ),
                     ),
-                  Expanded(child: _body(context, s, cubit)),
+                  Expanded(child: s.movers ? const MoversView() : _body(context, s, cubit)),
                 ],
               );
             },

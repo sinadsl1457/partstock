@@ -1,0 +1,9 @@
+{"day":"2026-11-24","updatedAt":"2026-11-24T19:00:00Z","fx":{"day":"2026-11-24","usdKrw":1348.85},"minListings":20,
+"up":[
+{"key":"rx-9070-xt","name":"RX 9070 XT","category":"GPU","vendor":"AMD","price":{"priceCents":69300,"pricePct":10,"medianCents":79999,"p75Cents":89999,"listingCount":87,"p25Cents":69300},"change":{"prevAt":"2026-11-23T19:00:00Z","prevPriceCents":66500,"pct":4.21,"prevP25Cents":66500}},
+{"key":"ddr5-32gb","name":"DDR5 32GB","category":"RAM","vendor":"DESKTOP","price":{"priceCents":13800,"pricePct":10,"medianCents":17999,"p75Cents":22999,"listingCount":412,"p25Cents":13800},"change":{"prevAt":"2026-11-23T19:00:00Z","prevPriceCents":13385,"pct":3.1,"prevP25Cents":13385}}
+],
+"down":[
+{"key":"rtx-5080","name":"RTX 5080","category":"GPU","vendor":"NVIDIA","price":{"priceCents":198400,"pricePct":10,"medianCents":219999,"p75Cents":239999,"listingCount":158,"p25Cents":198400},"change":{"prevAt":"2026-11-23T19:00:00Z","prevPriceCents":209500,"pct":-5.3,"prevP25Cents":209500}},
+{"key":"core-i5-14600k","name":"Core i5-14600K","category":"CPU","vendor":"INTEL","price":{"priceCents":22000,"pricePct":10,"medianCents":24999,"p75Cents":27999,"listingCount":25,"p25Cents":22000},"change":{"prevAt":"2026-11-23T19:00:00Z","prevPriceCents":22657,"pct":-2.9,"prevP25Cents":22657}}
+]}

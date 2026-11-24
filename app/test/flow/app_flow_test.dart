@@ -14,6 +14,7 @@ import 'package:partstock/features/board/data/board_filter_repository.dart';
 import 'package:partstock/features/board/presentation/board_cubit.dart';
 import 'package:partstock/features/market/data/market_models.dart';
 import 'package:partstock/features/market/data/market_repository.dart';
+import 'package:partstock/features/movers/presentation/movers_cubit.dart';
 import 'package:partstock/features/settings/data/settings_repository.dart';
 import 'package:partstock/features/settings/presentation/settings_cubit.dart';
 import 'package:partstock/features/ticker/presentation/ticker_cubit.dart';
@@ -51,6 +52,7 @@ Future<MockMarketRepo> setUpDi() async {
     ..registerSingleton(WatchlistCubit(WatchlistRepository(prefs)))
     ..registerSingleton(SettingsCubit(SettingsRepository(prefs)))
     ..registerFactory(() => BoardCubit(repo, BoardFilterRepository(prefs)))
+    ..registerFactory(() => MoversCubit(repo))
     ..registerFactory(() => WatchPricesCubit(repo))
     ..registerFactoryParam<TickerCubit, String, void>((key, _) => TickerCubit(repo, key));
   return repo;

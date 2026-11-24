@@ -12,6 +12,8 @@ enum Category {
 
   const Category(this.code);
   final String code;
+
+  static Category of(String code) => values.firstWhere((c) => c.code == code);
 }
 
 enum ChartRange {
@@ -250,5 +252,47 @@ abstract class ChartData with _$ChartData {
     rangePct: (m['rangePct'] as num?)?.toDouble(),
     since: _time(m['since']),
     points: _int(m['points']),
+  );
+}
+
+/// 급등·급락 한 줄(서버 ApiDtos.Mover)
+@freezed
+abstract class Mover with _$Mover {
+  const factory Mover({
+    required String key,
+    required String name,
+    required Category category,
+    required String vendor,
+    required Price price,
+    required Change change,
+  }) = _Mover;
+
+  factory Mover.fromMap(Map<String, dynamic> m) => Mover(
+    key: m['key'] as String,
+    name: m['name'] as String,
+    category: Category.of(m['category'] as String),
+    vendor: m['vendor'] as String,
+    price: Price.fromMap(m['price'] as Map<String, dynamic>),
+    change: Change.fromMap(m['change'] as Map<String, dynamic>),
+  );
+}
+
+/// 급등·급락 TOP 5(4개 분류, 판매 글 minListings개 이상). up은 많이 오른 순, down은 많이 내린 순
+@freezed
+abstract class Movers with _$Movers {
+  const factory Movers({
+    DateTime? updatedAt,
+    Fx? fx,
+    required int minListings,
+    required List<Mover> up,
+    required List<Mover> down,
+  }) = _Movers;
+
+  factory Movers.fromMap(Map<String, dynamic> m) => Movers(
+    updatedAt: _time(m['updatedAt']),
+    fx: m['fx'] == null ? null : Fx.fromMap(m['fx'] as Map<String, dynamic>),
+    minListings: _int(m['minListings']),
+    up: _list(m['up']).map(Mover.fromMap).toList(),
+    down: _list(m['down']).map(Mover.fromMap).toList(),
   );
 }

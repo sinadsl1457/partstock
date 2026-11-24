@@ -28,7 +28,8 @@ class ApiClient {
     Map<String, String>? headers,
     Object? body,
   }) async {
-    final uri = Uri.parse(_base + path).replace(queryParameters: query);
+    // 조건이 없으면 주소 끝에 "?"를 붙이지 않는다
+    final uri = Uri.parse(_base + path).replace(queryParameters: (query == null || query.isEmpty) ? null : query);
     final req = http.Request(method, uri)..headers.addAll(headers ?? const {});
     if (body != null) {
       req.headers['Content-Type'] = 'application/json';

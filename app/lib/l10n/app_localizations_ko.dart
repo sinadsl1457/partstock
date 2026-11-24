@@ -449,4 +449,27 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get marketNote => '미국 eBay 새 상품 기준 · 한국 실구매가와 다를 수 있어요(부가세·배송비 제외)';
+
+  @override
+  String get tabMovers => '급등락';
+
+  @override
+  String get moversUp => '급등 TOP 5';
+
+  @override
+  String get moversDown => '급락 TOP 5';
+
+  @override
+  String get moversVs => '24시간 전 대비';
+
+  @override
+  String get moversNoneUp => '24시간 동안 오른 종목이 없습니다.';
+
+  @override
+  String get moversNoneDown => '24시간 동안 내린 종목이 없습니다.';
+
+  @override
+  String moversNote(int n) {
+    return '판매 글 $n개 이상 종목만 · 4개 분류 전체 · 매시간 바뀝니다. 글이 적은 종목은 싼 글 하나로 크게 튀어서 뺍니다.';
+  }
 }

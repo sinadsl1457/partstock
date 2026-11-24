@@ -43,6 +43,22 @@ void main() {
     expect(r.cachedBoard(Category.ram), isNull);
   });
 
+  test('급등락을 읽는다(분류·순서 그대로)', () async {
+    // movers.json은 서버 응답 모양(ApiDtos.Movers)대로 만든 예시. 배포 뒤 실제 응답으로 바꾼다
+    final r = repo((req) async {
+      expect(req.url.toString(), 'https://api.test/api/movers');
+      return http.Response.bytes(utf8.encode(fixture('movers')), 200);
+    });
+
+    final m = await r.movers();
+
+    expect(m.minListings, 20);
+    expect(m.up.map((e) => e.key), ['rx-9070-xt', 'ddr5-32gb']);
+    expect(m.up[1].category, Category.ram);
+    expect(m.down.first.change.pct, -5.3);
+    expect(m.fx!.usdKrw, 1348.85);
+  });
+
   test('종목 상세와 차트를 읽는다', () async {
     final r = repo((req) async {
       final body = req.url.path == '/api/ticker' ? fixture('ticker_rtx5070ti') : fixture('chart_1d');

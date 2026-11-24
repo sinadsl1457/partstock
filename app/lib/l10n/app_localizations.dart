@@ -901,6 +901,48 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'미국 eBay 새 상품 기준 · 한국 실구매가와 다를 수 있어요(부가세·배송비 제외)'**
   String get marketNote;
+
+  /// No description provided for @tabMovers.
+  ///
+  /// In ko, this message translates to:
+  /// **'급등락'**
+  String get tabMovers;
+
+  /// No description provided for @moversUp.
+  ///
+  /// In ko, this message translates to:
+  /// **'급등 TOP 5'**
+  String get moversUp;
+
+  /// No description provided for @moversDown.
+  ///
+  /// In ko, this message translates to:
+  /// **'급락 TOP 5'**
+  String get moversDown;
+
+  /// No description provided for @moversVs.
+  ///
+  /// In ko, this message translates to:
+  /// **'24시간 전 대비'**
+  String get moversVs;
+
+  /// No description provided for @moversNoneUp.
+  ///
+  /// In ko, this message translates to:
+  /// **'24시간 동안 오른 종목이 없습니다.'**
+  String get moversNoneUp;
+
+  /// No description provided for @moversNoneDown.
+  ///
+  /// In ko, this message translates to:
+  /// **'24시간 동안 내린 종목이 없습니다.'**
+  String get moversNoneDown;
+
+  /// No description provided for @moversNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'판매 글 {n}개 이상 종목만 · 4개 분류 전체 · 매시간 바뀝니다. 글이 적은 종목은 싼 글 하나로 크게 튀어서 뺍니다.'**
+  String moversNote(int n);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

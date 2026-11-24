@@ -266,5 +266,19 @@
   "filter_capacity": "용량",
   "filter_iface": "규격",
   "privacy": "개인정보 처리방침",
-  "marketNote": "미국 eBay 새 상품 기준 · 한국 실구매가와 다를 수 있어요(부가세·배송비 제외)"
+  "marketNote": "미국 eBay 새 상품 기준 · 한국 실구매가와 다를 수 있어요(부가세·배송비 제외)",
+  "tabMovers": "급등락",
+  "moversUp": "급등 TOP 5",
+  "moversDown": "급락 TOP 5",
+  "moversVs": "24시간 전 대비",
+  "moversNoneUp": "24시간 동안 오른 종목이 없습니다.",
+  "moversNoneDown": "24시간 동안 내린 종목이 없습니다.",
+  "moversNote": "판매 글 {n}개 이상 종목만 · 4개 분류 전체 · 매시간 바뀝니다. 글이 적은 종목은 싼 글 하나로 크게 튀어서 뺍니다.",
+  "@moversNote": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  }
 }

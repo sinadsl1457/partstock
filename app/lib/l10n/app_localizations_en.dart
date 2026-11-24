@@ -452,4 +452,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get marketNote => 'Based on new eBay US listings · local prices may differ (tax and shipping not included)';
+
+  @override
+  String get tabMovers => 'Movers';
+
+  @override
+  String get moversUp => 'Top 5 gainers';
+
+  @override
+  String get moversDown => 'Top 5 losers';
+
+  @override
+  String get moversVs => 'vs 24h ago';
+
+  @override
+  String get moversNoneUp => 'Nothing rose in the last 24 hours.';
+
+  @override
+  String get moversNoneDown => 'Nothing fell in the last 24 hours.';
+
+  @override
+  String moversNote(int n) {
+    return 'Only items with $n+ listings · all categories · updated hourly. Items with few listings are left out because one cheap listing can swing them.';
+  }
 }

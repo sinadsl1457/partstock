@@ -134,5 +134,19 @@
   "filter_capacity": "Capacity",
   "filter_iface": "Interface",
   "privacy": "Privacy policy",
-  "marketNote": "Based on new eBay US listings · local prices may differ (tax and shipping not included)"
+  "marketNote": "Based on new eBay US listings · local prices may differ (tax and shipping not included)",
+  "tabMovers": "Movers",
+  "moversUp": "Top 5 gainers",
+  "moversDown": "Top 5 losers",
+  "moversVs": "vs 24h ago",
+  "moversNoneUp": "Nothing rose in the last 24 hours.",
+  "moversNoneDown": "Nothing fell in the last 24 hours.",
+  "moversNote": "Only items with {n}+ listings · all categories · updated hourly. Items with few listings are left out because one cheap listing can swing them.",
+  "@moversNote": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  }
 }

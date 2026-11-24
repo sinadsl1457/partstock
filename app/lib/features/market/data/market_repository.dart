@@ -34,6 +34,8 @@ class MarketRepository {
     }
   }
 
+  Future<Movers> movers() async => Movers.fromMap(await _api.get('/api/movers', {}));
+
   Future<TickerDetail> ticker(String key) async => TickerDetail.fromMap(await _api.get('/api/ticker', {'key': key}));
 
   Future<ChartData> chart(String key, ChartRange range) async =>

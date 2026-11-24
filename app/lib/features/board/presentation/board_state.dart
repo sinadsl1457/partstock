@@ -10,6 +10,9 @@ part 'board_state.freezed.dart';
 abstract class BoardState with _$BoardState {
   const factory BoardState({
     @Default(Category.gpu) Category category,
+
+    /// 분류 대신 급등락 탭을 보고 있다(내용은 MoversCubit)
+    @Default(false) bool movers,
     Board? board,
 
     /// 지금 분류의 필터(저장소에서 읽음)

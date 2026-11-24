@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/board/presentation/board_cubit.dart';
 import '../../features/board/presentation/board_screen.dart';
+import '../../features/movers/presentation/movers_cubit.dart';
 import '../../features/market/data/market_models.dart';
 import '../../features/onboarding/presentation/guide_screen.dart';
 import '../../features/onboarding/presentation/launch_screen.dart';
@@ -42,7 +43,14 @@ GoRouter createRouter({String initialLocation = '/launch'}) => GoRouter(
               path: '/board',
               pageBuilder: (_, s) => _page(
                 s,
-                BlocProvider(create: (_) => getIt<BoardCubit>()..select(Category.gpu), child: const BoardScreen()),
+                MultiBlocProvider(
+                  providers: [
+                    BlocProvider(create: (_) => getIt<BoardCubit>()..select(Category.gpu)),
+                    // 급등락 탭은 시세 탭과 함께 살고, 그 탭을 처음 열 때 받는다
+                    BlocProvider(create: (_) => getIt<MoversCubit>()),
+                  ],
+                  child: const BoardScreen(),
+                ),
               ),
             ),
           ],

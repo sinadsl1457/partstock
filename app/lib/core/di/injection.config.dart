@@ -25,6 +25,8 @@ import 'package:partstock/features/board/data/board_filter_repository.dart'
 import 'package:partstock/features/board/presentation/board_cubit.dart'
     as _i772;
 import 'package:partstock/features/market/data/market_repository.dart' as _i261;
+import 'package:partstock/features/movers/presentation/movers_cubit.dart'
+    as _i737;
 import 'package:partstock/features/settings/data/settings_repository.dart'
     as _i115;
 import 'package:partstock/features/settings/presentation/settings_cubit.dart'
@@ -90,6 +92,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i947.SettingsCubit>(
       () => _i947.SettingsCubit(gh<_i115.SettingsRepository>()),
+    );
+    gh.factory<_i737.MoversCubit>(
+      () => _i737.MoversCubit(gh<_i261.MarketRepository>()),
     );
     gh.factory<_i269.WatchPricesCubit>(
       () => _i269.WatchPricesCubit(gh<_i261.MarketRepository>()),

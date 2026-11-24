@@ -3645,4 +3645,631 @@ as int,
 
 }
 
+/// @nodoc
+mixin _$Mover {
+
+ String get key; String get name; Category get category; String get vendor; Price get price; Change get change;
+/// Create a copy of Mover
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MoverCopyWith<Mover> get copyWith => _$MoverCopyWithImpl<Mover>(this as Mover, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as Mover;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Mover&&(identical(other.key, _this.key) || other.key == _this.key)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.category, _this.category) || other.category == _this.category)&&(identical(other.vendor, _this.vendor) || other.vendor == _this.vendor)&&(identical(other.price, _this.price) || other.price == _this.price)&&(identical(other.change, _this.change) || other.change == _this.change));
+}
+
+
+@override
+int get hashCode {
+  final _this = this as Mover;
+  return Object.hash(runtimeType,_this.key,_this.name,_this.category,_this.vendor,_this.price,_this.change);
+}
+
+@override
+String toString() {
+  final _this = this as Mover;
+  return 'Mover(key: ${_this.key}, name: ${_this.name}, category: ${_this.category}, vendor: ${_this.vendor}, price: ${_this.price}, change: ${_this.change})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $MoverCopyWith<$Res>  {
+  factory $MoverCopyWith(Mover value, $Res Function(Mover) _then) = _$MoverCopyWithImpl;
+@useResult
+$Res call({
+ String key, String name, Category category, String vendor, Price price, Change change
+});
+
+
+$PriceCopyWith<$Res> get price;$ChangeCopyWith<$Res> get change;
+
+}
+/// @nodoc
+class _$MoverCopyWithImpl<$Res>
+    implements $MoverCopyWith<$Res> {
+  _$MoverCopyWithImpl(this._self, this._then);
+
+  final Mover _self;
+  final $Res Function(Mover) _then;
+
+/// Create a copy of Mover
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? key = null,Object? name = null,Object? category = null,Object? vendor = null,Object? price = null,Object? change = null,}) {
+  return _then(Mover(
+key: null == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as Category,vendor: null == vendor ? _self.vendor : vendor // ignore: cast_nullable_to_non_nullable
+as String,price: null == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
+as Price,change: null == change ? _self.change : change // ignore: cast_nullable_to_non_nullable
+as Change,
+  ));
+}
+/// Create a copy of Mover
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PriceCopyWith<$Res> get price {
+  
+  return $PriceCopyWith<$Res>(_self.price, (value) {
+    return _then(_self.copyWith(price: value));
+  });
+}/// Create a copy of Mover
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ChangeCopyWith<$Res> get change {
+  
+  return $ChangeCopyWith<$Res>(_self.change, (value) {
+    return _then(_self.copyWith(change: value));
+  });
+}
+}
+
+
+/// Adds pattern-matching-related methods to [Mover].
+extension MoverPatterns on Mover {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Mover value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _Mover() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Mover value)  $default,){
+final _that = this;
+switch (_that) {
+case _Mover():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Mover value)?  $default,){
+final _that = this;
+switch (_that) {
+case _Mover() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String key,  String name,  Category category,  String vendor,  Price price,  Change change)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _Mover() when $default != null:
+return $default(_that.key,_that.name,_that.category,_that.vendor,_that.price,_that.change);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String key,  String name,  Category category,  String vendor,  Price price,  Change change)  $default,) {final _that = this;
+switch (_that) {
+case _Mover():
+return $default(_that.key,_that.name,_that.category,_that.vendor,_that.price,_that.change);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String key,  String name,  Category category,  String vendor,  Price price,  Change change)?  $default,) {final _that = this;
+switch (_that) {
+case _Mover() when $default != null:
+return $default(_that.key,_that.name,_that.category,_that.vendor,_that.price,_that.change);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _Mover implements Mover {
+  const _Mover({required this.key, required this.name, required this.category, required this.vendor, required this.price, required this.change});
+  
+
+@override final  String key;
+@override final  String name;
+@override final  Category category;
+@override final  String vendor;
+@override final  Price price;
+@override final  Change change;
+
+/// Create a copy of Mover
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$MoverCopyWith<_Mover> get copyWith => __$MoverCopyWithImpl<_Mover>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Mover&&(identical(other.key, key) || other.key == key)&&(identical(other.name, name) || other.name == name)&&(identical(other.category, category) || other.category == category)&&(identical(other.vendor, vendor) || other.vendor == vendor)&&(identical(other.price, price) || other.price == price)&&(identical(other.change, change) || other.change == change));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,key,name,category,vendor,price,change);
+}
+
+@override
+String toString() {
+    return 'Mover(key: $key, name: $name, category: $category, vendor: $vendor, price: $price, change: $change)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$MoverCopyWith<$Res> implements $MoverCopyWith<$Res> {
+  factory _$MoverCopyWith(_Mover value, $Res Function(_Mover) _then) = __$MoverCopyWithImpl;
+@override @useResult
+$Res call({
+ String key, String name, Category category, String vendor, Price price, Change change
+});
+
+
+@override $PriceCopyWith<$Res> get price;@override $ChangeCopyWith<$Res> get change;
+
+}
+/// @nodoc
+class __$MoverCopyWithImpl<$Res>
+    implements _$MoverCopyWith<$Res> {
+  __$MoverCopyWithImpl(this._self, this._then);
+
+  final _Mover _self;
+  final $Res Function(_Mover) _then;
+
+/// Create a copy of Mover
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? key = null,Object? name = null,Object? category = null,Object? vendor = null,Object? price = null,Object? change = null,}) {
+  return _then(_Mover(
+key: null == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as Category,vendor: null == vendor ? _self.vendor : vendor // ignore: cast_nullable_to_non_nullable
+as String,price: null == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
+as Price,change: null == change ? _self.change : change // ignore: cast_nullable_to_non_nullable
+as Change,
+  ));
+}
+
+/// Create a copy of Mover
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PriceCopyWith<$Res> get price {
+  
+  return $PriceCopyWith<$Res>(_self.price, (value) {
+    return _then(_self.copyWith(price: value));
+  });
+}/// Create a copy of Mover
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ChangeCopyWith<$Res> get change {
+  
+  return $ChangeCopyWith<$Res>(_self.change, (value) {
+    return _then(_self.copyWith(change: value));
+  });
+}
+}
+
+/// @nodoc
+mixin _$Movers {
+
+ DateTime? get updatedAt; Fx? get fx; int get minListings; List<Mover> get up; List<Mover> get down;
+/// Create a copy of Movers
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MoversCopyWith<Movers> get copyWith => _$MoversCopyWithImpl<Movers>(this as Movers, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as Movers;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Movers&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.fx, _this.fx) || other.fx == _this.fx)&&(identical(other.minListings, _this.minListings) || other.minListings == _this.minListings)&&const DeepCollectionEquality().equals(other.up, _this.up)&&const DeepCollectionEquality().equals(other.down, _this.down));
+}
+
+
+@override
+int get hashCode {
+  final _this = this as Movers;
+  return Object.hash(runtimeType,_this.updatedAt,_this.fx,_this.minListings,const DeepCollectionEquality().hash(_this.up),const DeepCollectionEquality().hash(_this.down));
+}
+
+@override
+String toString() {
+  final _this = this as Movers;
+  return 'Movers(updatedAt: ${_this.updatedAt}, fx: ${_this.fx}, minListings: ${_this.minListings}, up: ${_this.up}, down: ${_this.down})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $MoversCopyWith<$Res>  {
+  factory $MoversCopyWith(Movers value, $Res Function(Movers) _then) = _$MoversCopyWithImpl;
+@useResult
+$Res call({
+ DateTime? updatedAt, Fx? fx, int minListings, List<Mover> up, List<Mover> down
+});
+
+
+$FxCopyWith<$Res>? get fx;
+
+}
+/// @nodoc
+class _$MoversCopyWithImpl<$Res>
+    implements $MoversCopyWith<$Res> {
+  _$MoversCopyWithImpl(this._self, this._then);
+
+  final Movers _self;
+  final $Res Function(Movers) _then;
+
+/// Create a copy of Movers
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? updatedAt = freezed,Object? fx = freezed,Object? minListings = null,Object? up = null,Object? down = null,}) {
+  return _then(Movers(
+updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,fx: freezed == fx ? _self.fx : fx // ignore: cast_nullable_to_non_nullable
+as Fx?,minListings: null == minListings ? _self.minListings : minListings // ignore: cast_nullable_to_non_nullable
+as int,up: null == up ? _self.up : up // ignore: cast_nullable_to_non_nullable
+as List<Mover>,down: null == down ? _self.down : down // ignore: cast_nullable_to_non_nullable
+as List<Mover>,
+  ));
+}
+/// Create a copy of Movers
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$FxCopyWith<$Res>? get fx {
+    if (_self.fx == null) {
+    return null;
+  }
+
+  return $FxCopyWith<$Res>(_self.fx!, (value) {
+    return _then(_self.copyWith(fx: value));
+  });
+}
+}
+
+
+/// Adds pattern-matching-related methods to [Movers].
+extension MoversPatterns on Movers {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Movers value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _Movers() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Movers value)  $default,){
+final _that = this;
+switch (_that) {
+case _Movers():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Movers value)?  $default,){
+final _that = this;
+switch (_that) {
+case _Movers() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime? updatedAt,  Fx? fx,  int minListings,  List<Mover> up,  List<Mover> down)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _Movers() when $default != null:
+return $default(_that.updatedAt,_that.fx,_that.minListings,_that.up,_that.down);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime? updatedAt,  Fx? fx,  int minListings,  List<Mover> up,  List<Mover> down)  $default,) {final _that = this;
+switch (_that) {
+case _Movers():
+return $default(_that.updatedAt,_that.fx,_that.minListings,_that.up,_that.down);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime? updatedAt,  Fx? fx,  int minListings,  List<Mover> up,  List<Mover> down)?  $default,) {final _that = this;
+switch (_that) {
+case _Movers() when $default != null:
+return $default(_that.updatedAt,_that.fx,_that.minListings,_that.up,_that.down);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _Movers implements Movers {
+  const _Movers({this.updatedAt, this.fx, required this.minListings, required  List<Mover> up, required  List<Mover> down}): _up = up,_down = down;
+  
+
+@override final  DateTime? updatedAt;
+@override final  Fx? fx;
+@override final  int minListings;
+ final  List<Mover> _up;
+@override List<Mover> get up {
+  if (_up is EqualUnmodifiableListView) return _up;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_up);
+}
+
+ final  List<Mover> _down;
+@override List<Mover> get down {
+  if (_down is EqualUnmodifiableListView) return _down;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_down);
+}
+
+
+/// Create a copy of Movers
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$MoversCopyWith<_Movers> get copyWith => __$MoversCopyWithImpl<_Movers>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Movers&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.fx, fx) || other.fx == fx)&&(identical(other.minListings, minListings) || other.minListings == minListings)&&const DeepCollectionEquality().equals(other.up, _up)&&const DeepCollectionEquality().equals(other.down, _down));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,updatedAt,fx,minListings,const DeepCollectionEquality().hash(_up),const DeepCollectionEquality().hash(_down));
+}
+
+@override
+String toString() {
+    return 'Movers(updatedAt: $updatedAt, fx: $fx, minListings: $minListings, up: $up, down: $down)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$MoversCopyWith<$Res> implements $MoversCopyWith<$Res> {
+  factory _$MoversCopyWith(_Movers value, $Res Function(_Movers) _then) = __$MoversCopyWithImpl;
+@override @useResult
+$Res call({
+ DateTime? updatedAt, Fx? fx, int minListings, List<Mover> up, List<Mover> down
+});
+
+
+@override $FxCopyWith<$Res>? get fx;
+
+}
+/// @nodoc
+class __$MoversCopyWithImpl<$Res>
+    implements _$MoversCopyWith<$Res> {
+  __$MoversCopyWithImpl(this._self, this._then);
+
+  final _Movers _self;
+  final $Res Function(_Movers) _then;
+
+/// Create a copy of Movers
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? updatedAt = freezed,Object? fx = freezed,Object? minListings = null,Object? up = null,Object? down = null,}) {
+  return _then(_Movers(
+updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,fx: freezed == fx ? _self.fx : fx // ignore: cast_nullable_to_non_nullable
+as Fx?,minListings: null == minListings ? _self.minListings : minListings // ignore: cast_nullable_to_non_nullable
+as int,up: null == up ? _self._up : up // ignore: cast_nullable_to_non_nullable
+as List<Mover>,down: null == down ? _self._down : down // ignore: cast_nullable_to_non_nullable
+as List<Mover>,
+  ));
+}
+
+/// Create a copy of Movers
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$FxCopyWith<$Res>? get fx {
+    if (_self.fx == null) {
+    return null;
+  }
+
+  return $FxCopyWith<$Res>(_self.fx!, (value) {
+    return _then(_self.copyWith(fx: value));
+  });
+}
+}
+
 // dart format on

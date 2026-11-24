@@ -1,4 +1,4 @@
-// 시세 목록: 탭(VGA/RAM)을 고르면 저장된 목록을 먼저 보여 주고 새로 받는다. 탭마다 고른 필터를 기억한다.
+// 시세 목록: 탭(VGA/RAM/CPU/SSD)을 고르면 저장된 목록을 먼저 보여 주고 새로 받는다. 탭마다 고른 필터를 기억한다.
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
@@ -29,6 +29,9 @@ class BoardCubit extends Cubit<BoardState> {
     );
     await _fetch(category);
   }
+
+  /// 급등락 탭으로. 지금 분류 목록은 그대로 두고 돌아오면 다시 보인다
+  void showMovers() => emit(state.copyWith(movers: true));
 
   Future<void> setFilter(BoardFilter filter) async {
     emit(state.copyWith(filter: filter));

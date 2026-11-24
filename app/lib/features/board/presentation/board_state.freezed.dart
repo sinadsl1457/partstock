@@ -15,7 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BoardState {
 
- Category get category; Board? get board;/// 지금 분류의 필터(저장소에서 읽음)
+ Category get category;/// 분류 대신 급등락 탭을 보고 있다(내용은 MoversCubit)
+ bool get movers; Board? get board;/// 지금 분류의 필터(저장소에서 읽음)
  Map<String, Set<String>> get filter; bool get loading;/// 지금 보이는 board가 저장해 둔 것(새로 받기 전·실패)
  bool get fromCache; AppFailure? get failure;
 /// Create a copy of BoardState
@@ -29,20 +30,20 @@ $BoardStateCopyWith<BoardState> get copyWith => _$BoardStateCopyWithImpl<BoardSt
 @override
 bool operator ==(Object other) {
   final _this = this as BoardState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BoardState&&(identical(other.category, _this.category) || other.category == _this.category)&&(identical(other.board, _this.board) || other.board == _this.board)&&const DeepCollectionEquality().equals(other.filter, _this.filter)&&(identical(other.loading, _this.loading) || other.loading == _this.loading)&&(identical(other.fromCache, _this.fromCache) || other.fromCache == _this.fromCache)&&(identical(other.failure, _this.failure) || other.failure == _this.failure));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BoardState&&(identical(other.category, _this.category) || other.category == _this.category)&&(identical(other.movers, _this.movers) || other.movers == _this.movers)&&(identical(other.board, _this.board) || other.board == _this.board)&&const DeepCollectionEquality().equals(other.filter, _this.filter)&&(identical(other.loading, _this.loading) || other.loading == _this.loading)&&(identical(other.fromCache, _this.fromCache) || other.fromCache == _this.fromCache)&&(identical(other.failure, _this.failure) || other.failure == _this.failure));
 }
 
 
 @override
 int get hashCode {
   final _this = this as BoardState;
-  return Object.hash(runtimeType,_this.category,_this.board,const DeepCollectionEquality().hash(_this.filter),_this.loading,_this.fromCache,_this.failure);
+  return Object.hash(runtimeType,_this.category,_this.movers,_this.board,const DeepCollectionEquality().hash(_this.filter),_this.loading,_this.fromCache,_this.failure);
 }
 
 @override
 String toString() {
   final _this = this as BoardState;
-  return 'BoardState(category: ${_this.category}, board: ${_this.board}, filter: ${_this.filter}, loading: ${_this.loading}, fromCache: ${_this.fromCache}, failure: ${_this.failure})';
+  return 'BoardState(category: ${_this.category}, movers: ${_this.movers}, board: ${_this.board}, filter: ${_this.filter}, loading: ${_this.loading}, fromCache: ${_this.fromCache}, failure: ${_this.failure})';
 }
 
 
@@ -53,7 +54,7 @@ abstract mixin class $BoardStateCopyWith<$Res>  {
   factory $BoardStateCopyWith(BoardState value, $Res Function(BoardState) _then) = _$BoardStateCopyWithImpl;
 @useResult
 $Res call({
- Category category, Board? board, Map<String, Set<String>> filter, bool loading, bool fromCache, AppFailure? failure
+ Category category, bool movers, Board? board, Map<String, Set<String>> filter, bool loading, bool fromCache, AppFailure? failure
 });
 
 
@@ -70,10 +71,11 @@ class _$BoardStateCopyWithImpl<$Res>
 
 /// Create a copy of BoardState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? category = null,Object? board = freezed,Object? filter = null,Object? loading = null,Object? fromCache = null,Object? failure = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? category = null,Object? movers = null,Object? board = freezed,Object? filter = null,Object? loading = null,Object? fromCache = null,Object? failure = freezed,}) {
   return _then(BoardState(
 category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as Category,board: freezed == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
+as Category,movers: null == movers ? _self.movers : movers // ignore: cast_nullable_to_non_nullable
+as bool,board: freezed == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
 as Board?,filter: null == filter ? _self.filter : filter // ignore: cast_nullable_to_non_nullable
 as Map<String, Set<String>>,loading: null == loading ? _self.loading : loading // ignore: cast_nullable_to_non_nullable
 as bool,fromCache: null == fromCache ? _self.fromCache : fromCache // ignore: cast_nullable_to_non_nullable
@@ -175,10 +177,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Category category,  Board? board,  Map<String, Set<String>> filter,  bool loading,  bool fromCache,  AppFailure? failure)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Category category,  bool movers,  Board? board,  Map<String, Set<String>> filter,  bool loading,  bool fromCache,  AppFailure? failure)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BoardState() when $default != null:
-return $default(_that.category,_that.board,_that.filter,_that.loading,_that.fromCache,_that.failure);case _:
+return $default(_that.category,_that.movers,_that.board,_that.filter,_that.loading,_that.fromCache,_that.failure);case _:
   return orElse();
 
 }
@@ -196,10 +198,10 @@ return $default(_that.category,_that.board,_that.filter,_that.loading,_that.from
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Category category,  Board? board,  Map<String, Set<String>> filter,  bool loading,  bool fromCache,  AppFailure? failure)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Category category,  bool movers,  Board? board,  Map<String, Set<String>> filter,  bool loading,  bool fromCache,  AppFailure? failure)  $default,) {final _that = this;
 switch (_that) {
 case _BoardState():
-return $default(_that.category,_that.board,_that.filter,_that.loading,_that.fromCache,_that.failure);case _:
+return $default(_that.category,_that.movers,_that.board,_that.filter,_that.loading,_that.fromCache,_that.failure);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -216,10 +218,10 @@ return $default(_that.category,_that.board,_that.filter,_that.loading,_that.from
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Category category,  Board? board,  Map<String, Set<String>> filter,  bool loading,  bool fromCache,  AppFailure? failure)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Category category,  bool movers,  Board? board,  Map<String, Set<String>> filter,  bool loading,  bool fromCache,  AppFailure? failure)?  $default,) {final _that = this;
 switch (_that) {
 case _BoardState() when $default != null:
-return $default(_that.category,_that.board,_that.filter,_that.loading,_that.fromCache,_that.failure);case _:
+return $default(_that.category,_that.movers,_that.board,_that.filter,_that.loading,_that.fromCache,_that.failure);case _:
   return null;
 
 }
@@ -231,10 +233,12 @@ return $default(_that.category,_that.board,_that.filter,_that.loading,_that.from
 
 
 class _BoardState implements BoardState {
-  const _BoardState({this.category = Category.gpu, this.board,  Map<String, Set<String>> filter = const {}, this.loading = false, this.fromCache = false, this.failure}): _filter = filter;
+  const _BoardState({this.category = Category.gpu, this.movers = false, this.board,  Map<String, Set<String>> filter = const {}, this.loading = false, this.fromCache = false, this.failure}): _filter = filter;
   
 
 @override@JsonKey() final  Category category;
+/// 분류 대신 급등락 탭을 보고 있다(내용은 MoversCubit)
+@override@JsonKey() final  bool movers;
 @override final  Board? board;
 /// 지금 분류의 필터(저장소에서 읽음)
  final  Map<String, Set<String>> _filter;
@@ -260,18 +264,18 @@ _$BoardStateCopyWith<_BoardState> get copyWith => __$BoardStateCopyWithImpl<_Boa
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BoardState&&(identical(other.category, category) || other.category == category)&&(identical(other.board, board) || other.board == board)&&const DeepCollectionEquality().equals(other.filter, _filter)&&(identical(other.loading, loading) || other.loading == loading)&&(identical(other.fromCache, fromCache) || other.fromCache == fromCache)&&(identical(other.failure, failure) || other.failure == failure));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BoardState&&(identical(other.category, category) || other.category == category)&&(identical(other.movers, movers) || other.movers == movers)&&(identical(other.board, board) || other.board == board)&&const DeepCollectionEquality().equals(other.filter, _filter)&&(identical(other.loading, loading) || other.loading == loading)&&(identical(other.fromCache, fromCache) || other.fromCache == fromCache)&&(identical(other.failure, failure) || other.failure == failure));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,category,board,const DeepCollectionEquality().hash(_filter),loading,fromCache,failure);
+    return Object.hash(runtimeType,category,movers,board,const DeepCollectionEquality().hash(_filter),loading,fromCache,failure);
 }
 
 @override
 String toString() {
-    return 'BoardState(category: $category, board: $board, filter: $filter, loading: $loading, fromCache: $fromCache, failure: $failure)';
+    return 'BoardState(category: $category, movers: $movers, board: $board, filter: $filter, loading: $loading, fromCache: $fromCache, failure: $failure)';
 }
 
 
@@ -282,7 +286,7 @@ abstract mixin class _$BoardStateCopyWith<$Res> implements $BoardStateCopyWith<$
   factory _$BoardStateCopyWith(_BoardState value, $Res Function(_BoardState) _then) = __$BoardStateCopyWithImpl;
 @override @useResult
 $Res call({
- Category category, Board? board, Map<String, Set<String>> filter, bool loading, bool fromCache, AppFailure? failure
+ Category category, bool movers, Board? board, Map<String, Set<String>> filter, bool loading, bool fromCache, AppFailure? failure
 });
 
 
@@ -299,10 +303,11 @@ class __$BoardStateCopyWithImpl<$Res>
 
 /// Create a copy of BoardState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? category = null,Object? board = freezed,Object? filter = null,Object? loading = null,Object? fromCache = null,Object? failure = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? category = null,Object? movers = null,Object? board = freezed,Object? filter = null,Object? loading = null,Object? fromCache = null,Object? failure = freezed,}) {
   return _then(_BoardState(
 category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as Category,board: freezed == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
+as Category,movers: null == movers ? _self.movers : movers // ignore: cast_nullable_to_non_nullable
+as bool,board: freezed == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
 as Board?,filter: null == filter ? _self._filter : filter // ignore: cast_nullable_to_non_nullable
 as Map<String, Set<String>>,loading: null == loading ? _self.loading : loading // ignore: cast_nullable_to_non_nullable
 as bool,fromCache: null == fromCache ? _self.fromCache : fromCache // ignore: cast_nullable_to_non_nullable
