@@ -164,6 +164,18 @@ abstract class AppLocalizations {
   /// **'표본 적음'**
   String get fewListings;
 
+  /// No description provided for @usedMarket.
+  ///
+  /// In ko, this message translates to:
+  /// **'중고 위주'**
+  String get usedMarket;
+
+  /// No description provided for @usedMarketNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'단종돼 미국 eBay에 새 상품 글이 중고보다 적어요. 남은 새 글은 비싼 재고라 시세판에서 뺐습니다.'**
+  String get usedMarketNote;
+
   /// No description provided for @tooFew.
   ///
   /// In ko, this message translates to:

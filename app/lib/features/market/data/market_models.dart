@@ -195,6 +195,9 @@ abstract class TickerDetail with _$TickerDetail {
     required List<Child> makers,
     required List<Child> models,
     required Links links,
+
+    /// 단종돼 새 상품 글이 중고보다 적은 칩셋(서버가 시세판에서 뺌). 관심 종목으로 들어오면 안내한다
+    @Default(false) bool usedMarket,
   }) = _TickerDetail;
 
   factory TickerDetail.fromMap(Map<String, dynamic> m) => TickerDetail(
@@ -206,6 +209,7 @@ abstract class TickerDetail with _$TickerDetail {
     makers: _list(m['makers']).map(Child.fromMap).toList(),
     models: _list(m['models']).map(Child.fromMap).toList(),
     links: Links.fromMap(m['links'] as Map<String, dynamic>),
+    usedMarket: m['usedMarket'] as bool? ?? false,
   );
 }
 

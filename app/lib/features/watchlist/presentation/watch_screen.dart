@@ -127,7 +127,9 @@ class WatchScreen extends StatelessWidget {
                 Expanded(
                   child: Text(d?.ticker.name ?? key, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
                 ),
-                if (p == null)
+                if (d?.usedMarket ?? false)
+                  Tag(t.usedMarket)
+                else if (p == null)
                   Tag(t.tooFew)
                 else
                   Column(

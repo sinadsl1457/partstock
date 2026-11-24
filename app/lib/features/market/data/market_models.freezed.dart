@@ -2674,7 +2674,8 @@ $LinksCopyWith<$Res> get links {
 /// @nodoc
 mixin _$TickerDetail {
 
- TickerInfo get ticker; DateTime? get updatedAt; Fx? get fx; Price? get price; Change? get change; List<Child> get makers; List<Child> get models; Links get links;
+ TickerInfo get ticker; DateTime? get updatedAt; Fx? get fx; Price? get price; Change? get change; List<Child> get makers; List<Child> get models; Links get links;/// 단종돼 새 상품 글이 중고보다 적은 칩셋(서버가 시세판에서 뺌). 관심 종목으로 들어오면 안내한다
+ bool get usedMarket;
 /// Create a copy of TickerDetail
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2686,20 +2687,20 @@ $TickerDetailCopyWith<TickerDetail> get copyWith => _$TickerDetailCopyWithImpl<T
 @override
 bool operator ==(Object other) {
   final _this = this as TickerDetail;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TickerDetail&&(identical(other.ticker, _this.ticker) || other.ticker == _this.ticker)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.fx, _this.fx) || other.fx == _this.fx)&&(identical(other.price, _this.price) || other.price == _this.price)&&(identical(other.change, _this.change) || other.change == _this.change)&&const DeepCollectionEquality().equals(other.makers, _this.makers)&&const DeepCollectionEquality().equals(other.models, _this.models)&&(identical(other.links, _this.links) || other.links == _this.links));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TickerDetail&&(identical(other.ticker, _this.ticker) || other.ticker == _this.ticker)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.fx, _this.fx) || other.fx == _this.fx)&&(identical(other.price, _this.price) || other.price == _this.price)&&(identical(other.change, _this.change) || other.change == _this.change)&&const DeepCollectionEquality().equals(other.makers, _this.makers)&&const DeepCollectionEquality().equals(other.models, _this.models)&&(identical(other.links, _this.links) || other.links == _this.links)&&(identical(other.usedMarket, _this.usedMarket) || other.usedMarket == _this.usedMarket));
 }
 
 
 @override
 int get hashCode {
   final _this = this as TickerDetail;
-  return Object.hash(runtimeType,_this.ticker,_this.updatedAt,_this.fx,_this.price,_this.change,const DeepCollectionEquality().hash(_this.makers),const DeepCollectionEquality().hash(_this.models),_this.links);
+  return Object.hash(runtimeType,_this.ticker,_this.updatedAt,_this.fx,_this.price,_this.change,const DeepCollectionEquality().hash(_this.makers),const DeepCollectionEquality().hash(_this.models),_this.links,_this.usedMarket);
 }
 
 @override
 String toString() {
   final _this = this as TickerDetail;
-  return 'TickerDetail(ticker: ${_this.ticker}, updatedAt: ${_this.updatedAt}, fx: ${_this.fx}, price: ${_this.price}, change: ${_this.change}, makers: ${_this.makers}, models: ${_this.models}, links: ${_this.links})';
+  return 'TickerDetail(ticker: ${_this.ticker}, updatedAt: ${_this.updatedAt}, fx: ${_this.fx}, price: ${_this.price}, change: ${_this.change}, makers: ${_this.makers}, models: ${_this.models}, links: ${_this.links}, usedMarket: ${_this.usedMarket})';
 }
 
 
@@ -2710,7 +2711,7 @@ abstract mixin class $TickerDetailCopyWith<$Res>  {
   factory $TickerDetailCopyWith(TickerDetail value, $Res Function(TickerDetail) _then) = _$TickerDetailCopyWithImpl;
 @useResult
 $Res call({
- TickerInfo ticker, DateTime? updatedAt, Fx? fx, Price? price, Change? change, List<Child> makers, List<Child> models, Links links
+ TickerInfo ticker, DateTime? updatedAt, Fx? fx, Price? price, Change? change, List<Child> makers, List<Child> models, Links links, bool usedMarket
 });
 
 
@@ -2727,7 +2728,7 @@ class _$TickerDetailCopyWithImpl<$Res>
 
 /// Create a copy of TickerDetail
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? ticker = null,Object? updatedAt = freezed,Object? fx = freezed,Object? price = freezed,Object? change = freezed,Object? makers = null,Object? models = null,Object? links = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? ticker = null,Object? updatedAt = freezed,Object? fx = freezed,Object? price = freezed,Object? change = freezed,Object? makers = null,Object? models = null,Object? links = null,Object? usedMarket = null,}) {
   return _then(TickerDetail(
 ticker: null == ticker ? _self.ticker : ticker // ignore: cast_nullable_to_non_nullable
 as TickerInfo,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -2737,7 +2738,8 @@ as Price?,change: freezed == change ? _self.change : change // ignore: cast_null
 as Change?,makers: null == makers ? _self.makers : makers // ignore: cast_nullable_to_non_nullable
 as List<Child>,models: null == models ? _self.models : models // ignore: cast_nullable_to_non_nullable
 as List<Child>,links: null == links ? _self.links : links // ignore: cast_nullable_to_non_nullable
-as Links,
+as Links,usedMarket: null == usedMarket ? _self.usedMarket : usedMarket // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 /// Create a copy of TickerDetail
@@ -2876,10 +2878,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TickerInfo ticker,  DateTime? updatedAt,  Fx? fx,  Price? price,  Change? change,  List<Child> makers,  List<Child> models,  Links links)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TickerInfo ticker,  DateTime? updatedAt,  Fx? fx,  Price? price,  Change? change,  List<Child> makers,  List<Child> models,  Links links,  bool usedMarket)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TickerDetail() when $default != null:
-return $default(_that.ticker,_that.updatedAt,_that.fx,_that.price,_that.change,_that.makers,_that.models,_that.links);case _:
+return $default(_that.ticker,_that.updatedAt,_that.fx,_that.price,_that.change,_that.makers,_that.models,_that.links,_that.usedMarket);case _:
   return orElse();
 
 }
@@ -2897,10 +2899,10 @@ return $default(_that.ticker,_that.updatedAt,_that.fx,_that.price,_that.change,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TickerInfo ticker,  DateTime? updatedAt,  Fx? fx,  Price? price,  Change? change,  List<Child> makers,  List<Child> models,  Links links)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TickerInfo ticker,  DateTime? updatedAt,  Fx? fx,  Price? price,  Change? change,  List<Child> makers,  List<Child> models,  Links links,  bool usedMarket)  $default,) {final _that = this;
 switch (_that) {
 case _TickerDetail():
-return $default(_that.ticker,_that.updatedAt,_that.fx,_that.price,_that.change,_that.makers,_that.models,_that.links);case _:
+return $default(_that.ticker,_that.updatedAt,_that.fx,_that.price,_that.change,_that.makers,_that.models,_that.links,_that.usedMarket);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -2917,10 +2919,10 @@ return $default(_that.ticker,_that.updatedAt,_that.fx,_that.price,_that.change,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TickerInfo ticker,  DateTime? updatedAt,  Fx? fx,  Price? price,  Change? change,  List<Child> makers,  List<Child> models,  Links links)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TickerInfo ticker,  DateTime? updatedAt,  Fx? fx,  Price? price,  Change? change,  List<Child> makers,  List<Child> models,  Links links,  bool usedMarket)?  $default,) {final _that = this;
 switch (_that) {
 case _TickerDetail() when $default != null:
-return $default(_that.ticker,_that.updatedAt,_that.fx,_that.price,_that.change,_that.makers,_that.models,_that.links);case _:
+return $default(_that.ticker,_that.updatedAt,_that.fx,_that.price,_that.change,_that.makers,_that.models,_that.links,_that.usedMarket);case _:
   return null;
 
 }
@@ -2932,7 +2934,7 @@ return $default(_that.ticker,_that.updatedAt,_that.fx,_that.price,_that.change,_
 
 
 class _TickerDetail implements TickerDetail {
-  const _TickerDetail({required this.ticker, this.updatedAt, this.fx, this.price, this.change, required  List<Child> makers, required  List<Child> models, required this.links}): _makers = makers,_models = models;
+  const _TickerDetail({required this.ticker, this.updatedAt, this.fx, this.price, this.change, required  List<Child> makers, required  List<Child> models, required this.links, this.usedMarket = false}): _makers = makers,_models = models;
   
 
 @override final  TickerInfo ticker;
@@ -2955,6 +2957,8 @@ class _TickerDetail implements TickerDetail {
 }
 
 @override final  Links links;
+/// 단종돼 새 상품 글이 중고보다 적은 칩셋(서버가 시세판에서 뺌). 관심 종목으로 들어오면 안내한다
+@override@JsonKey() final  bool usedMarket;
 
 /// Create a copy of TickerDetail
 /// with the given fields replaced by the non-null parameter values.
@@ -2966,18 +2970,18 @@ _$TickerDetailCopyWith<_TickerDetail> get copyWith => __$TickerDetailCopyWithImp
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TickerDetail&&(identical(other.ticker, ticker) || other.ticker == ticker)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.fx, fx) || other.fx == fx)&&(identical(other.price, price) || other.price == price)&&(identical(other.change, change) || other.change == change)&&const DeepCollectionEquality().equals(other.makers, _makers)&&const DeepCollectionEquality().equals(other.models, _models)&&(identical(other.links, links) || other.links == links));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TickerDetail&&(identical(other.ticker, ticker) || other.ticker == ticker)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.fx, fx) || other.fx == fx)&&(identical(other.price, price) || other.price == price)&&(identical(other.change, change) || other.change == change)&&const DeepCollectionEquality().equals(other.makers, _makers)&&const DeepCollectionEquality().equals(other.models, _models)&&(identical(other.links, links) || other.links == links)&&(identical(other.usedMarket, usedMarket) || other.usedMarket == usedMarket));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,ticker,updatedAt,fx,price,change,const DeepCollectionEquality().hash(_makers),const DeepCollectionEquality().hash(_models),links);
+    return Object.hash(runtimeType,ticker,updatedAt,fx,price,change,const DeepCollectionEquality().hash(_makers),const DeepCollectionEquality().hash(_models),links,usedMarket);
 }
 
 @override
 String toString() {
-    return 'TickerDetail(ticker: $ticker, updatedAt: $updatedAt, fx: $fx, price: $price, change: $change, makers: $makers, models: $models, links: $links)';
+    return 'TickerDetail(ticker: $ticker, updatedAt: $updatedAt, fx: $fx, price: $price, change: $change, makers: $makers, models: $models, links: $links, usedMarket: $usedMarket)';
 }
 
 
@@ -2988,7 +2992,7 @@ abstract mixin class _$TickerDetailCopyWith<$Res> implements $TickerDetailCopyWi
   factory _$TickerDetailCopyWith(_TickerDetail value, $Res Function(_TickerDetail) _then) = __$TickerDetailCopyWithImpl;
 @override @useResult
 $Res call({
- TickerInfo ticker, DateTime? updatedAt, Fx? fx, Price? price, Change? change, List<Child> makers, List<Child> models, Links links
+ TickerInfo ticker, DateTime? updatedAt, Fx? fx, Price? price, Change? change, List<Child> makers, List<Child> models, Links links, bool usedMarket
 });
 
 
@@ -3005,7 +3009,7 @@ class __$TickerDetailCopyWithImpl<$Res>
 
 /// Create a copy of TickerDetail
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? ticker = null,Object? updatedAt = freezed,Object? fx = freezed,Object? price = freezed,Object? change = freezed,Object? makers = null,Object? models = null,Object? links = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? ticker = null,Object? updatedAt = freezed,Object? fx = freezed,Object? price = freezed,Object? change = freezed,Object? makers = null,Object? models = null,Object? links = null,Object? usedMarket = null,}) {
   return _then(_TickerDetail(
 ticker: null == ticker ? _self.ticker : ticker // ignore: cast_nullable_to_non_nullable
 as TickerInfo,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -3015,7 +3019,8 @@ as Price?,change: freezed == change ? _self.change : change // ignore: cast_null
 as Change?,makers: null == makers ? _self._makers : makers // ignore: cast_nullable_to_non_nullable
 as List<Child>,models: null == models ? _self._models : models // ignore: cast_nullable_to_non_nullable
 as List<Child>,links: null == links ? _self.links : links // ignore: cast_nullable_to_non_nullable
-as Links,
+as Links,usedMarket: null == usedMarket ? _self.usedMarket : usedMarket // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

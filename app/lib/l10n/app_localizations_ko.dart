@@ -52,6 +52,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get fewListings => '표본 적음';
 
   @override
+  String get usedMarket => '중고 위주';
+
+  @override
+  String get usedMarketNote => '단종돼 미국 eBay에 새 상품 글이 중고보다 적어요. 남은 새 글은 비싼 재고라 시세판에서 뺐습니다.';
+
+  @override
   String get tooFew => '데이터 없음';
 
   @override

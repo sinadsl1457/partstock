@@ -183,6 +183,11 @@ class _BodyState extends State<_Body> {
                     ],
                   ),
                   const SizedBox(height: 8),
+                  if (d.usedMarket)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Text(t.usedMarketNote, style: const TextStyle(fontSize: 12, color: AppColors.warn)),
+                    ),
                   // 원화 값을 한국 실구매가로 오해하지 않게(미국 eBay 기준, 부가세·배송비·국내 마진 없음)
                   Row(
                     children: [

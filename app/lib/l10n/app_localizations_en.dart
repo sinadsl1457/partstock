@@ -52,6 +52,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fewListings => 'few listings';
 
   @override
+  String get usedMarket => 'Mostly used';
+
+  @override
+  String get usedMarketNote =>
+      'Discontinued: fewer new than used listings on eBay US. Remaining new listings are overpriced stock, so it is off the board.';
+
+  @override
   String get tooFew => 'No data';
 
   @override

@@ -33,6 +33,8 @@
     }
   },
   "fewListings": "표본 적음",
+  "usedMarket": "중고 위주",
+  "usedMarketNote": "단종돼 미국 eBay에 새 상품 글이 중고보다 적어요. 남은 새 글은 비싼 재고라 시세판에서 뺐습니다.",
   "tooFew": "데이터 없음",
   "boardNote": "대표가 = 미국 eBay 새 상품·즉시 구매 글 가격의 하위 10%(글이 20개 미만이면 하위 25%). 원화는 기준 환율 환산, 배송비·관세 제외.",
   "vendorNvidia": "NVIDIA",

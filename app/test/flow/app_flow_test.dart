@@ -110,6 +110,33 @@ void main() {
     expect(find.text('RTX 5070 Ti'), findsOneWidget);
   });
 
+  testWidgets('시세판에서 빠진 중고 위주 종목은 관심 탭에 "중고 위주", 차트 화면에 이유를 보여 준다', (tester) async {
+    final repo = await setUpDi();
+    when(() => repo.cachedBoard(any())).thenReturn(null);
+    when(() => repo.board(any())).thenAnswer((_) async => boardFixture());
+    when(() => repo.ticker(any())).thenAnswer((_) async => tickerFixture().copyWith(usedMarket: true));
+    when(() => repo.chart(any(), any())).thenAnswer((i) async => chartFixture(i.positionalArguments[1] as ChartRange));
+    tester.platformDispatcher.localesTestValue = const [Locale('ko')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.625;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(PartstockApp(router: createRouter(initialLocation: '/board')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('RTX 5070 Ti'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('남은 새 글은 비싼 재고라'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('관심 종목에 추가'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(BackButtonIcon));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('관심'));
+    await tester.pumpAndSettle();
+    expect(find.text('중고 위주'), findsOneWidget);
+  });
+
   testWidgets('처음부터 연결이 안 되면 안내와 다시 시도, 다시 시도하면 목록', (tester) async {
     final repo = await setUpDi();
     var fail = true;
