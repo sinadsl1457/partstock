@@ -268,7 +268,14 @@ public class PriceService {
 		// GIGABYTE를 눌렀는데 MSI·PNY·5060 Ti·라이저 케이블이 싼 순서 맨 위에 나왔다(11/23, 74개 중 57개가 다른 글)
 		String ebayQ = maker == null && series == null ? chipset.ebayQuery()
 				: (maker == null ? "" : maker.displayName() + " ") + "\"" + base + "\"" + (series == null ? "" : " " + series);
-		return Links.of(ebayQ, chipset.category().ebayCategoryId, q, danawaPcode);
+		return Links.of(ebayQ + ebayExclude(chipset), chipset.category().ebayCategoryId, q, danawaPcode);
+	}
+
+	/** " -7600X" 처럼 eBay 검색어 뒤에 붙일 빼기 단어(제조사·모델 링크도 같은 칩셋 이름이라 똑같이 섞인다) */
+	static String ebayExclude(ChipsetDef chipset) {
+		StringBuilder sb = new StringBuilder();
+		chipset.ebayExclude().forEach(w -> sb.append(" -").append(w));
+		return sb.toString();
 	}
 
 	/** "DDR5 32GB (2×16GB)" → "DDR5 32GB 16Gx2" (다나와 표기에 가깝게) */

@@ -16,7 +16,12 @@ public record ChipsetDef(
 		String ebayQuery,
 		Predicate<Title> matcher,
 		/** 화면 필터용 분류(GPU: series=RTX50…, RAM: ddr=DDR5, pack=1|2). 필터를 늘리면 여기 키만 늘린다 */
-		Map<String, String> facets) {
+		Map<String, String> facets,
+		/**
+		 * eBay 바로가기 검색어에서 뺄 단어(notNext에서 만든다). eBay는 "Ryzen 5 7600"에 7600X도 찾아 주고,
+		 * 싼 순으로 열면 더 싼 7600X가 앞을 다 채웠다(11/25). 수집 검색어에는 안 붙인다(제목 검사로 이미 거름).
+		 */
+		List<String> ebayExclude) {
 
 	public boolean matches(Title title) {
 		return matcher.test(title);
@@ -45,7 +50,8 @@ public record ChipsetDef(
 			}
 			return otherGb == null || !t.contains(List.of(otherGb.toString(), "GB"));
 		};
-		return new ChipsetDef(key, Category.GPU, displayName, displayName, matcher, Map.of("series", series(vendor, model.get(0))));
+		return new ChipsetDef(key, Category.GPU, displayName, displayName, matcher, Map.of("series", series(vendor, model.get(0))),
+				excludeWords(model, notNext));
 	}
 
 	/**
@@ -64,7 +70,7 @@ public record ChipsetDef(
 						|| t.contains(List.of(size, "G", "X", "2")));
 		String display = "DDR%d %dGB (2×%dGB)".formatted(ddr, moduleGb * 2, moduleGb);
 		String query = "DDR%d %dGB 2x%dGB desktop".formatted(ddr, moduleGb * 2, moduleGb);
-		return new ChipsetDef(key, Category.RAM, display, query, matcher, Map.of("ddr", "DDR" + ddr, "pack", "2"));
+		return new ChipsetDef(key, Category.RAM, display, query, matcher, Map.of("ddr", "DDR" + ddr, "pack", "2"), List.of());
 	}
 
 	/** 램 용량 중 흔한 값. 1개짜리 제목에 다른 용량이 같이 있으면(묶음 합계 등) 어느 쪽인지 몰라 뺀다 */
@@ -86,7 +92,7 @@ public record ChipsetDef(
 						.noneMatch(o -> t.contains(List.of(o, "GB")) || t.contains(List.of(o, "G")));
 		String display = "DDR%d %dGB".formatted(ddr, gb);
 		String query = "DDR%d %dGB desktop memory".formatted(ddr, gb);
-		return new ChipsetDef(key, Category.RAM, display, query, matcher, Map.of("ddr", "DDR" + ddr, "pack", "1"));
+		return new ChipsetDef(key, Category.RAM, display, query, matcher, Map.of("ddr", "DDR" + ddr, "pack", "1"), List.of());
 	}
 
 	/** 묶음 표시: "2x16GB"·"(2 x 8GB)"처럼 개수 × , "16GBx2"처럼 용량 × 개수, "2PCS"·"KIT". "1 x 8GB"(1개)는 묶음이 아니다 */
@@ -98,6 +104,27 @@ public record ChipsetDef(
 			}
 		}
 		return t.tokens().contains("KIT") || t.tokens().contains("KITS");
+	}
+
+	/**
+	 * notNext → eBay에서 뺄 단어. eBay는 단어 단위로 빼서 제목에 실제로 쓰이는 모양으로 만든다(11/25 실측).
+	 * 글자 여러 개(TI, SUPER, XT, GRE): 띄어 쓴 "5070 Ti"용 "TI"와 붙여 쓴 "5070TI".
+	 *   번호가 두 토큰 이상이면 띄어 쓴 쪽만("TI" 하나로 "4070 Ti Super"도 빠진다).
+	 * 한 글자(X, D, 3): 붙여 쓴 "7600X", "5090D", "9950X3"만. 따로 쓰인 "X"·"D"를 빼면 엉뚱한 글이 빠진다.
+	 *   "-9950X3"으로도 9950X3D가 빠진다.
+	 */
+	static List<String> excludeWords(List<String> model, Set<String> notNext) {
+		String joined = String.join("", model);
+		return notNext.stream().sorted().<String>mapMulti((n, out) -> {
+			if (n.length() == 1) {
+				out.accept(joined + n);
+				return;
+			}
+			out.accept(n);
+			if (model.size() == 1) {
+				out.accept(joined + n);
+			}
+		}).toList();
 	}
 
 	/** 칩셋 번호로 세대: 5070 → RTX50, 4070 → RTX40, 9070 → RX9000, 7900 → RX7000 */
@@ -121,7 +148,7 @@ public record ChipsetDef(
 			return at >= 0 && !notNext.contains(t.tokenAt(at + model.size()));
 		};
 		return new ChipsetDef(key, Category.CPU, displayName, displayName, matcher,
-				Map.of("brand", brand.name(), "series", series));
+				Map.of("brand", brand.name(), "series", series), excludeWords(model, notNext));
 	}
 
 	/** SSD 용량(TB). 제목에 다른 용량이 같이 있으면(여러 용량을 한 글에 파는 경우) 뺀다 */
@@ -145,7 +172,7 @@ public record ChipsetDef(
 		};
 		String display = "%s %dTB".formatted(model, tb);
 		return new ChipsetDef(key, Category.SSD, display, display, matcher,
-				Map.of("brand", brand.name(), "capacity", tb + "TB", "iface", iface));
+				Map.of("brand", brand.name(), "capacity", tb + "TB", "iface", iface), excludeWords(modelTokens, notNext));
 	}
 
 	private static boolean hasTb(Title t, int tb) {
