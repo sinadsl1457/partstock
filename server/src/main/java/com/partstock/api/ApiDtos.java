@@ -25,6 +25,12 @@ public final class ApiDtos {
 		public long p25Cents() {
 			return priceCents;
 		}
+
+		/** 글이 적어 대표가를 믿기 어려움(하위 25%를 쓰는 기준과 같다). 화면에 "표본 적음"으로 표시 */
+		@JsonProperty("fewListings")
+		public boolean fewListings() {
+			return listingCount < com.partstock.price.PriceStats.LOW_PRICE_MIN_LISTINGS;
+		}
 	}
 
 	/** 24시간 변동: 24시간 전(또는 그 전 가장 가까운) 시세와 비교. 비교할 시세가 없으면 null. */

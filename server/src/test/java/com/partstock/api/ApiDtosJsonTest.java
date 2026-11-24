@@ -22,4 +22,10 @@ class ApiDtosJsonTest {
 
 		assertThat(out).contains("\"priceCents\":26410").contains("\"p25Cents\":26410").contains("\"pricePct\":10");
 	}
+
+	@Test
+	void 글이_20개보다_적으면_표본_적음() {
+		assertThat(json.writeValueAsString(new Price(23_640, 25, 26_169, 29_900, 9))).contains("\"fewListings\":true");
+		assertThat(json.writeValueAsString(new Price(14_450, 10, 20_392, 25_716, 20))).contains("\"fewListings\":false");
+	}
 }
