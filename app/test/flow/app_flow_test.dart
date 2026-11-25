@@ -110,6 +110,49 @@ void main() {
     expect(find.text('RTX 5070 Ti'), findsOneWidget);
   });
 
+  testWidgets('시세 목록을 왼쪽으로 밀면 다음 분류 탭, 오른쪽으로 밀면 이전 탭(급등락까지)', (tester) async {
+    final repo = await setUpDi();
+    when(() => repo.cachedBoard(any())).thenReturn(null);
+    when(() => repo.board(Category.gpu)).thenAnswer((_) async => boardFixture());
+    when(() => repo.board(Category.ram)).thenAnswer((_) async => boardFixture('board_ram'));
+    when(() => repo.board(Category.cpu)).thenAnswer((_) async => boardFixture('board_cpu'));
+    when(() => repo.board(Category.ssd)).thenAnswer((_) async => boardFixture('board_ssd'));
+    when(() => repo.movers()).thenAnswer((_) async => moversFixture());
+    tester.platformDispatcher.localesTestValue = const [Locale('ko')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.625;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(PartstockApp(router: createRouter(initialLocation: '/board')));
+    await tester.pumpAndSettle();
+
+    Future<void> swipe(double dx) async {
+      await tester.fling(find.byType(Scrollable).last, Offset(dx, 0), 1200);
+      await tester.pumpAndSettle();
+    }
+
+    // 맨 앞(VGA)에서 오른쪽으로 밀면 그대로
+    await swipe(300);
+    expect(find.text('RTX 5070 Ti'), findsOneWidget);
+
+    await swipe(-300);
+    verify(() => repo.board(Category.ram)).called(1);
+    await swipe(-300);
+    verify(() => repo.board(Category.cpu)).called(1);
+    await swipe(-300);
+    verify(() => repo.board(Category.ssd)).called(1);
+    await swipe(-300);
+    expect(find.text('급등 TOP 5'), findsOneWidget);
+    // 맨 끝(급등락)에서 왼쪽으로 밀면 그대로
+    await swipe(-300);
+    expect(find.text('급등 TOP 5'), findsOneWidget);
+
+    await swipe(300);
+    expect(find.text('급등 TOP 5'), findsNothing);
+    expect(find.text('종목 · 미국 eBay 기준'), findsOneWidget);
+  });
+
   testWidgets('시세판에서 빠진 중고 위주 종목은 관심 탭에 "중고 위주", 차트 화면에 이유를 보여 준다', (tester) async {
     final repo = await setUpDi();
     when(() => repo.cachedBoard(any())).thenReturn(null);

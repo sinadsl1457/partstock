@@ -91,14 +91,7 @@ class BoardScreen extends StatelessWidget {
                         UnderlineTabs<Object>(
                           items: [for (final c in Category.values) (c, categoryLabel(t, c)), (_moversTab, t.tabMovers)],
                           selected: s.movers ? _moversTab : s.category,
-                          onSelect: (v) {
-                            if (v is Category) {
-                              cubit.select(v);
-                            } else {
-                              cubit.showMovers();
-                              context.read<MoversCubit>().open();
-                            }
-                          },
+                          onSelect: (v) => _open(context, v),
                         ),
                         if (!s.movers) Positioned(right: 0, top: 0, bottom: 2, child: _FilterButton(state: s)),
                       ],
@@ -134,7 +127,13 @@ class BoardScreen extends StatelessWidget {
                         style: const TextStyle(fontSize: 13, color: AppColors.warn),
                       ),
                     ),
-                  Expanded(child: s.movers ? const MoversView() : _body(context, s, cubit)),
+                  // 목록을 좌우로 밀면 옆 분류 탭으로(왼쪽으로 밀면 다음). 위아래 스크롤과는 방향으로 갈린다.
+                  Expanded(
+                    child: GestureDetector(
+                      onHorizontalDragEnd: (d) => _swipe(context, s, d.primaryVelocity ?? 0),
+                      child: s.movers ? const MoversView() : _body(context, s, cubit),
+                    ),
+                  ),
                 ],
               );
             },
@@ -142,6 +141,25 @@ class BoardScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static const _tabs = <Object>[...Category.values, _moversTab];
+
+  void _open(BuildContext context, Object tab) {
+    if (tab is Category) {
+      context.read<BoardCubit>().select(tab);
+    } else {
+      context.read<BoardCubit>().showMovers();
+      context.read<MoversCubit>().open();
+    }
+  }
+
+  /// 살짝 끈 것은 무시하고, 빠르게 민 것만 탭을 넘긴다. 맨 앞·맨 끝에서는 그대로.
+  void _swipe(BuildContext context, BoardState s, double velocity) {
+    if (velocity.abs() < 300) return;
+    final next = _tabs.indexOf(s.movers ? _moversTab : s.category) + (velocity < 0 ? 1 : -1);
+    if (next < 0 || next >= _tabs.length) return;
+    _open(context, _tabs[next]);
   }
 
   Widget _body(BuildContext context, BoardState s, BoardCubit cubit) {
