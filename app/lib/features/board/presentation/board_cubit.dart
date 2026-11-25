@@ -30,6 +30,10 @@ class BoardCubit extends Cubit<BoardState> {
     await _fetch(category);
   }
 
+  /// 옆 탭을 밀어서 보는 동안 미리 보여 줄 저장된 목록과 그 탭의 필터(상태는 바꾸지 않는다)
+  ({Board? board, BoardFilter filter}) peek(Category category) =>
+      (board: _repo.cachedBoard(category), filter: _filters.load(category));
+
   /// 급등락 탭으로. 지금 분류 목록은 그대로 두고 돌아오면 다시 보인다
   void showMovers() => emit(state.copyWith(movers: true));
 

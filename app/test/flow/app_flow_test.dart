@@ -128,7 +128,7 @@ void main() {
     await tester.pumpAndSettle();
 
     Future<void> swipe(double dx) async {
-      await tester.fling(find.byType(Scrollable).last, Offset(dx, 0), 1200);
+      await tester.fling(find.byType(PageView), Offset(dx, 0), 1200);
       await tester.pumpAndSettle();
     }
 
@@ -151,6 +151,30 @@ void main() {
     await swipe(300);
     expect(find.text('급등 TOP 5'), findsNothing);
     expect(find.text('종목 · 미국 eBay 기준'), findsOneWidget);
+  });
+
+  testWidgets('위 탭에서 멀리 있는 탭(SSD)을 누르면 미끄러져 가고, 지나가는 탭(RAM·CPU)은 받지 않는다', (tester) async {
+    final repo = await setUpDi();
+    when(() => repo.cachedBoard(any())).thenReturn(null);
+    when(() => repo.board(any())).thenAnswer((i) async {
+      final c = i.positionalArguments[0] as Category;
+      return boardFixture(c == Category.gpu ? 'board_gpu' : 'board_${c.name}');
+    });
+    tester.platformDispatcher.localesTestValue = const [Locale('ko')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.625;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(PartstockApp(router: createRouter(initialLocation: '/board')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('SSD'));
+    await tester.pumpAndSettle();
+
+    verify(() => repo.board(Category.ssd)).called(1);
+    verifyNever(() => repo.board(Category.ram));
+    verifyNever(() => repo.board(Category.cpu));
+    expect(find.text('RTX 5070 Ti'), findsNothing);
   });
 
   testWidgets('시세판에서 빠진 중고 위주 종목은 관심 탭에 "중고 위주", 차트 화면에 이유를 보여 준다', (tester) async {

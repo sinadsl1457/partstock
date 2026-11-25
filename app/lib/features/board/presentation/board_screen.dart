@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/network/app_failure.dart';
 import '../../../core/presentation/brand.dart';
 import '../../../core/presentation/common.dart';
 import '../../../core/presentation/format.dart';
@@ -39,7 +40,6 @@ class BoardScreen extends StatelessWidget {
         body: SafeArea(
           child: BlocBuilder<BoardCubit, BoardState>(
             builder: (context, s) {
-              final cubit = context.read<BoardCubit>();
               final updated = s.board?.updatedAt;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -127,11 +127,13 @@ class BoardScreen extends StatelessWidget {
                         style: const TextStyle(fontSize: 13, color: AppColors.warn),
                       ),
                     ),
-                  // 목록을 좌우로 밀면 옆 분류 탭으로(왼쪽으로 밀면 다음). 위아래 스크롤과는 방향으로 갈린다.
+                  // 목록을 좌우로 밀면 손가락을 따라 옆 분류 탭이 들어온다(왼쪽으로 밀면 다음).
                   Expanded(
-                    child: GestureDetector(
-                      onHorizontalDragEnd: (d) => _swipe(context, s, d.primaryVelocity ?? 0),
-                      child: s.movers ? const MoversView() : _body(context, s, cubit),
+                    child: _TabPager(
+                      index: _tabs.indexOf(s.movers ? _moversTab : s.category),
+                      count: _tabs.length,
+                      onPage: (i) => _open(context, _tabs[i]),
+                      page: (context, i) => _page(context, s, _tabs[i]),
                     ),
                   ),
                 ],
@@ -154,22 +156,22 @@ class BoardScreen extends StatelessWidget {
     }
   }
 
-  /// 살짝 끈 것은 무시하고, 빠르게 민 것만 탭을 넘긴다. 맨 앞·맨 끝에서는 그대로.
-  void _swipe(BuildContext context, BoardState s, double velocity) {
-    if (velocity.abs() < 300) return;
-    final next = _tabs.indexOf(s.movers ? _moversTab : s.category) + (velocity < 0 ? 1 : -1);
-    if (next < 0 || next >= _tabs.length) return;
-    _open(context, _tabs[next]);
+  /// 지금 탭은 상태 그대로, 밀어서 들어오는 옆 탭은 저장해 둔 목록(없으면 로딩)
+  Widget _page(BuildContext context, BoardState s, Object tab) {
+    if (tab is! Category) return const MoversView();
+    final cubit = context.read<BoardCubit>();
+    if (!s.movers && tab == s.category) return _body(context, s.board, s.filter, s.failure, cubit);
+    final peek = cubit.peek(tab);
+    return _body(context, peek.board, peek.filter, null, cubit);
   }
 
-  Widget _body(BuildContext context, BoardState s, BoardCubit cubit) {
-    final board = s.board;
+  Widget _body(BuildContext context, Board? board, BoardFilter filter, AppFailure? failure, BoardCubit cubit) {
     if (board == null) {
-      if (s.failure != null) return FailureView(failure: s.failure!, onRetry: cubit.refresh);
+      if (failure != null) return FailureView(failure: failure, onRetry: cubit.refresh);
       return const Center(child: CircularProgressIndicator());
     }
     final t = AppLocalizations.of(context);
-    final items = board.items.where((i) => matchesFilter(i, s.filter)).toList();
+    final items = board.items.where((i) => matchesFilter(i, filter)).toList();
     return RefreshIndicator(
       onRefresh: cubit.refresh,
       color: AppColors.accent,
@@ -189,6 +191,53 @@ class BoardScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// 분류 탭을 좌우로 넘기는 화면. 밀어서 넘기면 onPage, 위 탭을 눌러 index가 바뀌면 그 쪽으로 미끄러져 간다.
+class _TabPager extends StatefulWidget {
+  const _TabPager({required this.index, required this.count, required this.onPage, required this.page});
+
+  final int index;
+  final int count;
+  final ValueChanged<int> onPage;
+  final Widget Function(BuildContext context, int index) page;
+
+  @override
+  State<_TabPager> createState() => _TabPagerState();
+}
+
+class _TabPagerState extends State<_TabPager> {
+  late final PageController _controller = PageController(initialPage: widget.index);
+
+  /// 탭을 눌러 미끄러져 가는 동안 지나가는 탭(VGA → SSD면 RAM·CPU)은 열지 않는다
+  bool _sliding = false;
+
+  @override
+  void didUpdateWidget(_TabPager old) {
+    super.didUpdateWidget(old);
+    final now = _controller.hasClients ? _controller.page?.round() : null;
+    if (now == null || now == widget.index) return;
+    _sliding = true;
+    _controller
+        .animateToPage(widget.index, duration: const Duration(milliseconds: 280), curve: Curves.easeOutCubic)
+        .whenComplete(() => _sliding = false);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => PageView.builder(
+    controller: _controller,
+    itemCount: widget.count,
+    onPageChanged: (i) {
+      if (!_sliding && i != widget.index) widget.onPage(i);
+    },
+    itemBuilder: widget.page,
+  );
 }
 
 /// 탭 오른쪽 "필터" 버튼. 처음 값과 다르게 고른 묶음 수를 녹색 숫자로
