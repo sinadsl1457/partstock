@@ -86,9 +86,9 @@ docs/     AI_LOG.md
 - `getIt<X>()`는 main과 라우트의 `BlocProvider(create:)`에서만. Cubit은 이동·스낵바를 하지 않는다(상태를 보고 위젯이). 시간은 `Clock` 주입.
 - 폴더(상태를 누가 갖고 언제 생기나):
   - `features/market/data`: API 모델·저장소. 시세 목록·차트·관심이 같이 쓰는 읽기 전용 데이터라 한 곳에(화면은 없음).
-  - `features/board`: 시세 목록 탭. `BoardCubit`은 탭 화면과 함께 산다.
+  - `features/board`: 시세 목록 탭. `BoardCubit`은 탭 화면과 함께 살고, 네 분류(VGA/RAM/CPU/SSD)를 시작할 때 한꺼번에 받아 같이 든다. 탭을 바꿔도 다시 받지 않는다(11/26 사용자 피드백: 탭마다 받으니 옮길 때마다 로딩이 뜨고 업데이트 시각이 바뀌어 어색함). 다시 받기는 당기기·앱으로 돌아옴, 하나라도 실패하면 저장된 목록을 그대로 둔다(다른 시각의 시세가 섞이지 않게).
   - `features/ticker`: 종목 차트. `TickerCubit`은 종목을 열 때 생기고 닫으면 사라진다(종목마다 따로).
-  - `features/movers`: 시세 탭의 "급등락" 탭(분류 탭 옆). `MoversCubit`은 시세 탭 화면과 함께 살고 그 탭을 처음 열 때 받는다. 시세 목록과 받는 API·수명이 달라 따로(화면은 BoardScreen이 탭으로 끼워 넣음).
+  - `features/movers`: 시세 탭의 "급등락" 탭(분류 탭 옆). `MoversCubit`은 시세 탭 화면과 함께 살고 네 분류와 같이 시세 탭을 열 때 미리 받는다. 시세 목록과 받는 API·수명이 달라 따로(화면은 BoardScreen이 탭으로 끼워 넣음).
   - `features/watchlist`: 관심 종목. `WatchlistCubit`은 앱 전체 수명(차트 화면의 별과 관심 탭이 같은 상태를 본다), 저장은 SharedPreferences.
   - `features/settings`: 바로가기 기본값(eBay/다나와), 가이드를 봤는지. `SettingsCubit` 앱 전체 수명.
   - `features/onboarding`: 런치 애니메이션·처음 실행 가이드. 앱을 켤 때만 잠깐 있고 사라지는 화면이라 따로(상태는 위젯 안 + SettingsCubit).
