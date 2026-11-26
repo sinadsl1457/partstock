@@ -34,6 +34,7 @@ void main() {
     final repo = await setUpDi();
     when(() => repo.cachedBoard(any())).thenReturn(null);
     when(() => repo.board(any())).thenAnswer((_) async => boardFixture());
+    when(() => repo.movers()).thenAnswer((_) async => moversFixture());
     when(() => repo.ticker(any())).thenAnswer((_) async => tickerFixture());
     when(() => repo.chart(any(), any())).thenAnswer((i) async => chartFixture(i.positionalArguments[1] as ChartRange));
     tester.platformDispatcher.localesTestValue = const [Locale('ko')];
@@ -44,7 +45,7 @@ void main() {
 
     await tester.pumpWidget(PartstockApp(router: createRouter(initialLocation: '/board')));
     await tester.pumpAndSettle();
-    verify(() => repo.board(Category.gpu)).called(1);
+    verify(() => repo.board(any())).called(4); // 네 분류 한꺼번에
 
     // 알림창을 내렸다 올림: inactive만 거치고 화면은 계속 보임
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
@@ -54,7 +55,8 @@ void main() {
 
     await goBackground(tester);
     await comeBack(tester);
-    verify(() => repo.board(Category.gpu)).called(1);
+    verify(() => repo.board(any())).called(4);
+    verify(() => repo.movers()).called(2); // 시작할 때 미리 받아 둔 급등락도 같이
 
     await tester.tap(find.text('RTX 5070 Ti'));
     await tester.pumpAndSettle();

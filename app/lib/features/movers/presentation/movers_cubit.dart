@@ -1,4 +1,4 @@
-// 급등락 탭: 4개 분류의 24시간 급등·급락 TOP 5를 받는다. 시세 탭 화면과 함께 살고, 급등락 탭을 열 때 받는다.
+// 급등락 탭: 4개 분류의 24시간 급등·급락 TOP 5를 받는다. 시세 탭 화면과 함께 살고, 시세 탭을 열 때 미리 받는다.
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
@@ -12,7 +12,7 @@ class MoversCubit extends Cubit<MoversState> {
 
   final MarketRepository _repo;
 
-  /// 처음 열 때만 받는다(다시 받기는 당기기·앱으로 돌아옴)
+  /// 아직 안 받았을 때만 받는다(시세 탭을 열 때 라우트가 부름. 다시 받기는 당기기·앱으로 돌아옴)
   Future<void> open() async {
     if (state.movers != null || state.loading) return;
     await refresh();

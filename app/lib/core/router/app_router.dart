@@ -10,7 +10,6 @@ import 'package:go_router/go_router.dart';
 import '../../features/board/presentation/board_cubit.dart';
 import '../../features/board/presentation/board_screen.dart';
 import '../../features/movers/presentation/movers_cubit.dart';
-import '../../features/market/data/market_models.dart';
 import '../../features/onboarding/presentation/guide_screen.dart';
 import '../../features/onboarding/presentation/launch_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
@@ -45,9 +44,9 @@ GoRouter createRouter({String initialLocation = '/launch'}) => GoRouter(
                 s,
                 MultiBlocProvider(
                   providers: [
-                    BlocProvider(create: (_) => getIt<BoardCubit>()..select(Category.gpu)),
-                    // 급등락 탭은 시세 탭과 함께 살고, 그 탭을 처음 열 때 받는다
-                    BlocProvider(create: (_) => getIt<MoversCubit>()),
+                    BlocProvider(create: (_) => getIt<BoardCubit>()..start()),
+                    // 급등락 탭은 시세 탭과 함께 살고, 네 분류와 같이 처음부터 받아 둔다(탭을 열 때 기다리지 않게)
+                    BlocProvider(lazy: false, create: (_) => getIt<MoversCubit>()..open()),
                   ],
                   child: const BoardScreen(),
                 ),

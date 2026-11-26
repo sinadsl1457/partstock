@@ -30,17 +30,15 @@ class BoardScreen extends StatelessWidget {
     final t = AppLocalizations.of(context);
     return RefreshOnResume(
       onResume: () {
-        if (context.read<BoardCubit>().state.movers) {
-          context.read<MoversCubit>().refresh();
-        } else {
-          context.read<BoardCubit>().refresh();
-        }
+        // 네 분류는 늘 같이 새로 받고, 급등락은 받아 둔 적이 있으면 같이
+        context.read<BoardCubit>().refresh();
+        if (context.read<MoversCubit>().state.movers != null) context.read<MoversCubit>().refresh();
       },
       child: Scaffold(
         body: SafeArea(
           child: BlocBuilder<BoardCubit, BoardState>(
             builder: (context, s) {
-              final updated = s.board?.updatedAt;
+              final updated = s.updatedAt;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

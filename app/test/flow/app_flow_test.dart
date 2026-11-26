@@ -68,6 +68,7 @@ void main() {
   testWidgets('목록에서 종목을 누르면 차트, 별을 누르면 관심 탭에 나온다', (tester) async {
     final repo = await setUpDi();
     when(() => repo.cachedBoard(any())).thenReturn(null);
+    when(() => repo.movers()).thenAnswer((_) async => moversFixture());
     when(() => repo.board(any())).thenAnswer((_) async => boardFixture());
     when(() => repo.ticker(any())).thenAnswer((_) async => tickerFixture());
     when(() => repo.chart(any(), any())).thenAnswer((i) async => chartFixture(i.positionalArguments[1] as ChartRange));
@@ -113,6 +114,7 @@ void main() {
   testWidgets('시세 목록을 왼쪽으로 밀면 다음 분류 탭, 오른쪽으로 밀면 이전 탭(급등락까지)', (tester) async {
     final repo = await setUpDi();
     when(() => repo.cachedBoard(any())).thenReturn(null);
+    when(() => repo.movers()).thenAnswer((_) async => moversFixture());
     when(() => repo.board(Category.gpu)).thenAnswer((_) async => boardFixture());
     when(() => repo.board(Category.ram)).thenAnswer((_) async => boardFixture('board_ram'));
     when(() => repo.board(Category.cpu)).thenAnswer((_) async => boardFixture('board_cpu'));
@@ -136,12 +138,18 @@ void main() {
     await swipe(300);
     expect(find.text('RTX 5070 Ti'), findsOneWidget);
 
-    await swipe(-300);
-    verify(() => repo.board(Category.ram)).called(1);
-    await swipe(-300);
-    verify(() => repo.board(Category.cpu)).called(1);
-    await swipe(-300);
-    verify(() => repo.board(Category.ssd)).called(1);
+    // 네 분류는 시작할 때 한꺼번에 받았다. 밀어서 넘기면 바로 보이고 다시 받지 않으며 업데이트 시각도 그대로
+    for (final c in Category.values) {
+      verify(() => repo.board(c)).called(1);
+    }
+    final pill = tester.widget<Text>(find.textContaining('업데이트')).data;
+    for (final name in ['DDR5 16GB', 'Ryzen 9 9950X3D', 'Samsung 990 PRO 1TB']) {
+      await swipe(-300);
+      expect(find.text(name), findsWidgets);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(tester.widget<Text>(find.textContaining('업데이트')).data, pill);
+    }
+    verifyNever(() => repo.board(any()));
     await swipe(-300);
     expect(find.text('급등 TOP 5'), findsOneWidget);
     // 맨 끝(급등락)에서 왼쪽으로 밀면 그대로
@@ -153,9 +161,10 @@ void main() {
     expect(find.text('종목 · 미국 eBay 기준'), findsOneWidget);
   });
 
-  testWidgets('위 탭에서 멀리 있는 탭(SSD)을 누르면 미끄러져 가고, 지나가는 탭(RAM·CPU)은 받지 않는다', (tester) async {
+  testWidgets('위 탭에서 멀리 있는 탭(SSD)을 누르면 미끄러져 가고, 이미 받아 둔 목록이라 다시 받지 않는다', (tester) async {
     final repo = await setUpDi();
     when(() => repo.cachedBoard(any())).thenReturn(null);
+    when(() => repo.movers()).thenAnswer((_) async => moversFixture());
     when(() => repo.board(any())).thenAnswer((i) async {
       final c = i.positionalArguments[0] as Category;
       return boardFixture(c == Category.gpu ? 'board_gpu' : 'board_${c.name}');
@@ -171,15 +180,15 @@ void main() {
     await tester.tap(find.text('SSD'));
     await tester.pumpAndSettle();
 
-    verify(() => repo.board(Category.ssd)).called(1);
-    verifyNever(() => repo.board(Category.ram));
-    verifyNever(() => repo.board(Category.cpu));
+    verify(() => repo.board(any())).called(4); // 시작할 때 네 분류 한 번씩뿐
     expect(find.text('RTX 5070 Ti'), findsNothing);
+    expect(find.text('Samsung 990 PRO 1TB'), findsWidgets);
   });
 
   testWidgets('시세판에서 빠진 중고 위주 종목은 관심 탭에 "중고 위주", 차트 화면에 이유를 보여 준다', (tester) async {
     final repo = await setUpDi();
     when(() => repo.cachedBoard(any())).thenReturn(null);
+    when(() => repo.movers()).thenAnswer((_) async => moversFixture());
     when(() => repo.board(any())).thenAnswer((_) async => boardFixture());
     when(() => repo.ticker(any())).thenAnswer((_) async => tickerFixture().copyWith(usedMarket: true));
     when(() => repo.chart(any(), any())).thenAnswer((i) async => chartFixture(i.positionalArguments[1] as ChartRange));
@@ -208,6 +217,7 @@ void main() {
     final repo = await setUpDi();
     var fail = true;
     when(() => repo.cachedBoard(any())).thenReturn(null);
+    when(() => repo.movers()).thenAnswer((_) async => moversFixture());
     when(() => repo.board(any())).thenAnswer((_) async {
       if (fail) throw const NetworkFailure();
       return boardFixture();
@@ -232,6 +242,7 @@ void main() {
   testWidgets('종 버튼 → 목표가 창 → 알림 켜기 → 차트와 관심 탭에 알림이 보인다', (tester) async {
     final repo = await setUpDi();
     when(() => repo.cachedBoard(any())).thenReturn(null);
+    when(() => repo.movers()).thenAnswer((_) async => moversFixture());
     when(() => repo.board(any())).thenAnswer((_) async => boardFixture());
     when(() => repo.ticker(any())).thenAnswer((_) async => tickerFixture());
     when(() => repo.chart(any(), any())).thenAnswer((i) async => chartFixture(i.positionalArguments[1] as ChartRange));
@@ -285,6 +296,7 @@ void main() {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     final repo = await setUpDi();
     when(() => repo.cachedBoard(any())).thenReturn(null);
+    when(() => repo.movers()).thenAnswer((_) async => moversFixture());
     when(() => repo.board(any())).thenAnswer((_) async => boardFixture());
     when(() => repo.ticker(any())).thenAnswer((_) async => tickerFixture());
     when(() => repo.chart(any(), any())).thenAnswer((i) async => chartFixture(i.positionalArguments[1] as ChartRange));

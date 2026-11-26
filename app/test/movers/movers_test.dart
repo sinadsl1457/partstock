@@ -55,11 +55,12 @@ void main() {
     when(() => repo.ticker(any())).thenAnswer((_) async => tickerFixture());
     when(() => repo.chart(any(), any())).thenAnswer((i) async => chartFixture(i.positionalArguments[1] as ChartRange));
     await pumpApp(tester);
-    verifyNever(() => repo.movers()); // 탭을 열기 전에는 받지 않는다
+    verify(() => repo.movers()).called(1); // 시세 탭을 열 때 네 분류와 같이 미리 받는다
     expect(find.text('필터'), findsOneWidget);
 
     await tester.tap(find.text('급등락'));
     await tester.pumpAndSettle();
+    verifyNever(() => repo.movers()); // 탭을 열 때는 다시 받지 않는다
 
     expect(find.text('급등 TOP 5'), findsOneWidget);
     expect(find.text('급락 TOP 5'), findsOneWidget);

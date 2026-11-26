@@ -13,6 +13,7 @@ import 'package:partstock/features/board/data/board_filter_repository.dart';
 import 'package:partstock/features/board/presentation/board_cubit.dart';
 import 'package:partstock/features/market/data/market_models.dart';
 import 'package:partstock/features/market/data/market_repository.dart';
+import 'package:partstock/features/movers/presentation/movers_cubit.dart';
 import 'package:partstock/features/settings/data/settings_repository.dart';
 import 'package:partstock/features/settings/presentation/settings_cubit.dart';
 import 'package:partstock/features/watchlist/data/watchlist_repository.dart';
@@ -38,6 +39,7 @@ Future<CountingPush> setUp({required bool guideSeen}) async {
   final prefs = await SharedPreferences.getInstance();
   final market = MockMarketRepo();
   when(() => market.cachedBoard(any())).thenReturn(null);
+  when(() => market.movers()).thenAnswer((_) async => moversFixture());
   when(() => market.board(any())).thenAnswer((_) async => boardFixture());
   final alertsRepo = MockAlertsRepo();
   when(
@@ -55,7 +57,8 @@ Future<CountingPush> setUp({required bool guideSeen}) async {
     ..registerSingleton(AlertsCubit(push, alertsRepo))
     ..registerSingleton(WatchlistCubit(WatchlistRepository(prefs)))
     ..registerSingleton(SettingsCubit(SettingsRepository(prefs)))
-    ..registerFactory(() => BoardCubit(market, BoardFilterRepository(prefs)));
+    ..registerFactory(() => BoardCubit(market, BoardFilterRepository(prefs)))
+    ..registerFactory(() => MoversCubit(market));
   return push;
 }
 
